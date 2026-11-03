@@ -5,6 +5,7 @@
     "disabled": "boolean = false",
     "error-message": "string = ''",
     "hide-details": "boolean = false",
+    "hide-message": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",
@@ -19,8 +20,12 @@
   "defaultable": [
     "compact",
     "hideDetails",
+    "hideMessage",
     "size",
     "texts"
+  ],
+  "deprecated": [
+    "hideDetails"
   ],
   "events": {
     "change": "CustomEvent<CFileUploadEntry[]>",
@@ -53,6 +58,7 @@
     "disabled": "boolean = false",
     "errorMessage": "string = ''",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",

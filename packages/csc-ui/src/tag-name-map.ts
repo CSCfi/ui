@@ -173,7 +173,7 @@ export interface CAutocompleteElementEventMap {
 }
 
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
-export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hint' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'value'> {
+export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'external' | 'filter' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
@@ -188,8 +188,17 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
   external?: boolean;
   /** Custom filter predicate; receives a normalized option + the query. Ignored when `external` is set */
   filter?: CAutocompleteFilter;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the input */
   hint?: string;
   /**
@@ -527,7 +536,7 @@ export interface CCheckboxElementEventMap {
 }
 
 /** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
-export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'errorMessage' | 'falseValue' | 'hideDetails' | 'hint' | 'indeterminate' | 'invalid' | 'label' | 'name' | 'required' | 'trueValue' | 'value'> {
+export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'errorMessage' | 'falseValue' | 'hideDetails' | 'hideMessage' | 'hint' | 'indeterminate' | 'invalid' | 'label' | 'name' | 'required' | 'trueValue' | 'value'> {
   /**
    * Whether the checkbox is on: the boolean view of `value`. Setting it sets
    * `value` to `trueValue` or `falseValue`; reading it reports whether
@@ -541,8 +550,17 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
   errorMessage?: string;
   /** The value when the checkbox is unchecked */
   falseValue?: boolean | number | string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the checkbox */
   hint?: string;
   /**
@@ -631,7 +649,7 @@ export interface CColorPickerElementEventMap {
 }
 
 /** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
-export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'name' | 'placeholder' | 'required' | 'shadow' | 'size' | 'swatches' | 'swatchesOnly' | 'texts' | 'value'> {
+export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'name' | 'placeholder' | 'required' | 'shadow' | 'size' | 'swatches' | 'swatchesOnly' | 'texts' | 'value'> {
   /**
    * Let the colour carry transparency: an alpha slider and an A channel join
    * the panel. Without it typed alpha is dropped
@@ -648,8 +666,17 @@ export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'cleara
    * `#rrggbb`, `rgb(r g b)` or `oklch(l c h)`
    */
   format?: 'hex' | 'oklch' | 'rgb';
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the field */
   hint?: string;
   /**
@@ -869,7 +896,7 @@ export interface CDatePickerElementEventMap {
 }
 
 /** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
-export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hint' | 'invalid' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts' | 'type' | 'value'> {
+export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'disabledDates' | 'errorMessage' | 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'isDateDisabled' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts' | 'type' | 'value'> {
   /** Make the value clearable */
   clearable?: boolean;
   /** Disable the field */
@@ -891,8 +918,17 @@ export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
    * `dd`, `M`, `MM` and `yyyy` with any separators, e.g. `yyyy-MM-dd`
    */
   format?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the field */
   hint?: string;
   /**
@@ -1016,7 +1052,7 @@ export interface CFileUploadElementEventMap {
 }
 
 /** A field the user adds files to by dropping them on it or choosing them from a file dialog — and, given an upload function, the place each file's upload shows its progress. */
-export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compact' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'manual' | 'maxFiles' | 'maxSize' | 'multiple' | 'required' | 'size' | 'texts' | 'upload' | 'value'> {
+export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compact' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'label' | 'manual' | 'maxFiles' | 'maxSize' | 'multiple' | 'required' | 'size' | 'texts' | 'upload' | 'value'> {
   /** The file types the field takes, in the native `accept` syntax: extensions (`.pdf`) and media types (`image/*`, `application/json`), comma separated. It filters the file dialog and is checked again on a drop */
   accept?: string;
   /** Show the drop zone as a control-height row — a "Choose files" button and a drop prompt — that lines up with the fields beside it */
@@ -1025,8 +1061,17 @@ export interface CFileUploadElement extends Omit<HTMLElement, 'accept' | 'compac
   disabled?: boolean;
   /** Error message shown in place of the hint while the field is invalid */
   errorMessage?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text under the drop zone — the place to name the accepted types and limits */
   hint?: string;
   /**
@@ -1508,7 +1553,7 @@ export interface CNumberFieldElementEventMap {
 }
 
 /** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
-export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'decimalSeparator' | 'disabled' | 'errorMessage' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'shadow' | 'size' | 'step' | 'texts' | 'value'> {
+export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'decimalSeparator' | 'disabled' | 'errorMessage' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'shadow' | 'size' | 'step' | 'texts' | 'value'> {
   /** The most fraction digits the field takes; `0` makes it an integer field */
   decimals?: number;
   /** The decimal separator. Empty follows the page's `lang` (`,` for `fi`, `.` for `en`) */
@@ -1521,8 +1566,17 @@ export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'dec
   fixedDecimals?: boolean;
   /** The thousands separator. Empty follows the page's `lang` (a space for `fi`, `,` for `en`) */
   groupSeparator?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the field */
   hint?: string;
   /**
@@ -1623,13 +1677,22 @@ export interface COtpInputElementEventMap {
 }
 
 /** A one-time-code field: a row of single-digit boxes, filled in order as the user types or pastes a code, under a group label and above a hint or error message. */
-export interface COtpInputElement extends Omit<HTMLElement, 'autofocus' | 'errorMessage' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'length' | 'required' | 'value'> {
+export interface COtpInputElement extends Omit<HTMLElement, 'autofocus' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'label' | 'length' | 'required' | 'value'> {
   /** Focus the first digit when the field mounts. */
   autofocus?: boolean;
   /** Error message shown in place of the hint while the input is invalid */
   errorMessage?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the input */
   hint?: string;
   /**
@@ -1865,13 +1928,22 @@ export interface CRadioGroupElementEventMap {
 }
 
 /** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
-export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'inline' | 'invalid' | 'label' | 'required' | 'value'> {
+export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'inline' | 'invalid' | 'label' | 'required' | 'value'> {
   /** Disable the radio group */
   disabled?: boolean;
   /** Error message shown in place of the hint while the group is invalid */
   errorMessage?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the input */
   hint?: string;
   /** Display radio buttons inline */
@@ -1937,15 +2009,24 @@ export interface CSelectElementEventMap {
 }
 
 /** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
-export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'value'> {
+export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'loading' | 'maxTags' | 'multiple' | 'name' | 'optionAsSelection' | 'placeholder' | 'required' | 'returnObject' | 'selectAll' | 'shadow' | 'size' | 'texts' | 'value'> {
   /** Make the selected value clearable */
   clearable?: boolean;
   /** Disable the input */
   disabled?: boolean;
   /** Error message shown in place of the hint while the select is invalid */
   errorMessage?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the input */
   hint?: string;
   /**
@@ -2585,7 +2666,7 @@ export interface CTextFieldElementEventMap {
 }
 
 /** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
-export interface CTextFieldElement extends Omit<HTMLElement, 'autocapitalize' | 'autocomplete' | 'autocorrect' | 'autofocus' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'mask' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'value'> {
+export interface CTextFieldElement extends Omit<HTMLElement, 'autocapitalize' | 'autocomplete' | 'autocorrect' | 'autofocus' | 'disabled' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'mask' | 'max' | 'min' | 'name' | 'placeholder' | 'readonly' | 'required' | 'rows' | 'shadow' | 'size' | 'step' | 'trimWhitespace' | 'type' | 'value'> {
   /**
    * How on-screen keyboards capitalize typed text, as the native
    * `autocapitalize` attribute; unset leaves the browser's default
@@ -2613,8 +2694,17 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocapitalize' | 
   disabled?: boolean;
   /** Error message shown in place of the hint while the input is invalid */
   errorMessage?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the input */
   hint?: string;
   /**
@@ -2731,7 +2821,7 @@ export interface CTimePickerElementEventMap {
 }
 
 /** A time field that takes a typed time, or opens hour and minute columns for picking one, or a start and end time under `range`. */
-export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'max' | 'min' | 'minuteStep' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showNow' | 'size' | 'texts' | 'value'> {
+export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'disabled' | 'errorMessage' | 'format' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'label' | 'labelOnTop' | 'max' | 'min' | 'minuteStep' | 'name' | 'placeholder' | 'range' | 'required' | 'shadow' | 'showNow' | 'size' | 'texts' | 'value'> {
   /** Make the value clearable */
   clearable?: boolean;
   /** Disable the field */
@@ -2744,8 +2834,17 @@ export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
    * any separators, e.g. `HH:mm` or `h:mm a`
    */
   format?: string;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the field */
   hint?: string;
   /**
@@ -2975,7 +3074,7 @@ export interface CTreeSelectElementEventMap {
 }
 
 /** A hierarchical value-selection component: a readonly value field that opens a panel for browsing a tree one level at a time, or searching it as a whole, to commit one item. */
-export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'clearable' | 'disabled' | 'errorMessage' | 'filter' | 'hideDetails' | 'hint' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'levelLabels' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'value'> {
+export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'clearable' | 'disabled' | 'errorMessage' | 'filter' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'items' | 'itemsPerPage' | 'label' | 'labelOnTop' | 'levelLabels' | 'name' | 'placeholder' | 'required' | 'returnObject' | 'shadow' | 'size' | 'texts' | 'value'> {
   /**
    * Let a branch be committed as the value: a pinned select-branch row heads
    * every level below the root, and matching branches are listed as search
@@ -2993,8 +3092,17 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
    * ancestors. Functions have no attribute form — bind as a DOM property
    */
   filter?: CTreeSelectFilter;
-  /** Hide the hint and error messages */
+  /**
+   * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
+   */
   hideDetails?: boolean;
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
   /** Hint text for the field */
   hint?: string;
   /**
@@ -3078,36 +3186,36 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
  * always wins over an app default.
  */
 export interface CAppDefaults {
-  'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-autocomplete'?: Partial<Pick<CAutocompleteElement, 'hideDetails' | 'hideMessage' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-breadcrumb'?: Partial<Pick<CBreadcrumbElement, 'texts'>>;
-  'c-color-picker'?: Partial<Pick<CColorPickerElement, 'alpha' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-color-picker'?: Partial<Pick<CColorPickerElement, 'alpha' | 'format' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
   'c-data-table'?: Partial<Pick<CDataTableElement, 'texts'>>;
-  'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
-  'c-file-upload'?: Partial<Pick<CFileUploadElement, 'compact' | 'hideDetails' | 'size' | 'texts'>>;
+  'c-date-picker'?: Partial<Pick<CDatePickerElement, 'firstDayOfWeek' | 'format' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'showToday' | 'showWeekNumbers' | 'size' | 'texts'>>;
+  'c-file-upload'?: Partial<Pick<CFileUploadElement, 'compact' | 'hideDetails' | 'hideMessage' | 'size' | 'texts'>>;
   'c-navigation-button'?: Partial<Pick<CNavigationButtonElement, 'texts'>>;
-  'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
+  'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
   'c-pagination'?: Partial<Pick<CPaginationElement, 'texts'>>;
-  'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
-  'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'labelOnTop' | 'shadow' | 'size'>>;
-  'c-time-picker'?: Partial<Pick<CTimePickerElement, 'format' | 'hideDetails' | 'labelOnTop' | 'shadow' | 'showNow' | 'size' | 'texts'>>;
-  'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'hideMessage' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'size'>>;
+  'c-time-picker'?: Partial<Pick<CTimePickerElement, 'format' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'showNow' | 'size' | 'texts'>>;
+  'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'hideMessage' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
 }
 
 /** Runtime allow-list behind `applyDefaults()` validation — the same data as `CAppDefaults`. */
 export const DEFAULTABLE_PROPS = {
-  'c-autocomplete': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-autocomplete': ['hideDetails', 'hideMessage', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-breadcrumb': ['texts'],
-  'c-color-picker': ['alpha', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-color-picker': ['alpha', 'format', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'size', 'texts'],
   'c-data-table': ['texts'],
-  'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
-  'c-file-upload': ['compact', 'hideDetails', 'size', 'texts'],
+  'c-date-picker': ['firstDayOfWeek', 'format', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts'],
+  'c-file-upload': ['compact', 'hideDetails', 'hideMessage', 'size', 'texts'],
   'c-navigation-button': ['texts'],
-  'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
+  'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
   'c-pagination': ['texts'],
-  'c-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
-  'c-text-field': ['hideDetails', 'labelOnTop', 'shadow', 'size'],
-  'c-time-picker': ['format', 'hideDetails', 'labelOnTop', 'shadow', 'showNow', 'size', 'texts'],
-  'c-tree-select': ['hideDetails', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-select': ['hideDetails', 'hideMessage', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-text-field': ['hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'size'],
+  'c-time-picker': ['format', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'showNow', 'size', 'texts'],
+  'c-tree-select': ['hideDetails', 'hideMessage', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
 } as const satisfies Record<keyof CAppDefaults, readonly string[]>;
 
 /** Tags dispatching the v-model contract event `update:value` — the value controls (CONTEXT.md). */

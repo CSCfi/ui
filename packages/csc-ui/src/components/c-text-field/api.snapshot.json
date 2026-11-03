@@ -7,6 +7,7 @@
     "disabled": "boolean = false",
     "error-message": "string = ''",
     "hide-details": "boolean = false",
+    "hide-message": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",
@@ -29,9 +30,13 @@
   "cssProperties": [],
   "defaultable": [
     "hideDetails",
+    "hideMessage",
     "labelOnTop",
     "shadow",
     "size"
+  ],
+  "deprecated": [
+    "hideDetails"
   ],
   "events": {
     "change": "CustomEvent<string>",
@@ -54,6 +59,7 @@
     "disabled": "boolean = false",
     "errorMessage": "string = ''",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",

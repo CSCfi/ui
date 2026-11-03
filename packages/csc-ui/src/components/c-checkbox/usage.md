@@ -38,7 +38,7 @@ const onSelectAll = (event) => {
 ```
 
 Set `hint` for a persistent helper line below the control; while `invalid` is
-set, `error-message` replaces it. `hide-details` removes the message area
+set, `error-message` replaces it. `hide-message` removes the message area
 entirely.
 
 ## When to use

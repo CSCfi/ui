@@ -159,6 +159,13 @@ const fromAttribute = (attr: string, builtIn: unknown): unknown => {
  *
  * A nullish own value counts as "unset" (Vue itself treats `null` as an
  * explicit value; here it falls through to the app default).
+ *
+ * A scalar prop that replaces a deprecated one (ADR-0074) names it third,
+ * and each layer reads the new name, then the old: instance (new, old) →
+ * app default (new, old) → built-in. So an instance `hide-message="false"`
+ * still beats an app-wide `hideDetails: true`.
+ *
+ *   const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
  */
 export const useAppDefault = <T extends CDefaultableTag>(
   tag: T,
@@ -171,11 +178,14 @@ export const useAppDefault = <T extends CDefaultableTag>(
   return <K extends keyof Bucket<T> & string>(
     key: K,
     builtIn: Resolved<T, K>,
+    replaces?: keyof Bucket<T> & string,
   ): ComputedRef<Resolved<T, K>> =>
     computed(() => {
-      // Read the prop FIRST, unconditionally: it is the reactive dependency
-      // that re-runs this computed when the instance value changes.
+      // Read the props FIRST, unconditionally: they are the reactive
+      // dependencies that re-run this computed when an instance value changes.
       const value = own[key];
+
+      const replacedValue = replaces ? own[replaces] : undefined;
 
       const app = buckets[tag]?.[key];
 
@@ -187,16 +197,23 @@ export const useAppDefault = <T extends CDefaultableTag>(
         } as Resolved<T, K>;
       }
 
-      const attr = host?.getAttribute(hyphenate(key)) ?? null;
+      // The instance's own setting under one name, or undefined when unset.
+      const instance = (name: string, set: unknown): unknown => {
+        const attr = host?.getAttribute(hyphenate(name)) ?? null;
 
-      if (attr !== null) return fromAttribute(attr, builtIn) as Resolved<T, K>;
+        if (attr !== null) return fromAttribute(attr, builtIn);
 
-      if (value != null) {
-        return (
-          typeof builtIn === 'boolean' ? coerceBoolean(value) : value
-        ) as Resolved<T, K>;
-      }
+        if (set != null) {
+          return typeof builtIn === 'boolean' ? coerceBoolean(set) : set;
+        }
 
-      return (app ?? builtIn) as Resolved<T, K>;
+        return undefined;
+      };
+
+      return (instance(key, value) ??
+        (replaces ? instance(replaces, replacedValue) : undefined) ??
+        app ??
+        (replaces ? buckets[tag]?.[replaces] : undefined) ??
+        builtIn) as Resolved<T, K>;
     });
 };

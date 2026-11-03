@@ -19,7 +19,7 @@
     <c-input
       ref="cInputRef"
       :active="dropdownVisible"
-      :data-hide-details="String(hideDetailsResolved)"
+      :data-hide-details="String(hideMessageResolved)"
       :disabled
       :filled="hasSelection"
       :input-id
@@ -37,7 +37,7 @@
         :id="`${inputId}-message`"
         slot="message"
         :error-message
-        :hide-details="hideDetailsResolved"
+        :hide-details="hideMessageResolved"
         :hint
         :invalid
         :label-on-top="labelOnTopResolved"
@@ -58,7 +58,7 @@
             ref="inputRef"
             v-bind="controlAttrs"
             :aria-describedby="
-              hideDetailsResolved ? undefined : `${inputId}-message`
+              hideMessageResolved ? undefined : `${inputId}-message`
             "
             :aria-expanded="dropdownVisible"
             :aria-label="accessibleName"
@@ -238,8 +238,17 @@ interface CSelectProps {
    * Hide the hint and error messages
    *
    * @defaultable false
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   *
+   * @defaultable false
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the input
@@ -379,7 +388,7 @@ interface CSelectProps {
  * @csspart tags - The row of selected-value tags inside the field (`multiple` mode)
  * @csspart tag - One selected-value tag: the `c-tag` host, including the overflow tag
  * @csspart tag-root - The pill box inside each tag (the `c-tag` `root` part), for colours and borders
- * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-message`)
  */
 import { mdiChevronDown, mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
@@ -513,6 +522,7 @@ const props = withDefaults(defineProps<CSelectProps>(), {
   disabled: false,
   errorMessage: '',
   hideDetails: undefined,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   items: () => [],
@@ -563,10 +573,10 @@ const DEFAULT_TEXTS: Required<CSelectTexts> = {
 
 const t = appDefault('texts', DEFAULT_TEXTS);
 
-// `hide-details` reaches the inner `c-input` through the `data-hide-details`
+// `hide-message` reaches the inner `c-input` through the `data-hide-details`
 // channel — see src/shared/appDefaults.ts for the two defineCustomElement
 // quirks behind that and behind the attribute-first resolution.
-const hideDetailsResolved = appDefault('hideDetails', false);
+const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
 
 const itemsPerPageResolved = appDefault('itemsPerPage', 6);
 

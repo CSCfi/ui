@@ -40,7 +40,7 @@
     <button
       v-if="!compactResolved"
       ref="zoneRef"
-      :aria-describedby="hideDetailsResolved ? undefined : messageId"
+      :aria-describedby="hideMessageResolved ? undefined : messageId"
       :class="ui.zone()"
       :disabled="isDisabled"
       part="drop-zone"
@@ -68,7 +68,7 @@
     <div v-else :class="ui.zone()" part="drop-zone" @click="openDialog">
       <button
         ref="zoneRef"
-        :aria-describedby="hideDetailsResolved ? undefined : messageId"
+        :aria-describedby="hideMessageResolved ? undefined : messageId"
         :class="ui.choose()"
         :disabled="isDisabled"
         type="button"
@@ -88,7 +88,7 @@
     <field-message
       :id="messageId"
       :error-message
-      :hide-details="hideDetailsResolved"
+      :hide-details="hideMessageResolved"
       :hint
       :invalid
       part="message"
@@ -399,8 +399,17 @@ interface CFileUploadProps {
    * Hide the hint and error messages
    *
    * @defaultable false
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   *
+   * @defaultable false
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text under the drop zone — the place to name the accepted types and limits
@@ -480,7 +489,7 @@ interface CFileUploadProps {
  * @csspart root - The field: label, drop zone, message line and file list. The whole of it takes a drop
  * @csspart label - The label above the drop zone
  * @csspart drop-zone - The dashed drop zone — the large button, or the `compact` row
- * @csspart message - The hint/error message area under the drop zone (always reserved unless `hide-details`)
+ * @csspart message - The hint/error message area under the drop zone (always reserved unless `hide-message`)
  * @csspart list - The list of file entries and rejected files
  * @csspart entry - One file entry's row
  * @csspart rejected - One rejected file's row
@@ -665,6 +674,7 @@ const props = withDefaults(defineProps<CFileUploadProps>(), {
   disabled: false,
   errorMessage: '',
   hideDetails: undefined,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   label: '',
@@ -691,7 +701,7 @@ const appDefault = useAppDefault('c-file-upload', props);
 
 const compactResolved = appDefault('compact', false);
 
-const hideDetailsResolved = appDefault('hideDetails', false);
+const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
 
 const sizeResolved = appDefault('size', 'default');
 

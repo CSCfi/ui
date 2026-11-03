@@ -3,6 +3,7 @@
     "autofocus": "boolean = false",
     "error-message": "string = ''",
     "hide-details": "boolean = false",
+    "hide-message": "boolean",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",
@@ -12,6 +13,9 @@
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "hideDetails"
+  ],
   "events": {
     "change": "CustomEvent<string>",
     "completion": "CustomEvent<string>",
@@ -33,6 +37,7 @@
     "autofocus": "boolean = false",
     "errorMessage": "string = ''",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",

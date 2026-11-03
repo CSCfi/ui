@@ -334,13 +334,14 @@ const lintDefaultable = (component, errors) => {
   ].map((m) => m[1]);
 
   // `appDefault('<name>', <built-in>)` — the literal may itself hold quotes
-  // or an identifier (`DEFAULT_TEXTS`), never a nested call.
+  // or an identifier (`DEFAULT_TEXTS`), never a nested call. A third
+  // argument names the deprecated prop the call resolves along with it.
   const resolved = new Map(
     [
       ...scriptSource.matchAll(
-        /(?<![\w.])appDefault\(\s*'([^']+)'\s*,\s*([^()]+?)\s*\)/g,
+        /(?<![\w.])appDefault\(\s*'([^']+)'\s*,\s*([^()]+?)(?:\s*,\s*'([^']+)')?\s*\)/g,
       ),
-    ].map((m) => [m[1], m[2]]),
+    ].flatMap((m) => [[m[1], m[2]], ...(m[3] ? [[m[3], m[2]]] : [])]),
   );
 
   if (defaultable.length && !useTags.length) {

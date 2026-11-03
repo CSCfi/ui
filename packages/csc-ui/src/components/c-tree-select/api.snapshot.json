@@ -5,6 +5,7 @@
     "disabled": "boolean = false",
     "error-message": "string = ''",
     "hide-details": "boolean = false",
+    "hide-message": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "items-per-page": "number = 6",
@@ -21,11 +22,15 @@
   "cssProperties": [],
   "defaultable": [
     "hideDetails",
+    "hideMessage",
     "itemsPerPage",
     "labelOnTop",
     "shadow",
     "size",
     "texts"
+  ],
+  "deprecated": [
+    "hideDetails"
   ],
   "events": {
     "change": "CustomEvent<CTreeSelectValue>",
@@ -68,6 +73,7 @@
     "errorMessage": "string = ''",
     "filter": "CTreeSelectFilter",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "items": "CTreeSelectItem[] = () => []",

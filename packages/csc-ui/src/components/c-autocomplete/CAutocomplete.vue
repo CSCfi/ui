@@ -8,7 +8,7 @@
     <c-input
       ref="cInputRef"
       :active="isOpen"
-      :data-hide-details="String(hideDetailsResolved)"
+      :data-hide-details="String(hideMessageResolved)"
       :disabled
       :filled="hasSelection"
       :input-id
@@ -26,7 +26,7 @@
         :id="`${inputId}-message`"
         slot="message"
         :error-message
-        :hide-details="hideDetailsResolved"
+        :hide-details="hideMessageResolved"
         :hint
         :invalid
         :label-on-top="labelOnTopResolved"
@@ -47,7 +47,7 @@
           v-bind="controlAttrs"
           :aria-controls="`${id}-listbox`"
           :aria-describedby="
-            hideDetailsResolved ? undefined : `${inputId}-message`
+            hideMessageResolved ? undefined : `${inputId}-message`
           "
           :aria-expanded="isOpen"
           :aria-label="accessibleName"
@@ -452,8 +452,17 @@ interface CAutocompleteProps {
    * Hide the hint and error messages
    *
    * @defaultable false
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   *
+   * @defaultable false
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the input
@@ -592,7 +601,7 @@ interface CAutocompleteProps {
  * @csspart tags - The row of selected-value tags inside the field (`multiple` mode)
  * @csspart tag - One selected-value tag: the `c-tag` host, including the overflow tag
  * @csspart tag-root - The pill box inside each tag (the `c-tag` `root` part), for colours and borders
- * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-message`)
  *
  * @subcomponents c-option, c-option-value
  */
@@ -785,6 +794,7 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
   external: false,
   filter: undefined,
   hideDetails: undefined,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   items: () => [],
@@ -901,10 +911,10 @@ const inputId = computed(
     )}`,
 );
 
-// `hide-details` reaches the inner `c-input` through the `data-hide-details`
+// `hide-message` reaches the inner `c-input` through the `data-hide-details`
 // channel — see src/shared/appDefaults.ts for the two defineCustomElement
 // quirks behind that and behind the attribute-first resolution.
-const hideDetailsResolved = appDefault('hideDetails', false);
+const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
 
 const itemsPerPageResolved = appDefault('itemsPerPage', 6);
 
@@ -914,7 +924,7 @@ const shadowResolved = appDefault('shadow', false);
 
 const sizeResolved = appDefault('size', 'default');
 
-// Same defineCustomElement Boolean-attribute quirk as `hide-details`: resolve
+// Same defineCustomElement Boolean-attribute quirk as `hide-message`: resolve
 // `multiple` from the stable host attribute first.
 const multipleOn = computed(() =>
   host?.hasAttribute('multiple')

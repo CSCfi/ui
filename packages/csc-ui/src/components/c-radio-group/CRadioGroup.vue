@@ -1,7 +1,7 @@
 <template>
   <div
     ref="rootRef"
-    :aria-describedby="coerceBoolean(hideDetails) ? undefined : messageId"
+    :aria-describedby="hideMessageResolved ? undefined : messageId"
     :aria-labelledby="labelVisible ? labelId : undefined"
     :aria-required="isRequired || undefined"
     :class="ui.root()"
@@ -26,7 +26,7 @@
     <field-message
       :id="messageId"
       :error-message
-      :hide-details
+      :hide-details="hideMessageResolved"
       :hint
       :invalid
       part="message"
@@ -42,7 +42,7 @@
  * @csspart root - The radiogroup wrapper element
  * @csspart label - The group label above the radio buttons
  * @csspart items - The container the radios are slotted into
- * @csspart message - The hint/error message area below the radios (always reserved unless `hide-details`)
+ * @csspart message - The hint/error message area below the radios (always reserved unless `hide-message`)
  *
  * @subcomponents c-radio
  */
@@ -154,8 +154,16 @@ interface CRadioGroupProps {
 
   /**
    * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the input
@@ -198,6 +206,7 @@ const props = withDefaults(defineProps<CRadioGroupProps>(), {
   disabled: false,
   errorMessage: '',
   hideDetails: false,
+  hideMessage: undefined,
   hint: '',
   inline: false,
   invalid: false,
@@ -211,6 +220,11 @@ const props = withDefaults(defineProps<CRadioGroupProps>(), {
 const isGroupDisabled = computed(() => coerceBoolean(props.disabled));
 
 const isRequired = computed(() => coerceBoolean(props.required));
+
+// `hide-message` wins over the deprecated `hide-details` when set.
+const hideMessageResolved = computed(() =>
+  coerceBoolean(props.hideMessage ?? props.hideDetails),
+);
 
 const ui = computed(() =>
   radioGroup({

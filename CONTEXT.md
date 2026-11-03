@@ -619,6 +619,10 @@ _Avoid_: Helper text, description
 Consumer-supplied text explaining why a control is invalid, shown in place of the **hint** while the control is invalid. The component only *displays* it — validation itself (deciding validity, choosing the wording) is the consumer's job, which is why the prop is named for the message, not the process. Has no default: an invalid control without one shows error styling on the field but keeps its hint.
 _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
 
+**Message line**:
+The line under a form control where its **hint** or **error message** shows, stamped as the `message` part. It keeps its room while empty, so an error appearing at runtime doesn't push the content below it down; `hide-message` removes it and its room. Until 5.0 the 3.x `hide-details` still hides it while `hide-message` is unset (**deprecated**). On `c-pagination` and `c-progress-bar`, `hide-details` is not this: it hides their own `details` part, by the rule that `hide-<part>` hides that part.
+_Avoid_: Details (the 3.x name; on a field there is nothing else under the control), message area, helper line
+
 **Number field** (`c-number-field`):
 A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits `update:value` and `input` on every keystroke and every **step** that changes the number; `change` on **commit** (a step is one). Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
 _Avoid_: Numeric input, number input (the native one), amount field
