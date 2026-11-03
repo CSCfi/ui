@@ -472,12 +472,19 @@ export interface CButtonGroupElement extends Omit<HTMLElement, 'disabled' | 'lab
 }
 
 /** A raised, bordered surface that groups one piece of content — its heading, body and actions — into a single box on the page. */
-export interface CCardElement extends Omit<HTMLElement, 'fullscreen'> {
+export interface CCardElement extends Omit<HTMLElement, 'fullscreen' | 'showFullscreen'> {
   /**
    * Shows a toggle button in the card's top-right corner that puts the card
    * in the browser's fullscreen mode and back.
+   *
+   * @deprecated Use `show-fullscreen`.
    */
   fullscreen?: boolean;
+  /**
+   * Show a toggle button in the card's top-right corner that puts the card
+   * in the browser's fullscreen mode and back.
+   */
+  showFullscreen?: boolean;
   /**
    * Shows the card in the browser's fullscreen mode; does nothing while any
    * element is already fullscreen. Browsers grant it only in response to a

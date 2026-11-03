@@ -1,9 +1,13 @@
 {
   "attributes": {
-    "fullscreen": "boolean = false"
+    "fullscreen": "boolean = false",
+    "show-fullscreen": "boolean"
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "fullscreen"
+  ],
   "events": {},
   "methods": {
     "enterFullscreen": "()",
@@ -15,7 +19,8 @@
   ],
   "propertyOnly": [],
   "props": {
-    "fullscreen": "boolean = false"
+    "fullscreen": "boolean = false",
+    "showFullscreen": "boolean"
   },
   "slots": [
     "default"
