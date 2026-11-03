@@ -7,6 +7,7 @@
     "fixed-decimals": "boolean = false",
     "group-separator": "string = ''",
     "hide-details": "boolean = false",
+    "hide-message": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",
@@ -29,11 +30,15 @@
     "fixedDecimals",
     "groupSeparator",
     "hideDetails",
+    "hideMessage",
     "labelOnTop",
     "shadow",
     "size",
     "step",
     "texts"
+  ],
+  "deprecated": [
+    "hideDetails"
   ],
   "events": {
     "change": "CustomEvent<null | number>",
@@ -60,6 +65,7 @@
     "fixedDecimals": "boolean = false",
     "groupSeparator": "string = ''",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",

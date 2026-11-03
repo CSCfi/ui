@@ -1,6 +1,6 @@
 A circular indeterminate activity indicator — pure motion with no value, for waits of unknown duration.
 
-Size the spinner with the `size` (diameter) and `width` (stroke) props, both in pixels. It spins forever; there is nothing to bind. If the wait has a known completion percentage, use `c-progress-circle` instead — the boundary is the axis (pure activity vs known value), not the shape.
+Size the spinner with the `size` (diameter) and `thickness` (stroke) props, both in pixels; the 3.x `width` still sets the stroke until 5.0, and `thickness` wins when both are set. It spins forever; there is nothing to bind. If the wait has a known completion percentage, use `c-progress-circle` instead — the boundary is the axis (pure activity vs known value), not the shape.
 
 ## When to use
 
@@ -18,4 +18,4 @@ The spinner is purely visual and exposes nothing to assistive technology. Announ
 
 ## Customization
 
-`::part(root)` targets the `<svg>` drawing the circle. Prefer the `size`/`width`/`color` props for geometry and colour — the dash animation is computed from the size.
+`::part(root)` targets the `<svg>` drawing the circle. Prefer the `size`/`thickness`/`color` props for geometry and colour — the dash animation is computed from the size.

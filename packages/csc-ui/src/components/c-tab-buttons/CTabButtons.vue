@@ -8,9 +8,9 @@
       v-if="strip.overflowing.value"
       :aria-label="t.scrollBack"
       :disabled="!strip.canBack.value || isDisabled"
+      appearance="ghost"
       part="scroll-back"
       size="x-small"
-      ghost
       @click="strip.back()"
     >
       <c-icon :path="mdiChevronLeft" />
@@ -55,9 +55,9 @@
       v-if="strip.overflowing.value"
       :aria-label="t.scrollForward"
       :disabled="!strip.canForward.value || isDisabled"
+      appearance="ghost"
       part="scroll-forward"
       size="x-small"
-      ghost
       @click="strip.forward()"
     >
       <c-icon :path="mdiChevronRight" />

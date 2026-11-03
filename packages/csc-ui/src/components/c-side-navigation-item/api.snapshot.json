@@ -1,6 +1,8 @@
 {
   "attributes": {
     "active": "boolean = false",
+    "current": "boolean",
+    "expanded": "boolean",
     "href": "string = ''",
     "loading": "boolean = false",
     "target": "string = ''",
@@ -8,6 +10,9 @@
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "active"
+  ],
   "events": {
     "select": "CustomEvent<{ value: string | undefined }>"
   },
@@ -20,6 +25,8 @@
   "propertyOnly": [],
   "props": {
     "active": "boolean = false",
+    "current": "boolean",
+    "expanded": "boolean",
     "href": "string = ''",
     "loading": "boolean = false",
     "target": "string = ''",

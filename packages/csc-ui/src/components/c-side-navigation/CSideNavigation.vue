@@ -9,7 +9,12 @@
     part="root"
   >
     <div v-if="mobile" :class="ui.burger()">
-      <c-icon-button ref="closeRef" inverted text @click="closeMenu">
+      <c-icon-button
+        ref="closeRef"
+        appearance="text"
+        inverted
+        @click="closeMenu"
+      >
         <span :class="ui.srOnly()">Close sidemenu</span>
 
         <c-icon :path="arrowRight" />
@@ -59,6 +64,7 @@ import {
   watchEffect,
 } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import {
   closeModal,
   type ModalStackEntry,
@@ -273,7 +279,7 @@ watchEffect(() => {
   navigationDrawer.open = modal.value;
 });
 
-type ItemHost = { active: boolean } & HTMLElement;
+type ItemHost = { active?: boolean; expanded?: boolean } & HTMLElement;
 
 const ITEMS = 'c-side-navigation-item, c-sub-navigation-item';
 
@@ -282,7 +288,7 @@ const isParent = (item: Element) =>
   !!item.querySelector(':scope > [slot="sub-item"]');
 
 // Reflect an item's `select`. A leaf — an item without sub-items, or a
-// sub-item — asks for a page: the drawer closes, and the leaf's `active`
+// sub-item — asks for a page: the drawer closes, and the leaf's `current`
 // (`aria-current="page"`) stays the page's to set, from the page it shows —
 // a router can cancel the navigation, and a mark set here would then outlive
 // the page's own binding. A top-level item also collapses every parent (an
@@ -301,15 +307,17 @@ const handleItemChange = (event: Event) => {
 
   if (target.localName !== 'c-side-navigation-item' || target.slot) return;
 
-  const wasActive = target.active;
+  // A written `expanded` wins over the deprecated `active`, which only seeds
+  // the first state.
+  const wasExpanded = coerceBoolean(target.expanded ?? target.active);
 
   for (const item of host.querySelectorAll<ItemHost>(
     'c-side-navigation-item',
   )) {
-    if (isParent(item)) item.active = false;
+    if (isParent(item)) item.expanded = false;
   }
 
-  if (parent) target.active = !wasActive;
+  if (parent) target.expanded = !wasExpanded;
 };
 
 // A c-navigation-button anywhere on the page toggles the drawer. Click only:

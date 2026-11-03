@@ -272,11 +272,11 @@ let focusedValue: number | string | undefined;
 
 type CButtonEl = {
   active?: boolean;
+  appearance?: string;
   disabled?: boolean;
   fit?: boolean;
   noRipple?: boolean;
   size?: string;
-  text?: boolean;
   value?: number | string;
 } & HTMLElement;
 
@@ -433,10 +433,10 @@ const setupButtons = () => {
 
   btns.forEach((button, index) => {
     button.setAttribute('data-index', String(index));
-    // The group owns the buttons' appearance: transparent text variant on the
+    // The group owns the buttons' appearance: transparent `text` on the
     // sunken track (the active fill is each button's own), no per-button
     // ripple, equal-width columns via `fit`.
-    button.text = true;
+    button.appearance = 'text';
     button.noRipple = true;
     button.fit = true;
     button.size = props.size in sizeVariants ? props.size : 'default';

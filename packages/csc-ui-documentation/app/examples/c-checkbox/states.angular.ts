@@ -7,11 +7,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
   standalone: true,
   template: `
     <div class="example-row">
-      <c-checkbox hide-details>Unchecked</c-checkbox>
-      <c-checkbox checked hide-details>Checked</c-checkbox>
-      <c-checkbox indeterminate hide-details>Indeterminate</c-checkbox>
-      <c-checkbox disabled hide-details>Disabled</c-checkbox>
-      <c-checkbox checked disabled hide-details>
+      <c-checkbox hide-message>Unchecked</c-checkbox>
+      <c-checkbox checked hide-message>Checked</c-checkbox>
+      <c-checkbox indeterminate hide-message>Indeterminate</c-checkbox>
+      <c-checkbox disabled hide-message>Disabled</c-checkbox>
+      <c-checkbox checked disabled hide-message>
         Checked and disabled
       </c-checkbox>
     </div>

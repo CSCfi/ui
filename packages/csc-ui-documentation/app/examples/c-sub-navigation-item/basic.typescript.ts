@@ -10,7 +10,7 @@ const selectable = [activeProjects!, archivedProjects!];
 
 selectable.forEach((item) => {
   const select = () => {
-    selectable.forEach((other) => (other.active = other === item));
+    selectable.forEach((other) => (other.current = other === item));
   };
 
   item.addEventListener('select', select);

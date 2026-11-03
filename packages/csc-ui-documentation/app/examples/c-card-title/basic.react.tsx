@@ -6,7 +6,7 @@ export const Basic = () => (
     <CCard>
       <CCardTitle>
         Notifications
-        <CButton ghost size="small" slot="actions">
+        <CButton appearance="ghost" size="small" slot="actions">
           Mark all read
         </CButton>
       </CCardTitle>

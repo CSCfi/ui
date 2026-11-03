@@ -18,7 +18,7 @@ export const Basic = () => (
         <CBadge>3</CBadge>
       </span>
 
-      <CIconButton aria-label="Messages, 1 unread" outlined>
+      <CIconButton appearance="outlined" aria-label="Messages, 1 unread">
         <CIcon path={mdiEmailOutline} />
         <CBadge className="success-badge">1</CBadge>
       </CIconButton>

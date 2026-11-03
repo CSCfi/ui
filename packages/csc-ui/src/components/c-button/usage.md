@@ -1,6 +1,6 @@
 Buttons trigger actions — submitting a form, opening a modal, confirming a
-choice. Use one primary (default appearance) button per view; secondary
-actions use the `outlined`, `ghost` or `text` appearances.
+choice. Use one primary (filled, the default `appearance`) button per view;
+secondary actions use `appearance="outlined"`, `"ghost"` or `"text"`.
 
 ## When to use
 
@@ -12,6 +12,19 @@ actions use the `outlined`, `ghost` or `text` appearances.
 
 - Inline navigation within text — use `c-link`.
 - Toggling a persistent on/off state — use `c-switch`.
+
+## Appearances
+
+`appearance` sets how strongly a button reads: `filled` (the default) for the
+main action, then `outlined` (a primary outline, no fill), `ghost` (a light
+primary tint) and `text` (no fill or outline) for lower emphasis. `danger`
+turns the filled button into the error role for a destructive action; it has
+no effect on the other appearances. `inverted` is for a fixed dark or
+brand-coloured backdrop: it paints the `inverse-*` family, which looks the
+same in both theme modes.
+
+The `outlined`, `ghost` and `text` boolean attributes of 3.x still work until
+5.0; `appearance` wins when both are set.
 
 ## In a form
 

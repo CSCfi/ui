@@ -5,6 +5,7 @@
     "error-message": "string = ''",
     "format": "string = 'HH.mm'",
     "hide-details": "boolean = false",
+    "hide-message": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",
@@ -25,11 +26,15 @@
   "defaultable": [
     "format",
     "hideDetails",
+    "hideMessage",
     "labelOnTop",
     "shadow",
     "showNow",
     "size",
     "texts"
+  ],
+  "deprecated": [
+    "hideDetails"
   ],
   "events": {
     "change": "CustomEvent<CTimePickerValue>",
@@ -67,6 +72,7 @@
     "errorMessage": "string = ''",
     "format": "string = 'HH.mm'",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",

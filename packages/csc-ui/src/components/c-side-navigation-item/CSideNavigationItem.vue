@@ -56,6 +56,7 @@ import {
   watchEffect,
 } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useIdReferences } from '../../shared/useIdReferences';
 
@@ -168,6 +169,8 @@ interface CSideNavigationItemProps {
   /**
    * On an item without sub-items, mark the current page
    * (`aria-current="page"`); on a parent, expand its sub-items.
+   *
+   * @deprecated Use `current` on an item without sub-items and `expanded` on a parent.
    */
   active?: boolean;
 
@@ -178,6 +181,20 @@ interface CSideNavigationItemProps {
    * @internal
    */
   collapsed?: boolean;
+
+  /**
+   * Mark the item as the page shown (`aria-current="page"`), on an item
+   * without sub-items. Bind it from the page your router or the URL shows:
+   * the navigation never sets it.
+   */
+  current?: boolean;
+
+  /**
+   * Show a parent item's sub-items. The navigation sets it as parents open
+   * and close, collapsing the other top-level parents; set it to open one
+   * initially.
+   */
+  expanded?: boolean;
 
   /**
    * URL that makes the item a real link; without it the item is a button.
@@ -210,6 +227,9 @@ interface CSideNavigationItemProps {
 const props = withDefaults(defineProps<CSideNavigationItemProps>(), {
   active: false,
   collapsed: false,
+  // Unset, so the deprecated `active` still marks and expands until 5.0.
+  current: undefined,
+  expanded: undefined,
   href: '',
   loading: false,
   target: '',
@@ -235,9 +255,21 @@ const ariaLabel = ref('');
 // The sub-items' group, which a parent's header controls.
 const subNavId = `${useId()}-sub-nav`;
 
+// `current` and `expanded` win over the deprecated `active` when set.
+const isCurrent = computed(() => coerceBoolean(props.current ?? props.active));
+
+const isExpanded = computed(() =>
+  coerceBoolean(props.expanded ?? props.active),
+);
+
+// The highlighted look: an open parent, or the current page's item.
+const isActive = computed(() =>
+  slotHasContent.value ? isExpanded.value : isCurrent.value,
+);
+
 const ui = computed(() =>
   sideNavigationItem({
-    active: props.active,
+    active: isActive.value,
     expandable: slotHasContent.value,
     subItem: isSubItem.value,
   }),
@@ -279,7 +311,7 @@ const adoptSubItems = () => {
 
   slotHasContent.value = !!host.querySelector(':scope > [slot="sub-item"]');
   handleChildClasses();
-  handleChildCollapsedChange(props.active);
+  handleChildCollapsedChange(isExpanded.value);
 };
 
 const emit = useHostEmit<CSideNavigationItemEvents>();
@@ -322,7 +354,7 @@ onMounted(() => {
   host.addEventListener('select', (e) => {
     // Re-assign via host so Vue's prop setter runs.
     if (isSubItem.value && slotHasContent.value && e.target === host)
-      (host as { active?: boolean }).active = !props.active;
+      (host as { expanded?: boolean }).expanded = !isExpanded.value;
   });
 
   watchEffect(() => {
@@ -331,16 +363,16 @@ onMounted(() => {
       'c-side-navigation-item--parent',
       slotHasContent.value,
     );
-    host.classList.toggle('active', props.active);
+    host.classList.toggle('active', isActive.value);
 
     // aria state belongs on the menuitem (the header), not the host.
     const header = headerRef.value;
 
     if (header) {
       if (slotHasContent.value) {
-        header.setAttribute('aria-expanded', String(!!props.active));
+        header.setAttribute('aria-expanded', String(isExpanded.value));
         header.removeAttribute('aria-current');
-      } else if (props.active) {
+      } else if (isCurrent.value) {
         header.setAttribute('aria-current', 'page');
         header.removeAttribute('aria-expanded');
       } else {
@@ -349,7 +381,7 @@ onMounted(() => {
       }
     }
 
-    handleChildCollapsedChange(props.active);
+    handleChildCollapsedChange(isExpanded.value);
   });
 });
 

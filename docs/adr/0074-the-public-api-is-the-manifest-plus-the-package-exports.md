@@ -49,3 +49,10 @@ change to it, but a reviewer still decides by eye whether a diff is breaking.
   renamed `texts` key or a narrowed alias is a breaking diff.
 - Maintainer tooling (`migratedTags`, `tailwindVariantTags`) leaves the
   package entry: anything exported is public by this rule.
+- The renames the audit had deferred to a 4.x minor (button `appearance`,
+  fields' `hide-message`, `thickness`, toasts `position` + `contained`,
+  side-nav `current` + `expanded`, card `show-fullscreen`, slider
+  `tick-labels`) landed in 4.0.0 itself (2026-11-03,
+  `_plan/csc-ui-4-renames-before-stable.md`), so the first stable release
+  already teaches the final names; the old ones are deprecated from 4.0.0
+  and go in 5.0.

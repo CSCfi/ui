@@ -1,7 +1,7 @@
 <template>
   <div class="example-row">
     <c-menu @select="onSelect">
-      <c-button slot="trigger" ghost>
+      <c-button slot="trigger" appearance="ghost">
         Export
         <c-icon :path="mdiChevronDown" />
       </c-button>

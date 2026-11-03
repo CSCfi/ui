@@ -295,6 +295,14 @@ _Avoid_: Content area, view, scroll container (the Stencil-era and early-4.0 beh
 The **dashboard layout**'s left-hand menu — section titles, items and their sub-items. Its box is the **drawer**; below the items sits the **bottom slot**. On desktop `c-main` pins it beneath the **toolbar**; on mobile it is a slide-in panel over the page.
 _Avoid_: Sidebar, side menu, nav bar, menu (the command-menu component)
 
+**Current** (side navigation):
+The mark on the item, or sub-item, of the page shown (`current`, announced as `aria-current="page"`). The page sets it from the route it shows — the navigation never moves it on a click, since a router can cancel the navigation. Until 5.0 the 3.x `active` still sets it on an item without sub-items (**deprecated**).
+_Avoid_: Active (the 3.x prop, which also meant expanded on a parent; **active** is a button's pressed state), selected
+
+**Expanded** (side navigation):
+A parent item's open state (`expanded`, `aria-expanded`): its sub-items show and join the Tab order. The navigation writes it as parents open and close, one top-level parent at a time; a page sets it only to open one initially, or to open the parent of the **current** sub-item. Until 5.0 the 3.x `active` still sets it on a parent (**deprecated**).
+_Avoid_: Active, open (the drawer's state on mobile)
+
 **Drawer** (side navigation):
 The side navigation's box: on desktop a **pinned** column whose item list scrolls on its own, on mobile the slide-in panel. `autoheight` is its standalone viewport-high state, inert inside `c-main`.
 _Avoid_: Panel (transient surfaces), sidebar
@@ -324,6 +332,10 @@ _Avoid_: Flyout, popup, overlay (as a name for this component)
 **Toast** (`c-toast`, an **internal** tag):
 A passive, transient notification — an operation result, background progress — that the `c-toasts` container creates from a message and shows against one edge of the viewport, painting the **inverted surface** (ADR-0032). It closes itself when its timer runs out unless it is *persistent*, and the timer waits while a pointer hovers or presses it. The user closes it with its close button or a **swipe dismiss**; a *custom* toast (slotted content) and an *indeterminate* one (ongoing work) have no close button. When a toast arrives or leaves, the toasts around it glide into their new places (ADR-0073).
 _Avoid_: Notification (the general idea), snackbar (Material's name), alert (that is `c-alert`, the in-page message)
+
+**Contained** (`c-toasts`):
+The toast stack's in-container state (`contained`): it sits in its nearest positioned ancestor instead of the viewport, and so loses the guarantee to paint above an open modal. `position` places the stack either way. Named for the behaviour, not the CSS keyword, as **static** is; until 5.0 the 3.x `absolute` still sets it (**deprecated**).
+_Avoid_: Absolute (the 3.x prop and the CSS keyword), inline, embedded
 
 **Light dismiss**:
 Closing a transient surface — a **transient list panel**, `c-popover`, a **fullscreen panel** never — because the user pressed *and released* the pointer outside it, mirroring the native Popover API's rule. A press alone is not a dismissal: a scroll or drag that starts outside the surface leaves it open. Escape is a separate close path, not light dismiss. Modals have their own **dismissable** contract (backdrop click and Escape together) and are not light-dismissed.
@@ -579,6 +591,10 @@ _Avoid_: Pill (informal), active fill (that is a button's own selected look, not
 The recessed ground a control's choices sit on — the framed well the buttons of a **button group** or **tab buttons** sit in, stamped as that component's `root` part. It paints an opaque fill, so the labels on it keep one ground wherever the control is placed, and a **load-bearing hairline**, so its boundary reads on every **surface ladder** rung. In a tab strip the **sliding indicator** glides inside it.
 _Avoid_: Well, rail, background, box ("segmented-control box" describes its shape; the track is the concept)
 
+**Appearance** (`c-button`, `c-icon-button`):
+How strongly a button reads, set by `appearance`: `filled` (the default) for the main action of a view, then `outlined`, `ghost` and `text`, each lighter than the last. `danger` and `inverted` are separate axes that combine with it. Until 5.0 the 3.x `outlined` / `ghost` / `text` booleans still choose one while `appearance` is unset (**deprecated**).
+_Avoid_: Variant (reserved for a colour-intent axis; also the docs' **example variant** and the tailwind-variants mechanism), type, kind, style
+
 **Active** (`c-button`):
 The public pressed state of a button — the selected look plus `aria-pressed`. Set by consumers for standalone toggle buttons, or driven by `c-button-group` on its children.
 _Avoid_: Selected, pressed (canonical prop name is `active`; _pressed_ is only the ARIA mechanism)
@@ -614,6 +630,10 @@ _Avoid_: Helper text, description
 **Error message**:
 Consumer-supplied text explaining why a control is invalid, shown in place of the **hint** while the control is invalid. The component only *displays* it — validation itself (deciding validity, choosing the wording) is the consumer's job, which is why the prop is named for the message, not the process. Has no default: an invalid control without one shows error styling on the field but keeps its hint.
 _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's activity, not this text), validation message
+
+**Message line**:
+The line under a form control where its **hint** or **error message** shows, stamped as the `message` part. It keeps its room while empty, so an error appearing at runtime doesn't push the content below it down; `hide-message` removes it and its room. Until 5.0 the 3.x `hide-details` still hides it while `hide-message` is unset (**deprecated**). On `c-pagination` and `c-progress-bar`, `hide-details` is not this: it hides their own `details` part, by the rule that `hide-<part>` hides that part.
+_Avoid_: Details (the 3.x name; on a field there is nothing else under the control), message area, helper line
 
 **Number field** (`c-number-field`):
 A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits `update:value` and `input` on every keystroke and every **step** that changes the number; `change` on **commit** (a step is one). Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
@@ -767,6 +787,10 @@ _Avoid_: docs test, example test, smoke test (unqualified)
 **Public API**:
 What a release's version number makes promises about: everything the **manifest** publishes per tag (tag name, attributes and properties with their types and **built-in defaults**, **value events** and other events, slots, **parts**, CSS states, methods), the `texts` keys, the exported TypeScript types, the `css/*` files and the **semantic token** names. Removing, renaming or narrowing any of it, or changing a built-in default, is a breaking change. Shadow DOM structure, internal classes, anything **internal**, pixel appearance and the default `texts` strings are not public API.
 _Avoid_: Contract (unqualified), surface, interface
+
+**Deprecated** (API):
+A **public API** name kept working until the next major version after a new name replaced it: marked `@deprecated` with a message naming the replacement, which the **manifest**, the IDE data, the TypeScript element types (and so the React wrappers) and the docs' API table carry. The new name has no built-in default and wins when set, so both can stay on an element during a migration. There is no runtime warning.
+_Avoid_: Legacy, obsolete, alias (an alias is permanent; a deprecated name goes in the next major)
 
 **API snapshot**:
 The committed, condensed rendering of the **manifest** (per tag: props, events, methods, slots, parts, states; for the package: runtime exports and the shape of every exported type) that a node spec diffs the freshly generated manifest against, so an unintended public-API change fails a test instead of silently changing `custom-elements.json`. The strict analyzer checks the manifest is *consistent*; the API snapshot checks it is *unchanged*.

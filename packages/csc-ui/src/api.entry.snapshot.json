@@ -33,6 +33,7 @@
     "CAutocompleteTexts",
     "CAutocompleteValue",
     "CBreadcrumbTexts",
+    "CButtonAppearance",
     "CButtonGroupSize",
     "CButtonGroupValue",
     "CButtonSize",
@@ -75,6 +76,7 @@
     "CFileUploadRejection",
     "CFileUploadStatus",
     "CFileUploadTexts",
+    "CIconButtonAppearance",
     "CIconButtonSize",
     "CLoginCardActionsAlign",
     "CLoginCardActionsJustify",
@@ -106,6 +108,7 @@
     "CToastMessage",
     "CToastType",
     "CToastsHorizontal",
+    "CToastsPosition",
     "CToastsVertical",
     "CTooltipPosition",
     "CTreeSelectFilter",
@@ -144,6 +147,7 @@
       "breadcrumb?": "string",
       "fold?": "(count: number) => string"
     },
+    "CButtonAppearance": "'filled' | 'ghost' | 'outlined' | 'text'",
     "CButtonGroupSize": "'default' | 'small'",
     "CButtonGroupValue": "(number | string)[] | null | number | string",
     "CButtonSize": "'default' | 'large' | 'small'",
@@ -318,6 +322,7 @@
       "uploadFailed?": "string",
       "uploading?": "string"
     },
+    "CIconButtonAppearance": "'filled' | 'ghost' | 'outlined' | 'text'",
     "CIconButtonSize": "'default' | 'small' | 'x-small'",
     "CLoginCardActionsAlign": "'center' | 'end' | 'start'",
     "CLoginCardActionsJustify": "'center' | 'end' | 'space-around' | 'space-between' | 'start' | 'stretch'",
@@ -406,6 +411,7 @@
       "type?": "CToastType"
     },
     "CToastsHorizontal": "'center' | 'left' | 'right'",
+    "CToastsPosition": "'bottom-end' | 'bottom-start' | 'bottom' | 'top-end' | 'top-start' | 'top'",
     "CToastsVertical": "'bottom' | 'top'",
     "CToastType": "'error' | 'info' | 'success' | 'warning'",
     "CTooltipPosition": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top'",

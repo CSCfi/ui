@@ -35,3 +35,4 @@ Two Vue `defineCustomElement` facts shape the mechanism. A Boolean prop with `de
 - A `@defaultable` prop's `withDefaults` value is `undefined` by contract; the built-in lives in the tag and in the `appDefault()` call, and lint enforces their agreement.
 - The props table marks defaultable props with an "app default" badge; the Customization page owns the walkthrough and a live playground that resets its own tags on unmount.
 - `src/tag-name-map.ts` gains one value export (`DEFAULTABLE_PROPS`) and is no longer types-only.
+- A defaultable prop that replaces a deprecated one (ADR-0074) resolves the pair per layer: instance (new name, then old) → app default (new, then old) → built-in, through `appDefault()`'s third argument. Both names stay defaultable until the old one goes. First used by the fields' `hideMessage`, which replaces `hideDetails` (2026-11-03).

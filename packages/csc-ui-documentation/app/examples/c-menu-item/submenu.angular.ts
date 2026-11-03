@@ -9,7 +9,7 @@ import { mdiChevronDown, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
   template: `
     <div class="example-row">
       <c-menu (select)="selected.set($any($event).detail.value)">
-        <c-button slot="trigger" ghost>
+        <c-button slot="trigger" appearance="ghost">
           Export
           <c-icon [path]="mdiChevronDown" />
         </c-button>

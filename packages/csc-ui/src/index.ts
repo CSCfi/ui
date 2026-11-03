@@ -21,6 +21,7 @@ export type {
 } from './components/c-button-group/CButtonGroup.vue';
 
 export type {
+  CButtonAppearance,
   CButtonSize,
   CButtonType,
 } from './components/c-button/CButton.vue';
@@ -73,7 +74,10 @@ export type {
   CFileUploadTexts,
 } from './components/c-file-upload/CFileUpload.vue';
 
-export type { CIconButtonSize } from './components/c-icon-button/CIconButton.vue';
+export type {
+  CIconButtonAppearance,
+  CIconButtonSize,
+} from './components/c-icon-button/CIconButton.vue';
 
 export type {
   CLoginCardActionsAlign,
@@ -127,6 +131,7 @@ export type {
 
 export type {
   CToastsHorizontal,
+  CToastsPosition,
   CToastsVertical,
 } from './components/c-toasts/CToasts.vue';
 

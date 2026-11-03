@@ -96,8 +96,8 @@
           v-if="clearable && hasContent"
           :aria-label="clearLabel"
           :disabled
+          appearance="text"
           size="x-small"
-          text
           @click="onClear"
         >
           <c-icon :path="mdiClose" :size="20" />

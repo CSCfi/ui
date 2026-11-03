@@ -27,8 +27,9 @@ removing it with `v-if` would skip.
 
 Slot a short message to explain the wait. It fades in below the spinner
 after `content-delay` milliseconds (0 by default), so a delay keeps a quick
-load down to the spinner alone. `size` and `width` set the spinner's diameter
-and stroke in pixels (48 and 4 by default).
+load down to the spinner alone. `size` and `thickness` set the spinner's
+diameter and stroke in pixels (48 and 4 by default); the 3.x `width` still
+sets the stroke until 5.0, and `thickness` wins when both are set.
 
 ## Accessibility
 

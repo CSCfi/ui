@@ -18,7 +18,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
           </c-card-content>
 
           <c-card-actions justify="end">
-            <c-button text (click)="open.set(false)">Cancel</c-button>
+            <c-button appearance="text" (click)="open.set(false)">
+              Cancel
+            </c-button>
             <c-button danger (click)="open.set(false)">Delete</c-button>
           </c-card-actions>
         </c-card>

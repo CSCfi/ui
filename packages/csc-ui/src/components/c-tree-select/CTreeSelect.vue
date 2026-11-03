@@ -8,7 +8,7 @@
     <c-input
       ref="cInputRef"
       :active="isOpen"
-      :data-hide-details="String(hideDetailsResolved)"
+      :data-hide-details="String(hideMessageResolved)"
       :disabled
       :filled="hasSelection"
       :input-id
@@ -26,7 +26,7 @@
         :id="`${inputId}-message`"
         slot="message"
         :error-message
-        :hide-details="hideDetailsResolved"
+        :hide-details="hideMessageResolved"
         :hint
         :invalid
         :label-on-top="labelOnTopResolved"
@@ -43,7 +43,7 @@
           v-bind="controlAttrs"
           :aria-controls="`${id}-listbox`"
           :aria-describedby="
-            hideDetailsResolved ? undefined : `${inputId}-message`
+            hideMessageResolved ? undefined : `${inputId}-message`
           "
           :aria-expanded="isOpen"
           :aria-label="accessibleName"
@@ -90,8 +90,8 @@
           v-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
           :disabled
+          appearance="text"
           size="x-small"
-          text
           @click="onReset"
           @keydown="onButtonKeyDown('reset', $event)"
         >
@@ -102,8 +102,8 @@
           <c-icon-button
             :aria-label="t.toggleOptions"
             :disabled
+            appearance="text"
             size="x-small"
-            text
             @click="onChevronClick"
             @keydown="onButtonKeyDown('chevron', $event)"
           >
@@ -530,8 +530,17 @@ interface CTreeSelectProps {
    * Hide the hint and error messages
    *
    * @defaultable false
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   *
+   * @defaultable false
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the field
@@ -653,7 +662,7 @@ interface CTreeSelectProps {
  * @csspart path - The ancestor path line under a search result's label
  * @csspart match - A run of an item's code, label or path equal to the query, in a row; underlined in the primary colour, text inherits the row
  * @csspart info - The no-results row shown when nothing is listed
- * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-message`)
  */
 import {
   mdiAlert,
@@ -826,6 +835,7 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
   errorMessage: '',
   filter: undefined,
   hideDetails: undefined,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   items: () => [],
@@ -943,10 +953,10 @@ const inputId = computed(
     )}`,
 );
 
-// `hide-details` reaches the inner `c-input` through the `data-hide-details`
+// `hide-message` reaches the inner `c-input` through the `data-hide-details`
 // channel — see src/shared/appDefaults.ts for the two defineCustomElement
 // quirks behind that and behind the attribute-first resolution.
-const hideDetailsResolved = appDefault('hideDetails', false);
+const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
 
 const itemsPerPageResolved = appDefault('itemsPerPage', 6);
 
@@ -956,7 +966,7 @@ const shadowResolved = appDefault('shadow', false);
 
 const sizeResolved = appDefault('size', 'default');
 
-// Same defineCustomElement Boolean-attribute quirk as `hide-details`: resolve
+// Same defineCustomElement Boolean-attribute quirk as `hide-message`: resolve
 // `allow-branch` from the stable host attribute first.
 const allowBranchOn = computed(() =>
   host?.hasAttribute('allow-branch')

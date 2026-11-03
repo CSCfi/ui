@@ -53,7 +53,7 @@ label.
 Validation is your job: set `invalid` and supply an `error-message`
 explaining why. While invalid without an `error-message`,
 the `hint` keeps rendering as a hint. The message area reserves its height
-(unless `hide-details`), so an error appearing at runtime doesn't shift the
+(unless `hide-message`), so an error appearing at runtime doesn't shift the
 layout.
 
 ## Accessibility

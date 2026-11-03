@@ -23,6 +23,8 @@
  *   - a boolean prop whose built-in default is `true` (ADR-0076)
  *   - a prop tagged both `@internal` and `@defaultable` (an app default is set
  *     by consumers, so the prop is public by definition)
+ *   - a `@deprecated` prop whose message names no replacement in backticks,
+ *     or that is also `@internal` (only public API is deprecated, ADR-0074)
  *   - a prop typed bare `string` without an `@freeform` tag
  *     (set-of-accepted-values props must be named exported unions; genuinely
  *     open-ended props declare it explicitly), or an `@freeform` tag on a
@@ -219,6 +221,18 @@ export const lintComponent = (
       );
     }
 
+    if (prop.deprecated && !/`[^`]+`/.test(String(prop.deprecated))) {
+      errors.push(
+        `prop "${prop.name}" is @deprecated without naming its replacement — e.g. "@deprecated Use \`new-name\`."`,
+      );
+    }
+
+    if (prop.deprecated && prop.internal) {
+      errors.push(
+        `prop "${prop.name}" is tagged both @internal and @deprecated — only public API is deprecated`,
+      );
+    }
+
     if (prop.internal && prop.defaultable) {
       errors.push(
         `prop "${prop.name}" is tagged both @internal and @defaultable — an app default makes it public`,
@@ -320,13 +334,14 @@ const lintDefaultable = (component, errors) => {
   ].map((m) => m[1]);
 
   // `appDefault('<name>', <built-in>)` — the literal may itself hold quotes
-  // or an identifier (`DEFAULT_TEXTS`), never a nested call.
+  // or an identifier (`DEFAULT_TEXTS`), never a nested call. A third
+  // argument names the deprecated prop the call resolves along with it.
   const resolved = new Map(
     [
       ...scriptSource.matchAll(
-        /(?<![\w.])appDefault\(\s*'([^']+)'\s*,\s*([^()]+?)\s*\)/g,
+        /(?<![\w.])appDefault\(\s*'([^']+)'\s*,\s*([^()]+?)(?:\s*,\s*'([^']+)')?\s*\)/g,
       ),
-    ].map((m) => [m[1], m[2]]),
+    ].flatMap((m) => [[m[1], m[2]], ...(m[3] ? [[m[3], m[2]]] : [])]),
   );
 
   if (defaultable.length && !useTags.length) {

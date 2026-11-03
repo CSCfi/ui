@@ -36,7 +36,16 @@
           <tbody>
             <tr v-for="prop in view.props" :key="prop.name">
               <td :class="TD">
-                <code class="whitespace-nowrap">{{ prop.name }}</code>
+                <code
+                  :class="{ 'line-through': prop.deprecated }"
+                  class="whitespace-nowrap"
+                >
+                  {{ prop.name }}
+                </code>
+
+                <span v-if="prop.deprecated" :class="DEPRECATED">
+                  deprecated
+                </span>
               </td>
 
               <td :class="TD">
@@ -95,6 +104,12 @@
               </td>
 
               <td :class="TD" class="whitespace-pre-line">
+                <!-- The deprecation message names the replacement; the old
+                     name keeps working until the next major. -->
+                <strong v-if="prop.deprecated" class="block font-semibold">
+                  Deprecated. {{ prop.deprecated }}
+                </strong>
+
                 {{ prop.description }}
               </td>
             </tr>
@@ -375,6 +390,10 @@ const H4 =
 /** The "app default" marker on defaultable props (see the footnote). */
 const BADGE =
   'ml-[0.5em] whitespace-nowrap rounded-full bg-primary-subtle px-[0.6em] py-[0.1em] align-middle text-[0.7em] font-semibold text-on-primary-subtle';
+
+/** The "deprecated" marker on props kept until the next major. */
+const DEPRECATED =
+  'ml-[0.5em] whitespace-nowrap rounded-full bg-warning-subtle px-[0.6em] py-[0.1em] align-middle text-[0.7em] font-semibold text-on-warning-subtle';
 
 const props = defineProps<{
   /** Names of every type rendered on this page — mentions of these in prop

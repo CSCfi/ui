@@ -44,7 +44,7 @@
           <!-- color="currentColor" so the spinner tracks the slider's colour
                (tertiary-600 off → white on); the spinner prop default is
                primary-600, which would otherwise ignore the slider colour. -->
-          <c-spinner :size="14" :width="2" color="currentColor" />
+          <c-spinner :size="14" :thickness="2" color="currentColor" />
         </span>
       </span>
     </div>

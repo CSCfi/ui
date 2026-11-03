@@ -1,7 +1,7 @@
 <template>
   <div class="example-row">
     <c-menu @select="onTheme">
-      <c-button slot="trigger" text>
+      <c-button slot="trigger" appearance="text">
         <c-icon :path="mdiThemeLightDark" />
         Theme: {{ theme }}
         <c-icon :path="mdiChevronDown" />

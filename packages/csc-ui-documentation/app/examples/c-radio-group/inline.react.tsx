@@ -8,7 +8,7 @@ export const Inline = () => {
   return (
     <div>
       <CRadioGroup
-        hideDetails
+        hideMessage
         inline
         label="Email frequency"
         onChange={(event) => setFrequency(event.detail as string)}

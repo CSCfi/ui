@@ -135,10 +135,10 @@ describe('numbers (decisions D12)', () => {
     const m = await mount('c-slider', {
       attrs: {
         label: 'Range',
-        labels: true,
         max: 20,
         min: 10,
         segments: 5,
+        'tick-labels': true,
         ticks: true,
         value: 13,
       },
@@ -163,6 +163,23 @@ describe('numbers (decisions D12)', () => {
         .slice(1, -1)
         .map((mark) => getComputedStyle(mark).backgroundColor === passed),
     ).toEqual([true, false, false, false]);
+  });
+
+  it('tick-labels writes the numbers, and wins over the deprecated labels', async () => {
+    const room = async (attrs: Record<string, boolean | string>) =>
+      getComputedStyle(
+        (await mount('c-slider', { attrs: { label: 'Range', ...attrs } })).part(
+          'root',
+        ),
+      ).paddingBottom;
+
+    const none = await room({});
+
+    expect(await room({ 'tick-labels': true })).not.toBe(none);
+    expect(await room({ labels: true })).toBe(
+      await room({ 'tick-labels': true }),
+    );
+    expect(await room({ labels: true, 'tick-labels': 'false' })).toBe(none);
   });
 
   it('keeps the built-in value inside a narrower range', async () => {

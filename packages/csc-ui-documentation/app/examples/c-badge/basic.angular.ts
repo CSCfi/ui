@@ -26,7 +26,7 @@ import { mdiBellOutline, mdiEmailOutline } from '@mdi/js';
         <c-badge>3</c-badge>
       </span>
 
-      <c-icon-button aria-label="Messages, 1 unread" outlined>
+      <c-icon-button aria-label="Messages, 1 unread" appearance="outlined">
         <c-icon [path]="mdiEmailOutline"></c-icon>
         <c-badge class="success-badge">1</c-badge>
       </c-icon-button>

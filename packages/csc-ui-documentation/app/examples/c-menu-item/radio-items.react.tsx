@@ -27,7 +27,7 @@ export const RadioItems = () => {
   return (
     <div className="example-row">
       <CMenu onSelect={(event) => setTheme(event.detail.value)}>
-        <CButton slot="trigger" text>
+        <CButton appearance="text" slot="trigger">
           <CIcon path={mdiThemeLightDark} />
           Theme: {theme}
           <CIcon path={mdiChevronDown} />

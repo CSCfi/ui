@@ -9,7 +9,7 @@ import { mdiTuneVariant } from '@mdi/js';
   template: `
     <div class="example-row">
       <c-popover heading="Display settings">
-        <c-button slot="trigger" outlined>
+        <c-button slot="trigger" appearance="outlined">
           Display settings
           <c-icon [path]="mdiTuneVariant" />
         </c-button>

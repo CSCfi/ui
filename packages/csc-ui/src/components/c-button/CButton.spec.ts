@@ -149,6 +149,49 @@ describe('c-button in a form', () => {
   });
 });
 
+describe('c-button appearance', () => {
+  const paint = async (attrs: Record<string, boolean | string>) => {
+    const { part } = await mount('c-button', { attrs, html: 'Save' });
+
+    await settled();
+
+    const { backgroundColor, boxShadow, color } = getComputedStyle(
+      part('root'),
+    );
+
+    return { backgroundColor, boxShadow, color };
+  };
+
+  it('paints each appearance as its deprecated boolean does', async () => {
+    const filled = await paint({});
+
+    expect(await paint({ appearance: 'filled' })).toEqual(filled);
+
+    for (const appearance of ['ghost', 'outlined', 'text']) {
+      const look = await paint({ appearance });
+
+      expect(look, appearance).not.toEqual(filled);
+      expect(look, appearance).toEqual(await paint({ [appearance]: true }));
+    }
+  });
+
+  it('wins over the deprecated booleans when set', async () => {
+    expect(await paint({ appearance: 'filled', outlined: true })).toEqual(
+      await paint({}),
+    );
+    expect(await paint({ appearance: 'ghost', outlined: true })).toEqual(
+      await paint({ appearance: 'ghost' }),
+    );
+  });
+
+  it('leaves an unknown value to the deprecated booleans', async () => {
+    expect(await paint({ appearance: 'bold', outlined: true })).toEqual(
+      await paint({ appearance: 'outlined' }),
+    );
+    expect(await paint({ appearance: 'bold' })).toEqual(await paint({}));
+  });
+});
+
 describe('c-button disabled', () => {
   // The hint inks (`on-surface-muted`, `on-surface-faint`) are held to AA
   // contrast, dark enough that a disabled label inked with them reads as
@@ -160,10 +203,10 @@ describe('c-button disabled', () => {
       for (const attrs of [
         {},
         { danger: true },
-        { ghost: true },
-        { text: true },
-        { outlined: true },
-      ] as Record<string, boolean>[]) {
+        { appearance: 'ghost' },
+        { appearance: 'text' },
+        { appearance: 'outlined' },
+      ] as Record<string, boolean | string>[]) {
         const { part } = await mount('c-button', {
           attrs: { ...attrs, disabled: true },
           html: 'Save',

@@ -11,7 +11,7 @@ export const Basic = () => {
   return (
     <div className="example-row">
       <CPopover heading="Display settings">
-        <CButton outlined slot="trigger">
+        <CButton appearance="outlined" slot="trigger">
           Display settings
           <CIcon path={mdiTuneVariant} />
         </CButton>

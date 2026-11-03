@@ -5,8 +5,8 @@
     <c-icon-button
       v-if="closeable"
       :aria-label="closeLabel"
+      appearance="text"
       size="x-small"
-      text
       @click="onClose"
     >
       <c-icon :path="mdiClose" :size="16" />

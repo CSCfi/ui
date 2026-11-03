@@ -3,10 +3,14 @@
     "content-delay": "number = 0",
     "hide": "boolean = false",
     "size": "number = 48",
+    "thickness": "number",
     "width": "number = 4"
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "width"
+  ],
   "events": {},
   "methods": {},
   "parts": [
@@ -18,6 +22,7 @@
     "contentDelay": "number = 0",
     "hide": "boolean = false",
     "size": "number = 48",
+    "thickness": "number",
     "width": "number = 4"
   },
   "slots": [

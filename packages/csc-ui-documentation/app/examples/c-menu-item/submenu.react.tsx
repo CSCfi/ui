@@ -9,7 +9,7 @@ export const Submenu = () => {
   return (
     <div className="example-row">
       <CMenu onSelect={(event) => setSelected(event.detail.value as string)}>
-        <CButton ghost slot="trigger">
+        <CButton appearance="ghost" slot="trigger">
           Export
           <CIcon path={mdiChevronDown} />
         </CButton>

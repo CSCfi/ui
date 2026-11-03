@@ -49,28 +49,28 @@
         <c-side-navigation-title>Guides</c-side-navigation-title>
 
         <c-side-navigation-item
-          :active.prop="route.path === '/getting-started'"
+          :current.prop="route.path === '/getting-started'"
           value="/getting-started"
         >
           Getting started
         </c-side-navigation-item>
 
         <c-side-navigation-item
-          :active.prop="route.path === '/customization'"
+          :current.prop="route.path === '/customization'"
           value="/customization"
         >
           Customization
         </c-side-navigation-item>
 
         <c-side-navigation-item
-          :active.prop="route.path === '/data-visualization'"
+          :current.prop="route.path === '/data-visualization'"
           value="/data-visualization"
         >
           Data visualization
         </c-side-navigation-item>
 
         <c-side-navigation-item
-          :active.prop="route.path === '/migration'"
+          :current.prop="route.path === '/migration'"
           value="/migration"
         >
           Migration guide
@@ -81,7 +81,7 @@
         <c-side-navigation-item
           v-for="component in navComponents"
           :key="component.tagName"
-          :active.prop="route.path === `/components/${component.tagName}`"
+          :current.prop="route.path === `/components/${component.tagName}`"
           :value="`/components/${component.tagName}`"
         >
           {{ component.tagName }}

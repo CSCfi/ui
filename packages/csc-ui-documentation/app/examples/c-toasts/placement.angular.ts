@@ -16,45 +16,35 @@ import {
   template: `
     <div class="example-row">
       <c-select
-        [value]="vertical()"
-        label="Vertical"
-        (change)="vertical.set($any($event).detail)"
+        [value]="position()"
+        label="Position"
+        (change)="position.set($any($event).detail)"
       >
-        <c-option name="Bottom" value="bottom">Bottom</c-option>
+        <c-option name="Top start" value="top-start">Top start</c-option>
         <c-option name="Top" value="top">Top</c-option>
-      </c-select>
-
-      <c-select
-        [value]="horizontal()"
-        label="Horizontal"
-        (change)="horizontal.set($any($event).detail)"
-      >
-        <c-option name="Left" value="left">Left</c-option>
-        <c-option name="Center" value="center">Center</c-option>
-        <c-option name="Right" value="right">Right</c-option>
+        <c-option name="Top end" value="top-end">Top end</c-option>
+        <c-option name="Bottom start" value="bottom-start">
+          Bottom start
+        </c-option>
+        <c-option name="Bottom" value="bottom">Bottom</c-option>
+        <c-option name="Bottom end" value="bottom-end">Bottom end</c-option>
       </c-select>
 
       <c-button (click)="notify()">Show toast</c-button>
 
-      <c-toasts
-        #toasts
-        [horizontal]="horizontal()"
-        [vertical]="vertical()"
-      ></c-toasts>
+      <c-toasts #toasts [position]="position()"></c-toasts>
     </div>
   `,
 })
 export class PlacementExampleComponent {
-  horizontal = signal('center');
+  position = signal('bottom');
 
   toasts = viewChild<ElementRef<CToastsElement>>('toasts');
-
-  vertical = signal('bottom');
 
   notify() {
     this.toasts()?.nativeElement.addToast({
       heading: 'Notification',
-      message: `Placed at ${this.vertical()} ${this.horizontal()}.`,
+      message: `Placed at ${this.position()}.`,
       progress: true,
       type: 'info',
     });

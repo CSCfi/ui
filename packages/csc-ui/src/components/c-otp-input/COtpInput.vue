@@ -36,7 +36,7 @@
         :id="`${resolvedId}--input-${i}`"
         :key="i"
         ref="inputsRef"
-        :aria-describedby="hideDetails ? undefined : messageId"
+        :aria-describedby="hideMessageResolved ? undefined : messageId"
         :aria-invalid="invalid ? 'true' : undefined"
         :aria-label="`Enter code - digit number - ${i} of ${length}`"
         :aria-required="required ? 'true' : undefined"
@@ -62,7 +62,7 @@
     </div>
 
     <c-message
-      v-if="!hideDetails"
+      v-if="!hideMessageResolved"
       :id="messageId"
       :class="ui.message()"
       :error-message
@@ -94,6 +94,7 @@ import {
   watch,
 } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
@@ -141,7 +142,7 @@ defineOptions({ inheritAttrs: false });
  */
 const otp = tv({
   defaultVariants: {
-    hideDetails: false,
+    hideMessage: false,
     invalid: false,
   },
   slots: {
@@ -159,7 +160,7 @@ const otp = tv({
       'absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap [clip:rect(0_0_0_0)]',
   },
   variants: {
-    hideDetails: {
+    hideMessage: {
       true: { root: 'mb-0' },
     },
     invalid: {
@@ -185,8 +186,16 @@ interface COtpInputProps {
 
   /**
    * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the input
@@ -231,6 +240,7 @@ const props = withDefaults(defineProps<COtpInputProps>(), {
   autofocus: false,
   errorMessage: '',
   hideDetails: false,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   label: '',
@@ -262,8 +272,13 @@ const labelId = computed(() => `${resolvedId.value}-label`);
 
 const messageId = computed(() => `${resolvedId.value}-message`);
 
+// `hide-message` wins over the deprecated `hide-details` when set.
+const hideMessageResolved = computed(() =>
+  coerceBoolean(props.hideMessage ?? props.hideDetails),
+);
+
 const ui = computed(() =>
-  otp({ hideDetails: props.hideDetails, invalid: props.invalid }),
+  otp({ hideMessage: hideMessageResolved.value, invalid: props.invalid }),
 );
 
 const statusText = ref('');

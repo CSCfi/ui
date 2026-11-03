@@ -7,8 +7,8 @@
     "
     :aria-label="t.label"
     :class="ui.root()"
+    appearance="text"
     part="root"
-    text
   >
     <c-icon :path="menuIcon" />
   </c-icon-button>

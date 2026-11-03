@@ -10,7 +10,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
       <c-card>
         <c-card-title>
           Notifications
-          <c-button slot="actions" ghost size="small">Mark all read</c-button>
+          <c-button slot="actions" appearance="ghost" size="small">
+            Mark all read
+          </c-button>
         </c-card-title>
 
         <c-card-content>

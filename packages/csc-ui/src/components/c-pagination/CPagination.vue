@@ -17,8 +17,8 @@
             slot="trigger"
             :aria-label="`${t.pageSize} ${pageSize}`"
             :class="ui.itemsPerPageValue()"
+            appearance="text"
             size="small"
-            text
           >
             {{ pageSize }}
 
@@ -44,7 +44,7 @@
           :aria-label="t.previousPage"
           :disabled="page <= 1"
           :size="buttonSize"
-          text
+          appearance="text"
           @click="decreasePage"
         >
           <span class="sr-only">{{ t.previousPage }}</span>
@@ -60,9 +60,9 @@
           <c-icon-button
             v-if="btn.type === 'separator'"
             :size="buttonSize"
+            appearance="text"
             aria-hidden="true"
             disabled
-            text
           >
             <svg height="16" viewBox="0 0 24 24" width="16">
               <path :d="dotsIcon" fill="currentColor" />
@@ -72,10 +72,10 @@
           <!-- The name is the button's: an aria-label on a span is ignored. -->
           <c-icon-button
             v-else
+            :appearance="page === btn.number ? 'filled' : 'text'"
             :aria-current="page === btn.number ? 'page' : undefined"
             :aria-label="t.page(btn.number!, totalPages)"
             :size="buttonSize"
-            :text="page !== btn.number"
             @click="setPage(btn.number!)"
           >
             {{ btn.number }}

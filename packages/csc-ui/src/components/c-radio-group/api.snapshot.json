@@ -3,6 +3,7 @@
     "disabled": "boolean = false",
     "error-message": "string = ''",
     "hide-details": "boolean = false",
+    "hide-message": "boolean",
     "hint": "string = ''",
     "inline": "boolean = false",
     "invalid": "boolean = false",
@@ -12,6 +13,9 @@
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "hideDetails"
+  ],
   "events": {
     "change": "CustomEvent<string>",
     "input": "CustomEvent<void>",
@@ -31,6 +35,7 @@
     "disabled": "boolean = false",
     "errorMessage": "string = ''",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean",
     "hint": "string = ''",
     "inline": "boolean = false",
     "invalid": "boolean = false",

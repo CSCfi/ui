@@ -10,7 +10,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
       <c-slider
         [value]="cores()"
         label="CPU cores"
-        labels
+        tick-labels
         max="8"
         min="0"
         segments="8"

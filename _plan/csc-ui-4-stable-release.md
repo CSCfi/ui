@@ -148,10 +148,11 @@ new name, deprecate the old, remove in 5.0) the 3.x names in wide use. Numbers r
   `mobile-breakpoint` / `updateMobileLabels()` (grandfathered; glossary list corrected); c-tooltip `content` slot
   (ADR-0033); c-pagination / c-progress-bar `hide-details` / `hide-range` / `simple` ("`hide-<part>`" rule).
 
-**4.x: add + deprecate, remove in 5.0:** c-button/c-icon-button `outlined`/`ghost`/`text` → `appearance` (#29);
+**Moved before 4.0.0 (2026-11-03, `_plan/csc-ui-4-renames-before-stable.md`; was "4.x: add + deprecate"),
+deprecated now, removed in 5.0:** c-button/c-icon-button `outlined`/`ghost`/`text` → `appearance` (#29);
 field `hide-details` → `hide-message` (#30); c-spinner/c-loader `width` → `thickness` (#31); c-toasts
-`vertical`/`horizontal`/`absolute` → `position` (#32); c-side-navigation-item `active` → `current` + `expanded`
-(#33); c-card `fullscreen` → `show-fullscreen`; c-slider `labels` → `tick-labels`. Each new prop has no built-in
+`vertical`/`horizontal` → `position` and `absolute` → `contained` (#32); c-side-navigation-item `active` → `current` + `expanded`
+(#33; c-sub-navigation-item `active` → `current` too); c-card `fullscreen` → `show-fullscreen`; c-slider `labels` → `tick-labels`. Each new prop has no built-in
 default and wins over the old one when set.
 Deprecation mechanism (#36): `@deprecated` → manifest `deprecated` → IDE data + React JSDoc. No runtime warning:
 there is no dev build, and the example smoke fails on any `console.warn`.
@@ -561,12 +562,16 @@ start migrating on the first alpha that carries D2–D4.
      9f398565 removed that transform (fixed content in a panel). Now measured against the strip's box. Two
      older ways it stayed behind went with it: a move asked for during the 200ms wait was dropped, and
      `disable-animation` wrote a 0ms speed whose transition never ends. Five specs, each failing before.
+   - **Exception to "fixes only" (user decision 2026-11-03): the D13 renames.** The deprecation mechanism and the
+     seven "add + deprecate" renames land in the RC, additive only (the API guard reports them as additions), so
+     4.0.0 ships the final names with the old ones deprecated. Plan: `_plan/csc-ui-4-renames-before-stable.md`.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
    packages), remove `alpha`/`rc` dist-tags, `npm deprecate` `@cscfi/csc-ui-vue` + `@cscfi/csc-ui-vue2`, publish the
    v3 docs archive.
-6. **4.x follow-ups** — deprecation mechanism, then the D13 "4.x" lists; removals queued for 5.0.
+6. **4.x follow-ups** — the D13 "4.x additive only" list; removals queued for 5.0. The deprecation mechanism
+   and the "add + deprecate" renames moved before 4.0.0 (2026-11-03).
 
 ## ADRs and glossary follow-ups (written during phase 0–1)
 

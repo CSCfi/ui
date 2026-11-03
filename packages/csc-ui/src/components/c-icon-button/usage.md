@@ -22,9 +22,10 @@ the button itself (the slot wins when both are given). Listen to the native
 
 ## Appearances
 
-The appearances match `c-button`'s: the default filled primary button for
+`appearance` matches `c-button`'s: `filled` (the default) primary button for
 the main action, then `outlined`, `ghost` (a light primary tint) and `text`
-(no fill) for lower emphasis. `danger` turns the filled button into the error
+(no fill) for lower emphasis. The 3.x `outlined`, `ghost` and `text` boolean
+attributes still work until 5.0; `appearance` wins when both are set. `danger` turns the filled button into the error
 role for a destructive action; it has no effect on the other appearances.
 `inverted` is for a fixed dark or brand-coloured backdrop: it paints the
 `inverse-*` family, which looks the same in both theme modes.

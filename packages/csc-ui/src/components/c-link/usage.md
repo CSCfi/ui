@@ -12,7 +12,7 @@ one.
 ## When to use
 
 - Navigation in running text, or a list of links.
-- For an action, use `c-button` (its `text` appearance looks the lightest);
+- For an action, use `c-button` (`appearance="text"` looks the lightest);
   for a link that looks like a button, use `c-button` with `href`.
 
 ## Underline

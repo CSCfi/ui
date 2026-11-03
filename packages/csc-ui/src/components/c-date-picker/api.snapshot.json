@@ -6,6 +6,7 @@
     "first-day-of-week": "0 | 1 | 2 | 3 | 4 | 5 | 6 = 1",
     "format": "string = 'dd.MM.yyyy'",
     "hide-details": "boolean = false",
+    "hide-message": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",
@@ -28,12 +29,16 @@
     "firstDayOfWeek",
     "format",
     "hideDetails",
+    "hideMessage",
     "labelOnTop",
     "shadow",
     "showToday",
     "showWeekNumbers",
     "size",
     "texts"
+  ],
+  "deprecated": [
+    "hideDetails"
   ],
   "events": {
     "change": "CustomEvent<CDatePickerValue>",
@@ -88,6 +93,7 @@
     "firstDayOfWeek": "0 | 1 | 2 | 3 | 4 | 5 | 6 = 1",
     "format": "string = 'dd.MM.yyyy'",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "isDateDisabled": "(iso: string) => boolean",

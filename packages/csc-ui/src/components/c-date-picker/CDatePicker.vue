@@ -8,7 +8,7 @@
     :disabled
     :error-message
     :field="typed"
-    :hide-details="hideDetailsResolved"
+    :hide-details="hideMessageResolved"
     :hint
     :input-id
     :invalid
@@ -27,8 +27,8 @@
         :aria-label="t.openCalendar"
         :disabled
         :size="buttonSize"
+        appearance="text"
         aria-haspopup="dialog"
-        text
         @click="onCalendarClick"
       >
         <c-icon :path="mdiCalendar" :size="iconSize" />
@@ -583,8 +583,17 @@ interface CDatePickerProps {
    * Hide the hint and error messages
    *
    * @defaultable false
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   *
+   * @defaultable false
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the field
@@ -742,7 +751,7 @@ interface CDatePickerProps {
  * @csspart actions - The row under the calendar body holding the Today button (`show-today`) and, in the fullscreen panel, the Done button
  * @csspart today - The Today button: picks today, or the current month under `type="month"`
  * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
- * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-message`)
  *
  * @cssstate bad-input - Present while committed text names no date that can be picked
  */
@@ -985,6 +994,7 @@ const props = withDefaults(defineProps<CDatePickerProps>(), {
   firstDayOfWeek: undefined,
   format: undefined,
   hideDetails: undefined,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   isDateDisabled: undefined,
@@ -1031,7 +1041,7 @@ const firstDayResolved = appDefault('firstDayOfWeek', 1);
 
 const formatResolved = appDefault('format', 'dd.MM.yyyy');
 
-const hideDetailsResolved = appDefault('hideDetails', false);
+const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
 
 const labelOnTopResolved = appDefault('labelOnTop', false);
 

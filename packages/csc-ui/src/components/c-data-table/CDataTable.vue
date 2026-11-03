@@ -7,7 +7,7 @@
     <div v-if="banner" :class="ui.banner()" part="banner">
       <span>{{ banner.message }}</span>
 
-      <c-button size="small" text @click="banner.action">
+      <c-button appearance="text" size="small" @click="banner.action">
         {{ banner.actionLabel }}
       </c-button>
     </div>
@@ -171,8 +171,8 @@
                   <c-icon-button
                     :aria-expanded="isExpanded(row.id)"
                     :aria-label="rowText(t.expandRow, row)"
+                    appearance="text"
                     size="small"
-                    text
                     @click.stop="toggleExpanded(row.id)"
                   >
                     <c-icon

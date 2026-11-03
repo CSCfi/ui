@@ -64,7 +64,7 @@ Validation is yours too: set `invalid` and an `error-message` explaining why.
 The boxes take the error colour and the message replaces the `hint`. While
 invalid without an `error-message`, the boxes are still coloured but the hint
 keeps rendering as a hint. Checking the code on `completion` or `change` fits
-most flows. `hide-details` hides the hint and the error message.
+most flows. `hide-message` hides the hint and the error message.
 
 ## Accessibility
 

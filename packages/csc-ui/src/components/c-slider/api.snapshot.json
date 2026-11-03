@@ -9,12 +9,16 @@
     "name": "string = ''",
     "segments": "number = 10",
     "step": "number = 1",
+    "tick-labels": "boolean",
     "ticks": "boolean = false",
     "unit": "string = ''",
     "value": "number = 50"
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "labels"
+  ],
   "events": {
     "change": "CustomEvent<number>",
     "input": "CustomEvent<void>",
@@ -39,6 +43,7 @@
     "name": "string = ''",
     "segments": "number = 10",
     "step": "number = 1",
+    "tickLabels": "boolean",
     "ticks": "boolean = false",
     "unit": "string = ''",
     "value": "number = 50"

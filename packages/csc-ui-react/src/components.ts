@@ -179,7 +179,7 @@ export const CAlert = createComponent({
 /** A filterable value-selection component: a readonly value field that opens a popover panel with a search input above the matching options. */
 export const CAutocomplete = createComponent({
   displayName: 'CAutocomplete',
-  elementClass: elementClass<CAutocompleteElement>(['clearable', 'disabled', 'errorMessage', 'external', 'filter', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
+  elementClass: elementClass<CAutocompleteElement>(['clearable', 'disabled', 'errorMessage', 'external', 'filter', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CAutocompleteElementEventMap['change']>,
     onChangeQuery: 'change:query' as EventName<CAutocompleteElementEventMap['change:query']>,
@@ -214,10 +214,10 @@ export const CBreadcrumbItem = createComponent({
   tagName: 'c-breadcrumb-item',
 });
 
-/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (default appearance) button per view; secondary actions use the `outlined`, `ghost` or `text` appearances. */
+/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (filled, the default `appearance`) button per view; secondary actions use `appearance="outlined"`, `"ghost"` or `"text"`. */
 export const CButton = createComponent({
   displayName: 'CButton',
-  elementClass: elementClass<CButtonElement>(['active', 'danger', 'disabled', 'fit', 'ghost', 'href', 'inverted', 'loading', 'noRadius', 'outlined', 'size', 'target', 'text', 'type', 'value']),
+  elementClass: elementClass<CButtonElement>(['active', 'appearance', 'danger', 'disabled', 'fit', 'ghost', 'href', 'inverted', 'loading', 'noRadius', 'outlined', 'size', 'target', 'text', 'type', 'value']),
   react: React,
   tagName: 'c-button',
 });
@@ -238,7 +238,7 @@ export const CButtonGroup = createComponent({
 /** A raised, bordered surface that groups one piece of content — its heading, body and actions — into a single box on the page. */
 export const CCard = createComponent({
   displayName: 'CCard',
-  elementClass: elementClass<CCardElement>(['fullscreen']),
+  elementClass: elementClass<CCardElement>(['fullscreen', 'showFullscreen']),
   react: React,
   tagName: 'c-card',
 });
@@ -270,7 +270,7 @@ export const CCardTitle = createComponent({
 /** A form control for a single on/off choice: a native checkbox with a label, an optional hint, and validation messaging. */
 export const CCheckbox = createComponent({
   displayName: 'CCheckbox',
-  elementClass: elementClass<CCheckboxElement>(['checked', 'disabled', 'errorMessage', 'falseValue', 'hideDetails', 'hint', 'indeterminate', 'invalid', 'label', 'name', 'required', 'trueValue', 'value']),
+  elementClass: elementClass<CCheckboxElement>(['checked', 'disabled', 'errorMessage', 'falseValue', 'hideDetails', 'hideMessage', 'hint', 'indeterminate', 'invalid', 'label', 'name', 'required', 'trueValue', 'value']),
   events: {
     onChange: 'change' as EventName<CCheckboxElementEventMap['change']>,
     onInput: 'input' as EventName<CCheckboxElementEventMap['input']>,
@@ -283,7 +283,7 @@ export const CCheckbox = createComponent({
 /** A colour field that takes any typed CSS colour, or opens a panel for picking one: a colour area, hue and alpha sliders, per-channel inputs and swatches — or swatches alone under `swatches-only`. */
 export const CColorPicker = createComponent({
   displayName: 'CColorPicker',
-  elementClass: elementClass<CColorPickerElement>(['alpha', 'clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'name', 'placeholder', 'required', 'shadow', 'size', 'swatches', 'swatchesOnly', 'texts', 'value']),
+  elementClass: elementClass<CColorPickerElement>(['alpha', 'clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'label', 'labelOnTop', 'name', 'placeholder', 'required', 'shadow', 'size', 'swatches', 'swatchesOnly', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CColorPickerElementEventMap['change']>,
     onChangeText: 'change:text' as EventName<CColorPickerElementEventMap['change:text']>,
@@ -320,7 +320,7 @@ export const CDataTable = createComponent({
 /** A date field that takes a typed date, or opens a calendar panel for picking one, or a start and end date under `range`. */
 export const CDatePicker = createComponent({
   displayName: 'CDatePicker',
-  elementClass: elementClass<CDatePickerElement>(['clearable', 'disabled', 'disabledDates', 'errorMessage', 'firstDayOfWeek', 'format', 'hideDetails', 'hint', 'invalid', 'isDateDisabled', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'range', 'required', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts', 'type', 'value']),
+  elementClass: elementClass<CDatePickerElement>(['clearable', 'disabled', 'disabledDates', 'errorMessage', 'firstDayOfWeek', 'format', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'isDateDisabled', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'range', 'required', 'shadow', 'showToday', 'showWeekNumbers', 'size', 'texts', 'type', 'value']),
   events: {
     onChange: 'change' as EventName<CDatePickerElementEventMap['change']>,
     onChangeMonth: 'change:month' as EventName<CDatePickerElementEventMap['change:month']>,
@@ -343,7 +343,7 @@ export const CDivider = createComponent({
 /** A field the user adds files to by dropping them on it or choosing them from a file dialog — and, given an upload function, the place each file's upload shows its progress. */
 export const CFileUpload = createComponent({
   displayName: 'CFileUpload',
-  elementClass: elementClass<CFileUploadElement>(['accept', 'compact', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'manual', 'maxFiles', 'maxSize', 'multiple', 'required', 'size', 'texts', 'upload', 'value']),
+  elementClass: elementClass<CFileUploadElement>(['accept', 'compact', 'disabled', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'label', 'manual', 'maxFiles', 'maxSize', 'multiple', 'required', 'size', 'texts', 'upload', 'value']),
   events: {
     onChange: 'change' as EventName<CFileUploadElementEventMap['change']>,
     onInput: 'input' as EventName<CFileUploadElementEventMap['input']>,
@@ -365,7 +365,7 @@ export const CIcon = createComponent({
 /** An icon-only button: a round native button that shows a single icon and takes its accessible name from an `aria-label` on the element. */
 export const CIconButton = createComponent({
   displayName: 'CIconButton',
-  elementClass: elementClass<CIconButtonElement>(['badge', 'danger', 'disabled', 'ghost', 'inverted', 'loading', 'outlined', 'path', 'size', 'text']),
+  elementClass: elementClass<CIconButtonElement>(['appearance', 'badge', 'danger', 'disabled', 'ghost', 'inverted', 'loading', 'outlined', 'path', 'size', 'text']),
   react: React,
   tagName: 'c-icon-button',
 });
@@ -405,7 +405,7 @@ export const CListItemTitle = createComponent({
 /** A loading overlay that covers a container with a translucent scrim and a centred spinner, with an optional message below it, while that container's content loads. */
 export const CLoader = createComponent({
   displayName: 'CLoader',
-  elementClass: elementClass<CLoaderElement>(['contentDelay', 'hide', 'size', 'width']),
+  elementClass: elementClass<CLoaderElement>(['contentDelay', 'hide', 'size', 'thickness', 'width']),
   react: React,
   tagName: 'c-loader',
 });
@@ -526,7 +526,7 @@ export const CNavigationButton = createComponent({
 /** A field for a number — an integer, or one with decimals — shown with thousands separators as it is typed. */
 export const CNumberField = createComponent({
   displayName: 'CNumberField',
-  elementClass: elementClass<CNumberFieldElement>(['decimalSeparator', 'decimals', 'disabled', 'errorMessage', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'shadow', 'size', 'step', 'texts', 'value']),
+  elementClass: elementClass<CNumberFieldElement>(['decimalSeparator', 'decimals', 'disabled', 'errorMessage', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'shadow', 'size', 'step', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CNumberFieldElementEventMap['change']>,
     onInput: 'input' as EventName<CNumberFieldElementEventMap['input']>,
@@ -555,7 +555,7 @@ export const COptionValue = createComponent({
 /** A one-time-code field: a row of single-digit boxes, filled in order as the user types or pastes a code, under a group label and above a hint or error message. */
 export const COtpInput = createComponent({
   displayName: 'COtpInput',
-  elementClass: elementClass<Omit<COtpInputElement, 'autofocus'> & HTMLElement>(['autofocus', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'length', 'required', 'value']),
+  elementClass: elementClass<Omit<COtpInputElement, 'autofocus'> & HTMLElement>(['autofocus', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'label', 'length', 'required', 'value']),
   events: {
     onChange: 'change' as EventName<COtpInputElementEventMap['change']>,
     onCompletion: 'completion' as EventName<COtpInputElementEventMap['completion']>,
@@ -625,7 +625,7 @@ export const CRadio = createComponent({
 /** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
 export const CRadioGroup = createComponent({
   displayName: 'CRadioGroup',
-  elementClass: elementClass<CRadioGroupElement>(['disabled', 'errorMessage', 'hideDetails', 'hint', 'inline', 'invalid', 'label', 'required', 'value']),
+  elementClass: elementClass<CRadioGroupElement>(['disabled', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'inline', 'invalid', 'label', 'required', 'value']),
   events: {
     onChange: 'change' as EventName<CRadioGroupElementEventMap['change']>,
     onInput: 'input' as EventName<CRadioGroupElementEventMap['input']>,
@@ -638,7 +638,7 @@ export const CRadioGroup = createComponent({
 /** A value-selection field: a readonly field that opens a listbox of options — slotted `c-option` elements or an `items` array — and holds the picked value, emitting the value events that back `v-model`. */
 export const CSelect = createComponent({
   displayName: 'CSelect',
-  elementClass: elementClass<CSelectElement>(['clearable', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'optionAsSelection', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
+  elementClass: elementClass<CSelectElement>(['clearable', 'disabled', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'loading', 'maxTags', 'multiple', 'name', 'optionAsSelection', 'placeholder', 'required', 'returnObject', 'selectAll', 'shadow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CSelectElementEventMap['change']>,
     onInput: 'input' as EventName<CSelectElementEventMap['input']>,
@@ -659,10 +659,10 @@ export const CSideNavigation = createComponent({
   tagName: 'c-side-navigation',
 });
 
-/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
+/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, shown open while `expanded`; an item without sub-items marks the page shown with `current`. */
 export const CSideNavigationItem = createComponent({
   displayName: 'CSideNavigationItem',
-  elementClass: elementClass<CSideNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
+  elementClass: elementClass<CSideNavigationItemElement>(['active', 'current', 'expanded', 'href', 'loading', 'target', 'value']),
   events: {
     onSelect: 'select' as EventName<CSideNavigationItemElementEventMap['select']>,
   },
@@ -681,7 +681,7 @@ export const CSideNavigationTitle = createComponent({
 /** A slider for picking a number from a range by dragging a thumb along a track, with a label, a value bubble and optional tick marks. */
 export const CSlider = createComponent({
   displayName: 'CSlider',
-  elementClass: elementClass<CSliderElement>(['disableTooltip', 'disabled', 'label', 'labels', 'max', 'min', 'name', 'segments', 'step', 'ticks', 'unit', 'value']),
+  elementClass: elementClass<CSliderElement>(['disableTooltip', 'disabled', 'label', 'labels', 'max', 'min', 'name', 'segments', 'step', 'tickLabels', 'ticks', 'unit', 'value']),
   events: {
     onChange: 'change' as EventName<CSliderElementEventMap['change']>,
     onInput: 'input' as EventName<CSliderElementEventMap['input']>,
@@ -694,7 +694,7 @@ export const CSlider = createComponent({
 /** A circular indeterminate activity indicator — pure motion with no value, for waits of unknown duration. */
 export const CSpinner = createComponent({
   displayName: 'CSpinner',
-  elementClass: elementClass<CSpinnerElement>(['color', 'size', 'width']),
+  elementClass: elementClass<CSpinnerElement>(['color', 'size', 'thickness', 'width']),
   react: React,
   tagName: 'c-spinner',
 });
@@ -723,10 +723,10 @@ export const CSteps = createComponent({
   tagName: 'c-steps',
 });
 
-/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value` and closes the mobile drawer. It does not mark itself as the current page: set `active` on the sub-item of the page shown, and on its parent so the parent is expanded. */
+/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `expanded`. Activating it fires `select` with its `value` and closes the mobile drawer. It does not mark itself as the current page: set `current` on the sub-item of the page shown, and `expanded` on its parent. */
 export const CSubNavigationItem = createComponent({
   displayName: 'CSubNavigationItem',
-  elementClass: elementClass<CSubNavigationItemElement>(['active', 'href', 'loading', 'target', 'value']),
+  elementClass: elementClass<CSubNavigationItemElement>(['active', 'current', 'href', 'loading', 'target', 'value']),
   events: {
     onSelect: 'select' as EventName<CSubNavigationItemElementEventMap['select']>,
   },
@@ -822,7 +822,7 @@ export const CTags = createComponent({
 /** A text field for a single line of text, or several lines under `rows`, with a label, a hint and an error message. */
 export const CTextField = createComponent({
   displayName: 'CTextField',
-  elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>(['autocapitalize', 'autocomplete', 'autocorrect', 'autofocus', 'disabled', 'errorMessage', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'mask', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'rows', 'shadow', 'size', 'step', 'trimWhitespace', 'type', 'value']),
+  elementClass: elementClass<Omit<CTextFieldElement, 'autocorrect'> & HTMLElement>(['autocapitalize', 'autocomplete', 'autocorrect', 'autofocus', 'disabled', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'label', 'labelOnTop', 'mask', 'max', 'min', 'name', 'placeholder', 'readonly', 'required', 'rows', 'shadow', 'size', 'step', 'trimWhitespace', 'type', 'value']),
   events: {
     onChange: 'change' as EventName<CTextFieldElementEventMap['change']>,
     onInput: 'input' as EventName<CTextFieldElementEventMap['input']>,
@@ -835,7 +835,7 @@ export const CTextField = createComponent({
 /** A time field that takes a typed time, or opens hour and minute columns for picking one, or a start and end time under `range`. */
 export const CTimePicker = createComponent({
   displayName: 'CTimePicker',
-  elementClass: elementClass<CTimePickerElement>(['clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hint', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'minuteStep', 'name', 'placeholder', 'range', 'required', 'shadow', 'showNow', 'size', 'texts', 'value']),
+  elementClass: elementClass<CTimePickerElement>(['clearable', 'disabled', 'errorMessage', 'format', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'label', 'labelOnTop', 'max', 'min', 'minuteStep', 'name', 'placeholder', 'range', 'required', 'shadow', 'showNow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CTimePickerElementEventMap['change']>,
     onChangeText: 'change:text' as EventName<CTimePickerElementEventMap['change:text']>,
@@ -849,7 +849,7 @@ export const CTimePicker = createComponent({
 /** Toasts are passive, transient notifications — operation results, background progress — stacked and managed by a single `c-toasts` container via its `addToast` / `removeToast` methods. `addToast` returns the message's `id` (its own, or a generated one), which `removeToast` takes; `close` fires on the container with the message once a toast has left. */
 export const CToasts = createComponent({
   displayName: 'CToasts',
-  elementClass: elementClass<CToastsElement>(['absolute', 'horizontal', 'vertical']),
+  elementClass: elementClass<CToastsElement>(['absolute', 'contained', 'horizontal', 'position', 'vertical']),
   events: {
     onClose: 'close' as EventName<CToastsElementEventMap['close']>,
   },
@@ -879,7 +879,7 @@ export const CTooltip = createComponent({
 /** A hierarchical value-selection component: a readonly value field that opens a panel for browsing a tree one level at a time, or searching it as a whole, to commit one item. */
 export const CTreeSelect = createComponent({
   displayName: 'CTreeSelect',
-  elementClass: elementClass<CTreeSelectElement>(['allowBranch', 'clearable', 'disabled', 'errorMessage', 'filter', 'hideDetails', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'levelLabels', 'name', 'placeholder', 'required', 'returnObject', 'shadow', 'size', 'texts', 'value']),
+  elementClass: elementClass<CTreeSelectElement>(['allowBranch', 'clearable', 'disabled', 'errorMessage', 'filter', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'items', 'itemsPerPage', 'label', 'labelOnTop', 'levelLabels', 'name', 'placeholder', 'required', 'returnObject', 'shadow', 'size', 'texts', 'value']),
   events: {
     onChange: 'change' as EventName<CTreeSelectElementEventMap['change']>,
     onChangeQuery: 'change:query' as EventName<CTreeSelectElementEventMap['change:query']>,

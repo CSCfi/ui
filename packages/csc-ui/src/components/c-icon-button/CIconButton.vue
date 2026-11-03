@@ -46,6 +46,13 @@
 
 <script lang="ts">
 /**
+ * How strongly an icon button reads: `filled` for the main action, then
+ * `outlined`, `ghost` and `text`, each lighter than the last — `c-button`'s
+ * appearances.
+ */
+export type CIconButtonAppearance = 'filled' | 'ghost' | 'outlined' | 'text';
+
+/**
  * Size of the icon button. `small` and `x-small` render progressively more
  * compact buttons; omitting the attribute renders the default size.
  */
@@ -53,14 +60,21 @@ export type CIconButtonSize = 'default' | 'small' | 'x-small';
 
 interface CIconButtonProps {
   /**
+   * The button's look: `filled` (unless set) for the main action; `outlined`
+   * (a primary outline, no fill), `ghost` (a light primary tint) or `text`
+   * (no fill or outline) for lower emphasis.
+   */
+  appearance?: CIconButtonAppearance;
+
+  /**
    * Count shown in a bubble at the button's top-right corner; hidden while
    * `null` or empty, so `0` still shows.
    */
   badge?: null | number | string;
 
   /**
-   * Danger appearance for a destructive action: the filled button in the error
-   * colour; no effect on `outlined`, `ghost` or `text`.
+   * Danger look for a destructive action: the filled button in the error
+   * colour; no effect on the `outlined`, `ghost` or `text` appearance.
    */
   danger?: boolean;
 
@@ -71,13 +85,15 @@ interface CIconButtonProps {
 
   /**
    * Ghost appearance: a light primary tint, for lower emphasis.
+   *
+   * @deprecated Use `appearance="ghost"`.
    */
   ghost?: boolean;
 
   /**
    * Inverted colours for a fixed dark or brand-coloured backdrop: the
-   * `inverse-*` family, the same in both theme modes. Combines with the other
-   * appearances.
+   * `inverse-*` family, the same in both theme modes. Combines with every
+   * appearance.
    */
   inverted?: boolean;
 
@@ -89,6 +105,8 @@ interface CIconButtonProps {
 
   /**
    * Outlined appearance: a primary outline with no fill, for lower emphasis.
+   *
+   * @deprecated Use `appearance="outlined"`.
    */
   outlined?: boolean;
 
@@ -107,6 +125,8 @@ interface CIconButtonProps {
 
   /**
    * Text appearance: no fill or outline, the lightest look.
+   *
+   * @deprecated Use `appearance="text"`.
    */
   text?: boolean;
 }
@@ -123,6 +143,7 @@ interface CIconButtonProps {
 import { tv } from 'tailwind-variants';
 import { computed, useTemplateRef } from 'vue';
 
+import { resolveAppearance } from '../../shared/buttonAppearance';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
@@ -159,7 +180,7 @@ const sizeVariants = {
 
 const iconButton = tv({
   compoundVariants: [
-    // ---- default (no appearance flag) -----------------------------------
+    // ---- default (filled) --------------------------------------------------
     {
       class: {
         root: 'bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary',
@@ -330,8 +351,9 @@ const iconButton = tv({
         root: 'pointer-events-none cursor-default',
       },
     },
+    // Appearance flags, one per non-filled appearance (resolved from the
+    // `appearance` prop below): base look set in compoundVariants above.
     ghost: { true: '' },
-    // Appearance flags: base look set in compoundVariants below.
     inverted: { true: '' },
     loading: {
       true: {
@@ -345,6 +367,8 @@ const iconButton = tv({
 });
 
 const props = withDefaults(defineProps<CIconButtonProps>(), {
+  // Unset, so the deprecated booleans still choose until 5.0.
+  appearance: undefined,
   badge: null,
   danger: false,
   disabled: false,
@@ -357,18 +381,20 @@ const props = withDefaults(defineProps<CIconButtonProps>(), {
   text: false,
 });
 
+const appearance = computed(() => resolveAppearance(props));
+
 // Attributes can deliver any string at runtime; unknown values fall back to
 // the default size.
 const ui = computed(() =>
   iconButton({
     danger: props.danger,
     disabled: props.disabled,
-    ghost: props.ghost,
+    ghost: appearance.value === 'ghost',
     inverted: props.inverted,
     loading: props.loading,
-    outlined: props.outlined,
+    outlined: appearance.value === 'outlined',
     size: props.size in sizeVariants ? props.size : 'default',
-    text: props.text,
+    text: appearance.value === 'text',
   }),
 );
 

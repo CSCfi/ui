@@ -3,17 +3,17 @@ import { CCheckbox } from '@cscfi/csc-ui-react';
 
 export const States = () => (
   <div className="example-row">
-    <CCheckbox hideDetails>Unchecked</CCheckbox>
-    <CCheckbox checked hideDetails>
+    <CCheckbox hideMessage>Unchecked</CCheckbox>
+    <CCheckbox checked hideMessage>
       Checked
     </CCheckbox>
-    <CCheckbox hideDetails indeterminate>
+    <CCheckbox hideMessage indeterminate>
       Indeterminate
     </CCheckbox>
-    <CCheckbox disabled hideDetails>
+    <CCheckbox disabled hideMessage>
       Disabled
     </CCheckbox>
-    <CCheckbox checked disabled hideDetails>
+    <CCheckbox checked disabled hideMessage>
       Checked and disabled
     </CCheckbox>
   </div>

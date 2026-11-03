@@ -2,7 +2,7 @@
   <c-input
     v-bind="rootAttrs"
     :active="isFocused"
-    :data-hide-details="String(hideDetailsResolved)"
+    :data-hide-details="String(hideMessageResolved)"
     :disabled
     :filled="text !== ''"
     :input-id
@@ -19,7 +19,7 @@
       :id="`${inputId}-message`"
       slot="message"
       :error-message
-      :hide-details="hideDetailsResolved"
+      :hide-details="hideMessageResolved"
       :hint
       :invalid
       :label-on-top="labelOnTopResolved"
@@ -38,7 +38,7 @@
       :id="inputId"
       ref="inputRef"
       v-bind="controlAttrs"
-      :aria-describedby="hideDetailsResolved ? undefined : `${inputId}-message`"
+      :aria-describedby="hideMessageResolved ? undefined : `${inputId}-message`"
       :aria-invalid="invalid || outOfRange || undefined"
       :aria-label="accessibleName"
       :aria-valuemax="maxNumber ?? undefined"
@@ -169,8 +169,17 @@ interface CNumberFieldProps {
    * Hide the hint and error messages
    *
    * @defaultable false
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   *
+   * @defaultable false
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the field
@@ -275,7 +284,7 @@ interface CNumberFieldProps {
  * @csspart input - The text input
  * @csspart step-up - The button that steps the number up
  * @csspart step-down - The button that steps the number down
- * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-message`)
  * @cssstate out-of-range - Present while the number is below `min` or above `max`
  */
 import { mdiChevronDown, mdiChevronUp } from '@mdi/js';
@@ -369,6 +378,7 @@ const props = withDefaults(defineProps<CNumberFieldProps>(), {
   fixedDecimals: undefined,
   groupSeparator: undefined,
   hideDetails: undefined,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   label: '',
@@ -411,7 +421,7 @@ const fixedDecimalsResolved = appDefault('fixedDecimals', false);
 
 const groupSeparatorResolved = appDefault('groupSeparator', '');
 
-const hideDetailsResolved = appDefault('hideDetails', false);
+const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
 
 const labelOnTopResolved = appDefault('labelOnTop', false);
 

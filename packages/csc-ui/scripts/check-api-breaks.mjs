@@ -8,7 +8,8 @@
  *     export, type or type field removed or renamed; a type changed other
  *     than by widening a union; a built-in default changed; an optional type
  *     field made required, or a required one added;
- *   - added: anything new.
+ *   - added: anything new, and a prop newly marked `@deprecated` (the old
+ *     name keeps working until the next major).
  *
  * A breaking diff needs a new `major` changeset in the branch; while the
  * changesets pre tag is anything but `alpha` (the release candidates) it
@@ -277,6 +278,13 @@ for (const tag of new Set([...baseTags, ...headTags])) {
     previous.subcomponents,
     next.subcomponents,
   );
+
+  // Deprecating is additive (ADR-0074); lifting a deprecation breaks nothing.
+  for (const name of next.deprecated ?? []) {
+    if (!(previous.deprecated ?? []).includes(name)) {
+      added.push(`<${tag}> property \`${name}\` deprecated`);
+    }
+  }
 }
 
 const previousEntry = readBase(entryPath) ?? {};

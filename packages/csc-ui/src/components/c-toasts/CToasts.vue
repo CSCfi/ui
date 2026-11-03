@@ -20,6 +20,18 @@
 export type CToastsHorizontal = 'center' | 'left' | 'right';
 
 /**
+ * Where the toast stack sits: the edge it is anchored to, then its
+ * alignment along it — `start` is the left, `end` the right — or centred.
+ */
+export type CToastsPosition =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
+
+/**
  * Vertical placement of the toast stack.
  */
 export type CToastsVertical = 'bottom' | 'top';
@@ -29,17 +41,38 @@ interface CToastsProps {
    * Places the stack in its nearest positioned ancestor instead of the
    * viewport, for in-container notifications. Such a stack is not
    * guaranteed to paint above an open modal.
+   *
+   * @deprecated Use `contained`.
    */
   absolute?: boolean;
 
   /**
+   * Keep the stack inside its nearest positioned ancestor instead of the
+   * viewport, for in-container notifications. Such a stack is not
+   * guaranteed to paint above an open modal.
+   */
+  contained?: boolean;
+
+  /**
    * Where the stack sits across the viewport, or across its container
    * under `absolute`.
+   *
+   * @deprecated Use `position`.
    */
   horizontal?: CToastsHorizontal;
 
   /**
+   * Where the stack sits in the viewport, or in its container when
+   * `contained`: `bottom` (unless set), `bottom-start`, `bottom-end`,
+   * `top`, `top-start` or `top-end`. Toasts slide in from the top or bottom
+   * edge.
+   */
+  position?: CToastsPosition;
+
+  /**
    * The edge the stack is anchored to; toasts slide in from it.
+   *
+   * @deprecated Use `position`.
    */
   vertical?: CToastsVertical;
 }
@@ -70,6 +103,7 @@ import {
 
 import type { CToastMessage } from '../../types';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import { TOAST_BAND } from '../../shared/modalStack';
 import { prefersReducedMotion } from '../../shared/reducedMotion';
 import { useHostEmit } from '../../shared/useHostEmit';
@@ -96,8 +130,8 @@ defineOptions({ inheritAttrs: false });
 /**
  * Styling lives in this `tailwind-variants` config. Only the inner
  * container grid is a utility region (`root`); the host itself is the fixed
- * positioned overlay whose placement is driven by the `absolute` / `vertical`
- * / `horizontal` props. Those `:host(.absolute|.top|.bottom|.left|.right
+ * positioned overlay whose placement is driven by the `position` and
+ * `contained` props. Those `:host(.absolute|.top|.bottom|.left|.right
  * |.center)` rules are positional host state toggled imperatively as classes,
  * so they stay in the escape-hatch sheet below. Consumer
  * customization is via `::part()`.
@@ -110,7 +144,11 @@ const toasts = tv({
 
 const props = withDefaults(defineProps<CToastsProps>(), {
   absolute: false,
+  // Unset, so the deprecated `absolute`, `vertical` and `horizontal` still
+  // place the stack until 5.0.
+  contained: undefined,
   horizontal: 'center',
+  position: undefined,
   vertical: 'bottom',
 });
 
@@ -291,16 +329,47 @@ const onChildClose = (event: CustomEvent<CToastMessage>) => {
 
 defineExpose({ _toastLeaving, addToast, removeToast });
 
-// Attributes can deliver any string at runtime; unknown placements fall back
-// to the default center/bottom — otherwise an invalid `vertical`
-// would leave the stack with no anchor class at all.
-const horizontal = computed(() =>
-  props.horizontal === 'left' || props.horizontal === 'right'
-    ? props.horizontal
-    : 'center',
+const POSITIONS: readonly string[] = [
+  'bottom',
+  'bottom-end',
+  'bottom-start',
+  'top',
+  'top-end',
+  'top-start',
+] satisfies CToastsPosition[];
+
+// `position` when it names one, else the deprecated `vertical` and
+// `horizontal`. Attributes can deliver any string at runtime; unknown
+// placements fall back to the default center/bottom — otherwise an invalid
+// value would leave the stack with no anchor class at all.
+const position = computed(() =>
+  props.position && POSITIONS.includes(props.position)
+    ? props.position
+    : undefined,
 );
 
-const vertical = computed(() => (props.vertical === 'top' ? 'top' : 'bottom'));
+const horizontal = computed(() => {
+  if (position.value?.endsWith('-start')) return 'left';
+
+  if (position.value?.endsWith('-end')) return 'right';
+
+  if (position.value) return 'center';
+
+  return props.horizontal === 'left' || props.horizontal === 'right'
+    ? props.horizontal
+    : 'center';
+});
+
+const vertical = computed(() => {
+  if (position.value)
+    return position.value.startsWith('top') ? 'top' : 'bottom';
+
+  return props.vertical === 'top' ? 'top' : 'bottom';
+});
+
+const contained = computed(() =>
+  coerceBoolean(props.contained ?? props.absolute),
+);
 
 onMounted(() => {
   if (!host) return;
@@ -312,7 +381,7 @@ onMounted(() => {
   host.style.zIndex = String(TOAST_BAND);
 
   watchEffect(() => {
-    host.classList.toggle('absolute', props.absolute);
+    host.classList.toggle('absolute', contained.value);
     host.classList.toggle('top', vertical.value === 'top');
     host.classList.toggle('bottom', vertical.value === 'bottom');
     host.classList.toggle('left', horizontal.value === 'left');

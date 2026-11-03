@@ -4,17 +4,17 @@ The dashboard layout's left-hand menu: section titles, navigation items and thei
 
 Author the menu as a flat list of `c-side-navigation-title` and `c-side-navigation-item` elements: a title heads the items that follow it, up to the next title.
 
-Write an item's sub-items as `c-sub-navigation-item` children inside it; the item slots them itself, including sub-items added later. An item with sub-items is an expandable parent with a chevron: activating it toggles its `active` state, which shows or hides the sub-items, and activating any top-level item collapses the other parents, so one stays open at a time. A parent only expands and collapses — activating it does not close the mobile drawer. The sub-items of a collapsed parent leave the Tab order.
+Write an item's sub-items as `c-sub-navigation-item` children inside it; the item slots them itself, including sub-items added later. An item with sub-items is an expandable parent with a chevron: activating it toggles its `expanded` state, which shows or hides the sub-items, and activating any top-level item collapses the other parents, so one stays open at a time. Set `expanded` on a parent to open it initially. A parent only expands and collapses — activating it does not close the mobile drawer. The sub-items of a collapsed parent leave the Tab order.
 
-On a parent, `active` means expanded; on an item without sub-items and on a sub-item it marks the current page (`aria-current="page"`). To mark a page under a parent, set `active` on both:
+`current` marks the item, or sub-item, of the page shown (`aria-current="page"`). To mark a page under a parent, set `current` on the sub-item and `expanded` on its parent. The 3.x `active` still works until 5.0, meaning expanded on a parent and current elsewhere; `current` and `expanded` win when set.
 
 ```html
 <c-side-navigation>
   <c-side-navigation-title>My project</c-side-navigation-title>
   <c-side-navigation-item value="dashboard">Dashboard</c-side-navigation-item>
-  <c-side-navigation-item value="projects" active>
+  <c-side-navigation-item value="projects" expanded>
     Projects
-    <c-sub-navigation-item value="active" active>
+    <c-sub-navigation-item value="active" current>
       Active projects
     </c-sub-navigation-item>
     <c-sub-navigation-item value="archived">
@@ -34,14 +34,14 @@ navigation can route every item:
 <c-side-navigation @select="navigate($event.detail.value)">
   <c-side-navigation-item
     value="/dashboard"
-    :active="route.path === '/dashboard'"
+    :current="route.path === '/dashboard'"
   >
     Dashboard
   </c-side-navigation-item>
 </c-side-navigation>
 ```
 
-The navigation does not mark the current page itself: set `active` on the item, or sub-item, of the page shown, from your router or the URL. The highlight then follows the page, not the click, so a navigation your router cancels leaves it where it was.
+The navigation does not mark the current page itself: set `current` on the item, or sub-item, of the page shown, from your router or the URL. The highlight then follows the page, not the click, so a navigation your router cancels leaves it where it was.
 
 ## Inside c-main
 

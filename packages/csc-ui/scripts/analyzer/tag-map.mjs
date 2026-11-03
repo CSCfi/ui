@@ -49,6 +49,15 @@ const jsdoc = (description, indent) => {
     .join('\n')}\n${indent} */\n`;
 };
 
+/** A prop's description plus its `@deprecated` tag, which TypeScript (and
+ *  through the element types, the React wrappers) shows as a strikethrough. */
+const withDeprecation = (prop) =>
+  prop.deprecated
+    ? [prop.description, `@deprecated ${prop.deprecated}`]
+        .filter(Boolean)
+        .join('\n\n')
+    : prop.description;
+
 /** Quote a member key when it is not a plain identifier (e.g. update:value). */
 const memberKey = (name) =>
   /^[A-Za-z_$][\w$]*$/.test(name) ? name : `'${name}'`;
@@ -306,7 +315,7 @@ export const renderTagNameMap = (components, publicTypes) => {
 
     for (const prop of component.props.filter(isPublic)) {
       typeTexts.push(fieldType(prop));
-      block += jsdoc(prop.description, '  ');
+      block += jsdoc(withDeprecation(prop), '  ');
       block += `  ${memberKey(prop.name)}${prop.optional ? '?' : ''}: ${fieldType(prop)};\n`;
     }
 

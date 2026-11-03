@@ -9,12 +9,12 @@ export const Ticks = () => {
     <div>
       <CSlider
         label="CPU cores"
-        labels
         max="8"
         min="0"
         onUpdateValue={(event) => setCores(event.detail as number)}
         segments="8"
         step="1"
+        tickLabels
         ticks
         value={cores}
       />

@@ -132,6 +132,31 @@ describe('at the element (ADR-0048, _plan/app-defaults.md verification cases)', 
     expect(input(overridden).getAttribute('data-hide-details')).toBe('false');
   });
 
+  it('hide-message wins over the deprecated hide-details at each layer', async () => {
+    const hidden = async (attrs: Record<string, boolean | string> = {}) =>
+      input(
+        await mount('c-text-field', { attrs, props: { label: 'Name' } }),
+      ).getAttribute('data-hide-details');
+
+    // Instance: the new name, then the old.
+    expect(
+      await hidden({ 'hide-details': true, 'hide-message': 'false' }),
+    ).toBe('false');
+    expect(await hidden({ 'hide-details': true })).toBe('true');
+
+    // An instance setting under either name beats either app default.
+    applyDefaults({ 'c-text-field': { hideDetails: true, hideMessage: true } });
+    expect(await hidden({ 'hide-message': 'false' })).toBe('false');
+    expect(await hidden({ 'hide-details': 'false' })).toBe('false');
+
+    // App default: the new name, then the old.
+    applyDefaults({ 'c-text-field': { hideMessage: false } });
+    expect(await hidden()).toBe('false');
+
+    applyDefaults({ 'c-text-field': { hideMessage: undefined } });
+    expect(await hidden()).toBe('true');
+  });
+
   it('texts merge per key: built-in ← app default ← own', async () => {
     applyDefaults({ 'c-select': { texts: { toggleOptions: 'Vaihda' } } });
 

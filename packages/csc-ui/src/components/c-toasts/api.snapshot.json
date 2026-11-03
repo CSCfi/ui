@@ -1,11 +1,18 @@
 {
   "attributes": {
     "absolute": "boolean = false",
+    "contained": "boolean",
     "horizontal": "'center' | 'left' | 'right' = 'center'",
+    "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'top-end' | 'top-start' | 'top'",
     "vertical": "'bottom' | 'top' = 'bottom'"
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "absolute",
+    "horizontal",
+    "vertical"
+  ],
   "events": {
     "close": "CustomEvent<CToastMessage>"
   },
@@ -26,7 +33,9 @@
   "propertyOnly": [],
   "props": {
     "absolute": "boolean = false",
+    "contained": "boolean",
     "horizontal": "'center' | 'left' | 'right' = 'center'",
+    "position": "'bottom-end' | 'bottom-start' | 'bottom' | 'top-end' | 'top-start' | 'top'",
     "vertical": "'bottom' | 'top' = 'bottom'"
   },
   "slots": [

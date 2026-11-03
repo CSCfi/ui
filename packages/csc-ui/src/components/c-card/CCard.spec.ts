@@ -59,9 +59,23 @@ describe('c-card ink', () => {
 });
 
 describe('c-card fullscreen', () => {
+  it('show-fullscreen shows the toggle, and wins over the deprecated fullscreen', async () => {
+    const toggle = async (attrs: Record<string, boolean | string>) =>
+      (await mount('c-card', { attrs })).host.shadowRoot!.querySelector(
+        '[part~="fullscreen-toggle"]',
+      );
+
+    expect(await toggle({})).toBeNull();
+    expect(await toggle({ 'show-fullscreen': true })).not.toBeNull();
+    expect(await toggle({ fullscreen: true })).not.toBeNull();
+    expect(
+      await toggle({ fullscreen: true, 'show-fullscreen': 'false' }),
+    ).toBeNull();
+  });
+
   it('keeps the title clear of the fullscreen toggle', async () => {
     const m = await mount('c-card', {
-      attrs: { fullscreen: true },
+      attrs: { 'show-fullscreen': true },
       html:
         '<c-card-title>Project members<button slot="actions" style="display: block; width: 96px; height: 32px">Edit</button></c-card-title>' +
         '<c-card-content><p>Manage who has access.</p></c-card-content>',
@@ -87,7 +101,7 @@ describe('c-card fullscreen', () => {
 
   it('exitFullscreen() leaves another element fullscreen', async () => {
     const m = await mount('c-card', {
-      attrs: { fullscreen: true },
+      attrs: { 'show-fullscreen': true },
       html: CARD,
     });
 

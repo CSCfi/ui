@@ -2,7 +2,7 @@
   <c-input
     v-bind="rootAttrs"
     :active="isActiveForInput"
-    :data-hide-details="String(hideDetailsResolved)"
+    :data-hide-details="String(hideMessageResolved)"
     :disabled
     :filled="isFilledForInput"
     :input-id
@@ -20,7 +20,7 @@
       :id="`${inputId}-message`"
       slot="message"
       :error-message
-      :hide-details="hideDetailsResolved"
+      :hide-details="hideMessageResolved"
       :hint
       :invalid
       :label-on-top="labelOnTopResolved"
@@ -44,7 +44,7 @@
       :id="inputId"
       ref="inputRef"
       v-bind="controlAttrs"
-      :aria-describedby="hideDetailsResolved ? undefined : `${inputId}-message`"
+      :aria-describedby="hideMessageResolved ? undefined : `${inputId}-message`"
       :aria-invalid="invalid"
       :aria-label="accessibleName"
       :autocapitalize="autocapitalize || undefined"
@@ -86,7 +86,7 @@
         ref="inputRef"
         v-bind="controlAttrs"
         :aria-describedby="
-          hideDetailsResolved ? undefined : `${inputId}-message`
+          hideMessageResolved ? undefined : `${inputId}-message`
         "
         :aria-invalid="invalid"
         :aria-label="accessibleName"
@@ -226,8 +226,17 @@ interface CTextFieldProps {
    * Hide the hint and error messages
    *
    * @defaultable false
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   *
+   * @defaultable false
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the input
@@ -353,7 +362,7 @@ interface CTextFieldProps {
  * @slot pre - Content inside the field, before the input, such as an icon
  * @slot post - Content inside the field, after the input and its password or date button
  * @csspart mask-guide - The faint rest of the input mask, shown behind the typed text
- * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-message`)
  * @cssstate incomplete - Present while a masked field holds text that leaves a required mask token (one outside an optional section) unfilled
  */
 import { mdiCalendar, mdiEye, mdiEyeOff } from '@mdi/js';
@@ -471,6 +480,7 @@ const props = withDefaults(defineProps<CTextFieldProps>(), {
   disabled: false,
   errorMessage: '',
   hideDetails: undefined,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   label: '',
@@ -508,10 +518,10 @@ const accessibleName = computed(
 
 // Defaultable props resolve host attribute → own value → app default →
 // built-in (see src/shared/appDefaults.ts, which also explains why
-// `hide-details` reaches c-input through the `data-hide-details` channel).
+// `hide-message` reaches c-input through the `data-hide-details` channel).
 const appDefault = useAppDefault('c-text-field', props);
 
-const hideDetailsResolved = appDefault('hideDetails', false);
+const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
 
 const labelOnTopResolved = appDefault('labelOnTop', false);
 

@@ -2,10 +2,14 @@
   "attributes": {
     "color": "string = 'var(--c-primary)'",
     "size": "number = 24",
+    "thickness": "number",
     "width": "number = 2"
   },
   "cssProperties": [],
   "defaultable": [],
+  "deprecated": [
+    "width"
+  ],
   "events": {},
   "methods": {},
   "parts": [
@@ -15,6 +19,7 @@
   "props": {
     "color": "string = 'var(--c-primary)'",
     "size": "number = 24",
+    "thickness": "number",
     "width": "number = 2"
   },
   "slots": [],

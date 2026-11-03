@@ -8,7 +8,7 @@
     :disabled
     :error-message
     :field="typed"
-    :hide-details="hideDetailsResolved"
+    :hide-details="hideMessageResolved"
     :hint
     :input-id
     :inputmode="twelve ? 'text' : 'numeric'"
@@ -26,8 +26,8 @@
         :aria-label="t.openClock"
         :disabled
         :size="buttonSize"
+        appearance="text"
         aria-haspopup="dialog"
-        text
         @click="onClockClick"
       >
         <c-icon :path="mdiClockOutline" :size="iconSize" />
@@ -261,8 +261,17 @@ interface CTimePickerProps {
    * Hide the hint and error messages
    *
    * @defaultable false
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   *
+   * @defaultable false
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the field
@@ -392,7 +401,7 @@ interface CTimePickerProps {
  * @csspart actions - The row under the columns holding the Now button (`show-now`) and, in the fullscreen panel, the Done button
  * @csspart now - The Now button: commits the current time
  * @csspart done - The Done button of the fullscreen panel (narrow viewports): commits what the panel holds and closes
- * @csspart message - The hint / error message area below the field (always reserved unless `hide-details`)
+ * @csspart message - The hint / error message area below the field (always reserved unless `hide-message`)
  *
  * @cssstate bad-input - Present while committed text names no time that can be picked
  */
@@ -558,6 +567,7 @@ const props = withDefaults(defineProps<CTimePickerProps>(), {
   errorMessage: '',
   format: undefined,
   hideDetails: undefined,
+  hideMessage: undefined,
   hint: '',
   invalid: false,
   label: '',
@@ -600,7 +610,7 @@ const appDefault = useAppDefault('c-time-picker', props);
 
 const formatResolved = appDefault('format', 'HH.mm');
 
-const hideDetailsResolved = appDefault('hideDetails', false);
+const hideMessageResolved = appDefault('hideMessage', false, 'hideDetails');
 
 const labelOnTopResolved = appDefault('labelOnTop', false);
 

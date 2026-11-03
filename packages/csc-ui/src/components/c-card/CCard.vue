@@ -1,7 +1,7 @@
 <template>
   <article :class="ui.root()" part="root">
     <button
-      v-if="fullscreen"
+      v-if="showFullscreenResolved"
       :aria-label="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
       :class="ui.fullscreenToggle()"
       :title="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
@@ -25,7 +25,7 @@
  * @slot default - The card's sections: `c-card-title`, `c-card-content` and `c-card-actions`, in that order
  *
  * @csspart root - The card's visible surface, carries the background and its ink, border, radius, shadow and section spacing
- * @csspart fullscreen-toggle - The round fullscreen toggle button, shown when `fullscreen` is set
+ * @csspart fullscreen-toggle - The round fullscreen toggle button, shown when `show-fullscreen` is set
  *
  * @subcomponents c-card-title, c-card-content, c-card-actions
  */
@@ -33,6 +33,7 @@ import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, onBeforeUnmount, onMounted, ref, useHost } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useIdReferences } from '../../shared/useIdReferences';
 
 /**
@@ -85,15 +86,29 @@ interface CCardProps {
   /**
    * Shows a toggle button in the card's top-right corner that puts the card
    * in the browser's fullscreen mode and back.
+   *
+   * @deprecated Use `show-fullscreen`.
    */
   fullscreen?: boolean;
+
+  /**
+   * Show a toggle button in the card's top-right corner that puts the card
+   * in the browser's fullscreen mode and back.
+   */
+  showFullscreen?: boolean;
 }
 
 const props = withDefaults(defineProps<CCardProps>(), {
   fullscreen: false,
+  // Unset, so the deprecated `fullscreen` still shows the toggle until 5.0.
+  showFullscreen: undefined,
 });
 
-const ui = computed(() => card({ fullscreen: props.fullscreen }));
+const showFullscreenResolved = computed(() =>
+  coerceBoolean(props.showFullscreen ?? props.fullscreen),
+);
+
+const ui = computed(() => card({ fullscreen: showFullscreenResolved.value }));
 
 const isFullscreen = ref(false);
 

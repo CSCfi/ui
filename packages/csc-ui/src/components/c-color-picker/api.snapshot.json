@@ -6,6 +6,7 @@
     "error-message": "string = ''",
     "format": "'hex' | 'oklch' | 'rgb' = 'hex'",
     "hide-details": "boolean = false",
+    "hide-message": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",
@@ -23,10 +24,14 @@
     "alpha",
     "format",
     "hideDetails",
+    "hideMessage",
     "labelOnTop",
     "shadow",
     "size",
     "texts"
+  ],
+  "deprecated": [
+    "hideDetails"
   ],
   "events": {
     "change": "CustomEvent<CColorPickerValue>",
@@ -73,6 +78,7 @@
     "errorMessage": "string = ''",
     "format": "'hex' | 'oklch' | 'rgb' = 'hex'",
     "hideDetails": "boolean = false",
+    "hideMessage": "boolean = false",
     "hint": "string = ''",
     "invalid": "boolean = false",
     "label": "string = ''",

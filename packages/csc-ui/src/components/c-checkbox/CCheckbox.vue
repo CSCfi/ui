@@ -13,7 +13,7 @@
       :id="inputId"
       v-bind="controlAttrs"
       :aria-checked="indeterminate ? 'mixed' : isChecked"
-      :aria-describedby="hideDetails ? undefined : `${inputId}-message`"
+      :aria-describedby="hideMessageResolved ? undefined : `${inputId}-message`"
       :checked="isChecked"
       :class="ui.input()"
       :disabled
@@ -65,7 +65,7 @@
       </form-label>
     </label>
 
-    <!-- The message AREA is always in the flow (unless `hide-details`), the
+    <!-- The message AREA is always in the flow (unless `hide-message`), the
          same as c-input: it reserves its min-height so a validation error
          appearing at runtime doesn't push the content below it down. Only the
          inner line mounts/unmounts. Mode `out-in` mirrors the Stencil
@@ -74,7 +74,7 @@
          re-mount whenever the message identity (hint vs error, or text
          content) changes. -->
     <div
-      v-if="!hideDetails"
+      v-if="!hideMessageResolved"
       :id="`${inputId}-message`"
       :class="ui.message()"
       part="message"
@@ -109,7 +109,7 @@
  * @csspart label - The label text or slotted label content beside the box
  * @csspart indicator - The checkbox box itself — the bordered square that fills when checked; border, fill and the keyboard focus ring (its `::before`) all draw with `currentColor`, so `color` recolours them together
  * @csspart mark - The SVG check / indeterminate glyph revealed inside the indicator; draws with `currentColor`, so `color` recolours it
- * @csspart message - The hint / error message area below the checkbox (always reserved unless `hide-details`)
+ * @csspart message - The hint / error message area below the checkbox (always reserved unless `hide-message`)
  *
  * @cssstate checked - Present while the checkbox is checked
  * @cssstate indeterminate - Present while the checkbox is in the indeterminate state
@@ -127,6 +127,7 @@ import {
   watch,
 } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import FormLabel from '../../shared/FormLabel.vue';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useControlAttrs } from '../../shared/useControlAttrs';
@@ -288,8 +289,16 @@ interface CCheckboxProps {
 
   /**
    * Hide the hint and error messages
+   *
+   * @deprecated Use `hide-message`.
    */
   hideDetails?: boolean;
+
+  /**
+   * Hide the message line — the hint and error messages under the field —
+   * and the room it keeps.
+   */
+  hideMessage?: boolean;
 
   /**
    * Hint text for the checkbox
@@ -355,6 +364,7 @@ const props = withDefaults(defineProps<CCheckboxProps>(), {
   errorMessage: '',
   falseValue: false,
   hideDetails: false,
+  hideMessage: undefined,
   hint: '',
   indeterminate: false,
   invalid: false,
@@ -366,6 +376,11 @@ const props = withDefaults(defineProps<CCheckboxProps>(), {
 });
 
 const showError = computed(() => props.invalid && Boolean(props.errorMessage));
+
+// `hide-message` wins over the deprecated `hide-details` when set.
+const hideMessageResolved = computed(() =>
+  coerceBoolean(props.hideMessage ?? props.hideDetails),
+);
 
 const ui = computed(() =>
   checkbox({

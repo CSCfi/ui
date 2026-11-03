@@ -14,17 +14,17 @@ export const Basic = () => {
   return (
     <div>
       <CSideNavigation>
-        <CSideNavigationItem active>
+        <CSideNavigationItem expanded>
           <CIcon path={mdiFolderOutline} />
           Projects
           <CSubNavigationItem
-            active={current === 'active'}
+            current={current === 'active'}
             onSelect={() => setCurrent('active')}
           >
             Active projects
           </CSubNavigationItem>
           <CSubNavigationItem
-            active={current === 'archived'}
+            current={current === 'archived'}
             onSelect={() => setCurrent('archived')}
           >
             Archived projects

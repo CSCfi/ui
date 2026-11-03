@@ -149,7 +149,11 @@ describe('c-side-navigation', () => {
       '<c-sub-navigation-item value="archived">Archived</c-sub-navigation-item>' +
       '</c-side-navigation-item>';
 
-    type ItemHost = { active: boolean } & HTMLElement;
+    type ItemHost = {
+      active?: boolean;
+      current?: boolean;
+      expanded?: boolean;
+    } & HTMLElement;
 
     const item = (m: { host: HTMLElement }, value: string): ItemHost =>
       m.host.querySelector(`[value="${value}"]`) as ItemHost;
@@ -188,7 +192,7 @@ describe('c-side-navigation', () => {
       await userEvent.click(box(item(m, 'active'), 'root'));
 
       expect(events.details()).toEqual([{ value: 'active' }]);
-      expect(item(m, 'projects').active).toBe(true);
+      expect(item(m, 'projects').expanded).toBe(true);
     });
 
     it('the page marks the current page: activating a leaf moves no highlight', async () => {
@@ -197,12 +201,12 @@ describe('c-side-navigation', () => {
       });
 
       // As a page's binding does, from the page it shows.
-      item(m, 'settings').active = true;
+      item(m, 'settings').current = true;
       await settle();
 
       const current = (): string[] =>
         [...m.host.querySelectorAll<ItemHost>('[value]')]
-          .filter((el) => el.active)
+          .filter((el) => el.current)
           .map((el) => el.getAttribute('value')!);
 
       // A router can cancel the navigation a click asks for; the item the page
@@ -224,7 +228,72 @@ describe('c-side-navigation', () => {
       await userEvent.click(box(item(m, 'archived'), 'root'));
       await settle();
 
-      expect(current()).toEqual(['projects', 'settings']);
+      expect(item(m, 'projects').expanded).toBe(true);
+      expect(current()).toEqual(['settings']);
+    });
+
+    it('current marks the page and expanded opens a parent; the deprecated active still does both', async () => {
+      const marks = async (dashboard: string, projects: string) => {
+        const m = await mount('c-side-navigation', {
+          html:
+            `<c-side-navigation-item value="dashboard" ${dashboard}>Dashboard</c-side-navigation-item>` +
+            `<c-side-navigation-item value="projects" ${projects}>Projects` +
+            '<c-sub-navigation-item value="active">Active</c-sub-navigation-item>' +
+            '</c-side-navigation-item>',
+        });
+
+        await settle();
+
+        return [
+          box(item(m, 'dashboard'), 'header').getAttribute('aria-current'),
+          box(item(m, 'projects'), 'header').getAttribute('aria-expanded'),
+        ];
+      };
+
+      expect(await marks('', '')).toEqual([null, 'false']);
+      expect(await marks('current', 'expanded')).toEqual(['page', 'true']);
+      expect(await marks('active', 'active')).toEqual(['page', 'true']);
+      expect(
+        await marks('active current="false"', 'active expanded="false"'),
+      ).toEqual([null, 'false']);
+    });
+
+    it('collapses a parent the deprecated active opened when another opens', async () => {
+      const m = await mount('c-side-navigation', {
+        html:
+          '<c-side-navigation-item value="projects" active>Projects' +
+          '<c-sub-navigation-item value="active">Active</c-sub-navigation-item>' +
+          '</c-side-navigation-item>' +
+          '<c-side-navigation-item value="guides">Guides' +
+          '<c-sub-navigation-item value="intro">Intro</c-sub-navigation-item>' +
+          '</c-side-navigation-item>',
+      });
+
+      await settle();
+
+      const expanded = (value: string) =>
+        box(item(m, value), 'header').getAttribute('aria-expanded');
+
+      expect([expanded('projects'), expanded('guides')]).toEqual([
+        'true',
+        'false',
+      ]);
+
+      await userEvent.click(box(item(m, 'guides'), 'header'));
+      await settle();
+
+      expect([expanded('projects'), expanded('guides')]).toEqual([
+        'false',
+        'true',
+      ]);
+
+      await userEvent.click(box(item(m, 'projects'), 'header'));
+      await settle();
+
+      expect([expanded('projects'), expanded('guides')]).toEqual([
+        'true',
+        'false',
+      ]);
     });
 
     it('an item with an href fires select once on Enter', async () => {
@@ -262,8 +331,8 @@ describe('c-side-navigation', () => {
 
       expect(location.hash).toBe('#side-nav-nested');
       expect(events.details()).toEqual([{ value: 'intro' }]);
-      expect(item(m, 'guides').active).toBe(true);
-      expect(item(m, 'intro').active).toBe(false);
+      expect(item(m, 'guides').expanded).toBe(true);
+      expect(item(m, 'intro').current).toBeFalsy();
       history.replaceState(null, '', location.pathname + location.search);
     });
 

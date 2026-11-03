@@ -28,8 +28,8 @@ type CToastsEl = {
   removeToast(id: string): void;
 } & HTMLElement;
 
-const mountStack = (vertical: 'bottom' | 'top' = 'bottom') =>
-  mount<CToastsEl>('c-toasts', { attrs: { vertical }, stage: false });
+const mountStack = (position: 'bottom' | 'top' = 'bottom') =>
+  mount<CToastsEl>('c-toasts', { attrs: { position }, stage: false });
 
 async function add(stack: Mounted<CToastsEl>, ...ids: string[]) {
   for (const id of ids) {
@@ -143,6 +143,52 @@ describe('stack glide', () => {
       expect(glides(a)).toHaveLength(1);
       expect(glides(toast(stack, 'b'))).toEqual([]);
     });
+  });
+});
+
+describe('placement', () => {
+  const place = async (attrs: Record<string, boolean | string> = {}) => {
+    const { host } = await mount('c-toasts', { attrs, stage: false });
+
+    const { bottom, justifyContent, position, top } = getComputedStyle(host);
+
+    return { bottom, justifyContent, position, top };
+  };
+
+  it('position places the stack as the deprecated vertical and horizontal do', async () => {
+    for (const [position, vertical, horizontal] of [
+      ['top-start', 'top', 'left'],
+      ['top', 'top', 'center'],
+      ['top-end', 'top', 'right'],
+      ['bottom-start', 'bottom', 'left'],
+      ['bottom', 'bottom', 'center'],
+      ['bottom-end', 'bottom', 'right'],
+    ]) {
+      expect(await place({ position }), position).toEqual(
+        await place({ horizontal, vertical }),
+      );
+    }
+
+    expect(await place({ position: 'top-end' })).not.toEqual(await place());
+  });
+
+  it('position wins over vertical and horizontal when set', async () => {
+    expect(
+      await place({
+        horizontal: 'right',
+        position: 'top-start',
+        vertical: 'bottom',
+      }),
+    ).toEqual(await place({ horizontal: 'left', vertical: 'top' }));
+  });
+
+  it('contained keeps the stack in its container, and wins over absolute', async () => {
+    expect((await place()).position).toBe('fixed');
+    expect((await place({ contained: true })).position).toBe('absolute');
+    expect((await place({ absolute: true })).position).toBe('absolute');
+    expect((await place({ absolute: true, contained: 'false' })).position).toBe(
+      'fixed',
+    );
   });
 });
 

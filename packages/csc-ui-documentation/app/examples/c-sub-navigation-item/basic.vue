@@ -3,19 +3,19 @@
 <template>
   <div>
     <c-side-navigation>
-      <c-side-navigation-item active>
+      <c-side-navigation-item expanded>
         <c-icon :path="mdiFolderOutline" />
         Projects
 
         <c-sub-navigation-item
-          :active="current === 'active'"
+          :current="current === 'active'"
           @select="current = 'active'"
         >
           Active projects
         </c-sub-navigation-item>
 
         <c-sub-navigation-item
-          :active="current === 'archived'"
+          :current="current === 'archived'"
           @select="current = 'archived'"
         >
           Archived projects

@@ -9,7 +9,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
     <div>
       <c-radio-group
         [value]="frequency()"
-        hide-details
+        hide-message
         inline
         label="Email frequency"
         (change)="frequency.set($any($event).detail)"

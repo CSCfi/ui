@@ -3,7 +3,7 @@
     <c-radio-group
       v-model="frequency"
       label="Email frequency"
-      hide-details
+      hide-message
       inline
     >
       <c-radio value="daily">Daily</c-radio>

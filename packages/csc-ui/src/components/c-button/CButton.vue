@@ -52,6 +52,12 @@
 
 <script lang="ts">
 /**
+ * How strongly a button reads: `filled` for the main action, then
+ * `outlined`, `ghost` and `text`, each lighter than the last.
+ */
+export type CButtonAppearance = 'filled' | 'ghost' | 'outlined' | 'text';
+
+/**
  * Size of the button.
  */
 export type CButtonSize = 'default' | 'large' | 'small';
@@ -72,6 +78,13 @@ interface CButtonProps {
   active?: boolean;
 
   /**
+   * The button's look: `filled` (unless set) for the main action of a view;
+   * `outlined` (a primary outline, no fill), `ghost` (a light primary tint)
+   * or `text` (no fill or outline) for lower emphasis.
+   */
+  appearance?: CButtonAppearance;
+
+  /**
    * Be a tab of a tablist: `role="tab"`, with `active` as `aria-selected`
    * instead of `aria-pressed`. c-tab-buttons sets it on its buttons.
    *
@@ -80,8 +93,8 @@ interface CButtonProps {
   asTab?: boolean;
 
   /**
-   * Danger appearance for a destructive action: the filled button in the error
-   * colour; no effect on `outlined`, `ghost` or `text`.
+   * Danger look for a destructive action: the filled button in the error
+   * colour; no effect on the `outlined`, `ghost` or `text` appearance.
    */
   danger?: boolean;
 
@@ -98,6 +111,8 @@ interface CButtonProps {
 
   /**
    * Ghost appearance: primary text on a light primary tint, for lower emphasis.
+   *
+   * @deprecated Use `appearance="ghost"`.
    */
   ghost?: boolean;
 
@@ -111,8 +126,8 @@ interface CButtonProps {
 
   /**
    * Inverted colours for a fixed dark or brand-coloured backdrop: the
-   * `inverse-*` family, the same in both theme modes. Combines with the other
-   * appearances.
+   * `inverse-*` family, the same in both theme modes. Combines with every
+   * appearance.
    */
   inverted?: boolean;
 
@@ -138,6 +153,8 @@ interface CButtonProps {
   /**
    * Outlined appearance: a primary outline and text with no fill, for lower
    * emphasis.
+   *
+   * @deprecated Use `appearance="outlined"`.
    */
   outlined?: boolean;
 
@@ -157,6 +174,8 @@ interface CButtonProps {
 
   /**
    * Text appearance: primary text with no fill or outline, the lightest look.
+   *
+   * @deprecated Use `appearance="text"`.
    */
   text?: boolean;
 
@@ -187,6 +206,7 @@ interface CButtonProps {
 import { tv } from 'tailwind-variants';
 import { computed, useHost, useTemplateRef } from 'vue';
 
+import { resolveAppearance } from '../../shared/buttonAppearance';
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useIdReferences } from '../../shared/useIdReferences';
@@ -239,7 +259,7 @@ const sizeVariants = {
 
 const button = tv({
   compoundVariants: [
-    // ---- default (no appearance flag) -----------------------------------
+    // ---- default (filled) --------------------------------------------------
     {
       class: {
         root: 'bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary',
@@ -453,9 +473,10 @@ const button = tv({
     danger: { true: '' },
     disabled: { true: { root: 'cursor-not-allowed' } },
     fit: { true: { root: 'w-full' } },
+    // Appearance flags, one per non-filled appearance (resolved from the
+    // `appearance` prop below): base look set in compoundVariants above so
+    // the inverted/disabled intersections can override cleanly.
     ghost: { true: '' },
-    // Appearance flags: base look set in compoundVariants below so the
-    // inverted/disabled intersections can override cleanly.
     inverted: { true: '' },
     loading: {
       true: { contentInner: 'opacity-0', root: 'pointer-events-none' },
@@ -474,6 +495,8 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   // absent prop into `false`, which would stamp aria-pressed="false" on
   // every regular action button.
   active: undefined,
+  // Unset, so the deprecated booleans still choose until 5.0.
+  appearance: undefined,
   asTab: false,
   danger: false,
   disabled: false,
@@ -492,6 +515,8 @@ const props = withDefaults(defineProps<CButtonProps>(), {
   value: undefined,
 });
 
+const appearance = computed(() => resolveAppearance(props));
+
 // Attributes can deliver any string at runtime; unknown values fall back to
 // the defaults.
 const ui = computed(() =>
@@ -500,13 +525,13 @@ const ui = computed(() =>
     danger: props.danger,
     disabled: props.disabled,
     fit: props.fit,
-    ghost: props.ghost,
+    ghost: appearance.value === 'ghost',
     inverted: props.inverted,
     loading: props.loading,
     noRadius: props.noRadius,
-    outlined: props.outlined,
+    outlined: appearance.value === 'outlined',
     size: props.size in sizeVariants ? props.size : 'default',
-    text: props.text,
+    text: appearance.value === 'text',
   }),
 );
 

@@ -44,6 +44,9 @@ export interface CemMember {
     typeAlias?: string;
   };
   default?: string;
+
+  /** Kept until the next major; the message names the replacement. */
+  deprecated?: boolean | string;
   description?: string;
   kind: 'field' | 'method';
   name: string;
@@ -163,6 +166,9 @@ export interface PropView {
 
   /** Accepts an app-wide default via `applyDefaults()` (`@defaultable`). */
   defaultable?: boolean;
+
+  /** Kept until the next major: the message naming the replacement. */
+  deprecated?: string;
   description?: string;
   name: string;
   type: string;
@@ -243,17 +249,20 @@ export const toComponentView = (
     (c.attributes ?? []).map((a) => [a.fieldName, a.name]),
   );
 
+  // Deprecated props sort after the live ones.
   const props: PropView[] = (c.members ?? [])
     .filter((m) => m.kind === 'field' && !m.readonly)
     .map((m) => ({
       attribute: attributeByField.get(m.name) ?? null,
       default: m.default,
       defaultable: m.csc?.defaultable ?? false,
+      deprecated: m.deprecated ? String(m.deprecated) : undefined,
       description: m.description,
       name: m.name,
       type: m.type?.text ?? '',
       typeAlias: m.csc?.typeAlias,
-    }));
+    }))
+    .sort((a, b) => Number(!!a.deprecated) - Number(!!b.deprecated));
 
   const events: EventView[] = (c.events ?? []).map((e) => ({
     description: e.description,
