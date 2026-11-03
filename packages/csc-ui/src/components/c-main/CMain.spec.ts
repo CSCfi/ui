@@ -20,7 +20,7 @@ const TOOLBAR = '<c-toolbar><span>My Service</span></c-toolbar>';
 const STATIC_TOOLBAR = '<c-toolbar static><span>My Service</span></c-toolbar>';
 
 const ITEMS =
-  '<c-side-navigation-title>My project</c-side-navigation-title><c-side-navigation-item active>Dashboard</c-side-navigation-item><c-side-navigation-item>Members</c-side-navigation-item>';
+  '<c-side-navigation-title>My project</c-side-navigation-title><c-side-navigation-item current>Dashboard</c-side-navigation-item><c-side-navigation-item>Members</c-side-navigation-item>';
 
 const LONG_ITEMS = Array.from(
   { length: 40 },

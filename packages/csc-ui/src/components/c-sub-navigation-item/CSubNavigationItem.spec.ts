@@ -21,9 +21,9 @@ import {
 const NAV = `
   <c-side-navigation-title>My project</c-side-navigation-title>
   <c-side-navigation-item>Dashboard</c-side-navigation-item>
-  <c-side-navigation-item active>
+  <c-side-navigation-item expanded>
     Projects
-    <c-sub-navigation-item active>Active projects</c-sub-navigation-item>
+    <c-sub-navigation-item current>Active projects</c-sub-navigation-item>
     <c-sub-navigation-item>Archived projects</c-sub-navigation-item>
   </c-side-navigation-item>
   <c-side-navigation-item>Service description</c-side-navigation-item>
@@ -107,7 +107,7 @@ describe('c-sub-navigation-item', () => {
 describe('current page', () => {
   it('is announced by aria-current alone, not by added text', async () => {
     const m = await mount('c-sub-navigation-item', {
-      attrs: { active: true },
+      attrs: { current: true },
       html: 'Reports',
     });
 
@@ -115,5 +115,16 @@ describe('current page', () => {
 
     expect(row.getAttribute('aria-current')).toBe('page');
     expect(row.textContent?.replace(/\s+/g, ' ').trim()).toBe('');
+  });
+
+  it('is still marked by the deprecated active, which current overrides', async () => {
+    const marked = async (attrs: Record<string, boolean | string>) =>
+      (await mount('c-sub-navigation-item', { attrs, html: 'Reports' }))
+        .part('root')
+        .getAttribute('aria-current');
+
+    expect(await marked({ active: true })).toBe('page');
+    expect(await marked({ active: true, current: 'false' })).toBeNull();
+    expect(await marked({})).toBeNull();
   });
 });

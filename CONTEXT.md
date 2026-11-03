@@ -295,6 +295,14 @@ _Avoid_: Content area, view, scroll container (the Stencil-era and early-4.0 beh
 The **dashboard layout**'s left-hand menu — section titles, items and their sub-items. Its box is the **drawer**; below the items sits the **bottom slot**. On desktop `c-main` pins it beneath the **toolbar**; on mobile it is a slide-in panel over the page.
 _Avoid_: Sidebar, side menu, nav bar, menu (the command-menu component)
 
+**Current** (side navigation):
+The mark on the item, or sub-item, of the page shown (`current`, announced as `aria-current="page"`). The page sets it from the route it shows — the navigation never moves it on a click, since a router can cancel the navigation. Until 5.0 the 3.x `active` still sets it on an item without sub-items (**deprecated**).
+_Avoid_: Active (the 3.x prop, which also meant expanded on a parent; **active** is a button's pressed state), selected
+
+**Expanded** (side navigation):
+A parent item's open state (`expanded`, `aria-expanded`): its sub-items show and join the Tab order. The navigation writes it as parents open and close, one top-level parent at a time; a page sets it only to open one initially, or to open the parent of the **current** sub-item. Until 5.0 the 3.x `active` still sets it on a parent (**deprecated**).
+_Avoid_: Active, open (the drawer's state on mobile)
+
 **Drawer** (side navigation):
 The side navigation's box: on desktop a **pinned** column whose item list scrolls on its own, on mobile the slide-in panel. `autoheight` is its standalone viewport-high state, inert inside `c-main`.
 _Avoid_: Panel (transient surfaces), sidebar

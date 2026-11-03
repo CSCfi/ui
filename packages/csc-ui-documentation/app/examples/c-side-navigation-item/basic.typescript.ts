@@ -17,9 +17,9 @@ const [activeProjects, archivedProjects] = document.querySelectorAll(
 );
 
 function setCurrent(current: string) {
-  dashboardItem!.active = current === 'dashboard';
-  activeProjects!.active = current === 'active';
-  archivedProjects!.active = current === 'archived';
+  dashboardItem!.current = current === 'dashboard';
+  activeProjects!.current = current === 'active';
+  archivedProjects!.current = current === 'archived';
 }
 
 dashboardItem!.addEventListener('select', () => setCurrent('dashboard'));

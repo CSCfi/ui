@@ -2179,12 +2179,26 @@ export interface CSideNavigationItemElementEventMap {
 }
 
 /** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, shown open while `expanded`; an item without sub-items marks the page shown with `current`. */
-export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
+export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'current' | 'expanded' | 'href' | 'loading' | 'target' | 'value'> {
   /**
    * On an item without sub-items, mark the current page
    * (`aria-current="page"`); on a parent, expand its sub-items.
+   *
+   * @deprecated Use `current` on an item without sub-items and `expanded` on a parent.
    */
   active?: boolean;
+  /**
+   * Mark the item as the page shown (`aria-current="page"`), on an item
+   * without sub-items. Bind it from the page your router or the URL shows:
+   * the navigation never sets it.
+   */
+  current?: boolean;
+  /**
+   * Show a parent item's sub-items. The navigation sets it as parents open
+   * and close, collapsing the other top-level parents; set it to open one
+   * initially.
+   */
+  expanded?: boolean;
   /** URL that makes the item a real link; without it the item is a button. */
   href?: string;
   /** Cover the item with a loading overlay: a translucent scrim and a spinner. */
@@ -2351,12 +2365,20 @@ export interface CSubNavigationItemElementEventMap {
 }
 
 /** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `expanded`. Activating it fires `select` with its `value` and closes the mobile drawer. It does not mark itself as the current page: set `current` on the sub-item of the page shown, and `expanded` on its parent. */
-export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
+export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'current' | 'href' | 'loading' | 'target' | 'value'> {
   /**
    * Mark the sub-item as the current page (`aria-current="page"`); set `active`
    * on its parent item too, so the parent is expanded.
+   *
+   * @deprecated Use `current`.
    */
   active?: boolean;
+  /**
+   * Mark the sub-item as the page shown (`aria-current="page"`), and set
+   * `expanded` on its parent item so the parent is open. Bind it from the
+   * page your router or the URL shows: the navigation never sets it.
+   */
+  current?: boolean;
   /**
    * URL that makes the sub-item a real link; without it the sub-item is a
    * button.

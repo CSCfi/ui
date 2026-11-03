@@ -3,7 +3,7 @@
     <!-- A link with an `href`, else a button. -->
     <component
       :is="href ? 'a' : 'button'"
-      :aria-current="active ? 'page' : undefined"
+      :aria-current="isCurrent ? 'page' : undefined"
       :class="ui.item()"
       :href="href || undefined"
       :tabindex="collapsed ? -1 : undefined"
@@ -32,6 +32,7 @@
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, ref, useHost, watchEffect } from 'vue';
 
+import { coerceBoolean } from '../../shared/coerceBoolean';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useIdReferences } from '../../shared/useIdReferences';
 
@@ -107,6 +108,8 @@ interface CSubNavigationItemProps {
   /**
    * Mark the sub-item as the current page (`aria-current="page"`); set `active`
    * on its parent item too, so the parent is expanded.
+   *
+   * @deprecated Use `current`.
    */
   active?: boolean;
 
@@ -117,6 +120,13 @@ interface CSubNavigationItemProps {
    * @internal
    */
   collapsed?: boolean;
+
+  /**
+   * Mark the sub-item as the page shown (`aria-current="page"`), and set
+   * `expanded` on its parent item so the parent is open. Bind it from the
+   * page your router or the URL shows: the navigation never sets it.
+   */
+  current?: boolean;
 
   /**
    * URL that makes the sub-item a real link; without it the sub-item is a
@@ -151,6 +161,8 @@ interface CSubNavigationItemProps {
 const props = withDefaults(defineProps<CSubNavigationItemProps>(), {
   active: false,
   collapsed: false,
+  // Unset, so the deprecated `active` still marks the page until 5.0.
+  current: undefined,
   href: '',
   loading: false,
   target: '',
@@ -161,8 +173,11 @@ const host = useHost();
 
 const subLevel = ref(false);
 
+// `current` wins over the deprecated `active` when set.
+const isCurrent = computed(() => coerceBoolean(props.current ?? props.active));
+
 const ui = computed(() =>
-  subNavigationItem({ active: props.active, subLevel: subLevel.value }),
+  subNavigationItem({ active: isCurrent.value, subLevel: subLevel.value }),
 );
 
 const emit = useHostEmit<CSubNavigationItemEvents>();
@@ -184,7 +199,7 @@ onMounted(() => {
   // Listeners stay on the host; events bubble through it normally.
   host.addEventListener('click', redirect);
   watchEffect(() => {
-    host.classList.toggle('active', props.active);
+    host.classList.toggle('active', isCurrent.value);
   });
 
   // The `sub-level` palette is toggled by the parent c-side-navigation-item

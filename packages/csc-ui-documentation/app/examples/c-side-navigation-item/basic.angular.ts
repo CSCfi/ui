@@ -14,26 +14,26 @@ import {
     <div>
       <c-side-navigation>
         <c-side-navigation-item
-          [active]="current() === 'dashboard'"
+          [current]="current() === 'dashboard'"
           (select)="current.set('dashboard')"
         >
           <c-icon [path]="mdiViewDashboardOutline"></c-icon>
           Dashboard
         </c-side-navigation-item>
 
-        <c-side-navigation-item active>
+        <c-side-navigation-item expanded>
           <c-icon [path]="mdiFolderOutline"></c-icon>
           Projects
 
           <c-sub-navigation-item
-            [active]="current() === 'active'"
+            [current]="current() === 'active'"
             (select)="current.set('active')"
           >
             Active projects
           </c-sub-navigation-item>
 
           <c-sub-navigation-item
-            [active]="current() === 'archived'"
+            [current]="current() === 'archived'"
             (select)="current.set('archived')"
           >
             Archived projects
