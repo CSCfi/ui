@@ -289,7 +289,8 @@ start migrating on the first alpha that carries D2–D4.
        `on-surface-faint` are both `tertiary-500` (`#7e888d`: 3.62:1 on white, 3.18:1 on `surface-muted`). The
        proposal: both → `tertiary-600` (`#5e6a71`: 5.56:1 / 4.87:1; `border-strong` already uses it). It lands in
        phase 2 once design approves; D14 stays exception-free. These are the only 2 of the contrast audit's ten
-       below-AA pairs that axe flags today; the other 8 (white on `accent` / `success` / `info` / `warning`,
+       below-AA pairs that axe flags today; the other 8 (white on `accent` / `success` / `info` / `warning` — the last
+       three fixed 2026-11-03 with dark labels, d95be1d4 —
        `on-accent-subtle`, nav hover) appear in no canon state axe sees (hover never), so they go to design as
        context but do not block rc.1 unless a canon starts showing one. Axe's other failing pairs are not in the
        audit (it checks light-mode token pairs only) and are ours to fix: dark `#5e6a71` on `#2b2f33` (data
@@ -565,6 +566,10 @@ start migrating on the first alpha that carries D2–D4.
    - **Exception to "fixes only" (user decision 2026-11-03): the D13 renames.** The deprecation mechanism and the
      seven "add + deprecate" renames land in the RC, additive only (the API guard reports them as additions), so
      4.0.0 ships the final names with the old ones deprecated. Plan: `_plan/csc-ui-4-renames-before-stable.md`.
+   - **Same exception: the buttons' `variant`** (user decision 2026-11-03, ADR-0079). A colour prop on c-button and
+     c-icon-button in every appearance, app-defaultable; `danger` deprecated the same way. It brought the light-mode
+     dark labels on the success/info/warning fills (the audit's white-label pairs, d95be1d4) and the lighter
+     appearances' `on-<role>-subtle` ink. Plan: `_plan/csc-ui-button-variants.md`.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both

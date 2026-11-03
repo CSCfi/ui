@@ -643,6 +643,8 @@ const data = [{ id: 1, name: 'Ada' }];
       {
         code: `- c-button, c-icon-button: outlined, ghost, text → appearance="outlined",
   "ghost" or "text" (filled is the default)
+- c-button, c-icon-button: danger → variant="danger". variant also takes
+  primary (the default), secondary, success, info and warning.
 - c-text-field, c-number-field, c-select, c-autocomplete, c-tree-select,
   c-date-picker, c-time-picker, c-color-picker, c-file-upload, c-checkbox,
   c-radio-group, c-otp-input: hide-details → hide-message (also as an
