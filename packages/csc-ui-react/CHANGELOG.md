@@ -1,5 +1,72 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-rc.3
+
+### Minor Changes
+
+- [#316](https://github.com/CSCfi/ui/pull/316) [`d37b24b`](https://github.com/CSCfi/ui/commit/d37b24bff42edba1d3d3710b6aab76132970bf30) Thanks [@razorfever](https://github.com/razorfever)! - `c-button` and `c-icon-button` have an `appearance` prop: `filled` (the
+  default), `outlined`, `ghost` or `text`. It replaces the `outlined`, `ghost`
+  and `text` boolean attributes, which are deprecated: they keep working until
+  5.0, and `appearance` wins when both are set.
+
+  ```html
+  <c-button appearance="outlined">Cancel</c-button>
+  ```
+
+- [#316](https://github.com/CSCfi/ui/pull/316) [`a2825e9`](https://github.com/CSCfi/ui/commit/a2825e94f7153f16c446f0243d5708caadb324b8) Thanks [@razorfever](https://github.com/razorfever)! - `c-card` has a `show-fullscreen` attribute for its fullscreen toggle button.
+  It replaces `fullscreen`, which is deprecated and keeps working until 5.0;
+  `show-fullscreen` wins when both are set.
+
+- [#316](https://github.com/CSCfi/ui/pull/316) [`57a91a5`](https://github.com/CSCfi/ui/commit/57a91a5f21aa2bba573415acbdb7cf0c1c560c35) Thanks [@razorfever](https://github.com/razorfever)! - A deprecated prop is now marked as one wherever its name shows: in the
+  editor completions (VS Code and JetBrains), in the TypeScript element types
+  and the React wrappers (struck through), and on the documentation site. The
+  note names the prop to use instead. A deprecated prop keeps working until the
+  next major version.
+
+- [#316](https://github.com/CSCfi/ui/pull/316) [`6e8ce6d`](https://github.com/CSCfi/ui/commit/6e8ce6d314ad43957e346898ebc730369b3db668) Thanks [@razorfever](https://github.com/razorfever)! - The form fields have a `hide-message` attribute, named after the `message`
+  part it removes: the hint and error message under the field, and the room
+  they keep. It replaces `hide-details`, which is deprecated and keeps working
+  until 5.0; `hide-message` wins when both are set. This covers `c-text-field`,
+  `c-number-field`, `c-select`, `c-autocomplete`, `c-tree-select`,
+  `c-date-picker`, `c-time-picker`, `c-color-picker`, `c-file-upload`,
+  `c-checkbox`, `c-radio-group` and `c-otp-input`. `applyDefaults()` takes
+  `hideMessage` as well, and an element's own setting under either name beats
+  an app default under either name. `c-pagination` and `c-progress-bar` keep
+  `hide-details`, which hides their `details` part.
+
+- [#316](https://github.com/CSCfi/ui/pull/316) [`71cc449`](https://github.com/CSCfi/ui/commit/71cc4493a9aa0237103d2587441b2268ae4aa618) Thanks [@razorfever](https://github.com/razorfever)! - `c-side-navigation-item` splits `active` into what it meant on each kind of
+  item: `current` marks the item of the page you are on
+  (`aria-current="page"`), and `expanded` shows a parent item's sub-items.
+  `c-sub-navigation-item` takes `current` too. `active` is deprecated and keeps
+  working until 5.0; the new ones win when set. Bind `current` from your
+  router's current route; the side navigation writes `expanded` itself as
+  parents open and close.
+
+- [#316](https://github.com/CSCfi/ui/pull/316) [`64d6526`](https://github.com/CSCfi/ui/commit/64d652672d1ff4ade8496be565edf0994227da50) Thanks [@razorfever](https://github.com/razorfever)! - `c-slider` has a `tick-labels` attribute for the numbers under the track,
+  next to `ticks`. It replaces `labels`, which is deprecated and keeps working
+  until 5.0; `tick-labels` wins when both are set.
+
+- [#316](https://github.com/CSCfi/ui/pull/316) [`4964cd2`](https://github.com/CSCfi/ui/commit/4964cd27b665f06c52496b6591089f38a6b8809d) Thanks [@razorfever](https://github.com/razorfever)! - `c-spinner` and `c-loader` have a `thickness` attribute for the stroke width
+  in pixels, the name `c-progress-circle` already uses. It replaces `width`,
+  which is deprecated and keeps working until 5.0; `thickness` wins when both
+  are set.
+
+- [#316](https://github.com/CSCfi/ui/pull/316) [`e60e849`](https://github.com/CSCfi/ui/commit/e60e849309874c637d2003d7b9d28d0b448445a2) Thanks [@razorfever](https://github.com/razorfever)! - `c-toasts` has a `position` attribute — `bottom`, `bottom-start`,
+  `bottom-end`, `top`, `top-start` or `top-end`, the words the menus and
+  popovers use — and a `contained` boolean that keeps the stack inside its
+  nearest positioned ancestor. They replace `vertical` + `horizontal` and
+  `absolute`, which are deprecated and keep working until 5.0; the new ones win
+  when set.
+
+  ```html
+  <c-toasts position="top-end"></c-toasts>
+  ```
+
+### Patch Changes
+
+- Updated dependencies [[`d37b24b`](https://github.com/CSCfi/ui/commit/d37b24bff42edba1d3d3710b6aab76132970bf30), [`a2825e9`](https://github.com/CSCfi/ui/commit/a2825e94f7153f16c446f0243d5708caadb324b8), [`57a91a5`](https://github.com/CSCfi/ui/commit/57a91a5f21aa2bba573415acbdb7cf0c1c560c35), [`6e8ce6d`](https://github.com/CSCfi/ui/commit/6e8ce6d314ad43957e346898ebc730369b3db668), [`71cc449`](https://github.com/CSCfi/ui/commit/71cc4493a9aa0237103d2587441b2268ae4aa618), [`64d6526`](https://github.com/CSCfi/ui/commit/64d652672d1ff4ade8496be565edf0994227da50), [`4964cd2`](https://github.com/CSCfi/ui/commit/4964cd27b665f06c52496b6591089f38a6b8809d), [`e60e849`](https://github.com/CSCfi/ui/commit/e60e849309874c637d2003d7b9d28d0b448445a2)]:
+  - @cscfi/csc-ui@4.0.0-rc.3
+
 ## 4.0.0-rc.2
 
 ### Patch Changes
