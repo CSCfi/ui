@@ -7,7 +7,7 @@
  *     `@slot` / `@csspart` / `@cssprop` tags
  *   - props: the type argument of `defineProps<T>()` (+ `withDefaults`
  *     defaults), with per-member JSDoc descriptions and the `@freeform` /
- *     `@defaultable <built-in>` / `@internal` member tags
+ *     `@defaultable <built-in>` / `@internal` / `@deprecated` member tags
  *   - methods: `defineExpose({ … })` entries, resolved to their top-level
  *     declarations for JSDoc and signature text; an exposed `computed<T>(…)`
  *     is a read-only property instead (`readonlyProperties`)
@@ -60,6 +60,14 @@ const defaultableTag = (member) => memberTag(member, 'defaultable');
  * public API (ADR-0074).
  */
 const internalTag = (member) => Boolean(memberTag(member, 'internal'));
+
+/**
+ * The `@deprecated <message>` member tag: a public prop kept working until
+ * the next major, its message naming the replacement (ADR-0074). The
+ * manifest, the IDE data and the tag map's JSDoc carry the message. Returns
+ * the message (or `true` when missing, which lint rejects).
+ */
+const deprecatedTag = (member) => memberTag(member, 'deprecated');
 
 /**
  * The `@propertyonly` member tag: a prop whose type has a string member that
@@ -135,6 +143,7 @@ const interfaceMembers = (
         defaults.get(name) ??
         (typeof defaultable === 'string' ? defaultable : undefined),
       defaultable,
+      deprecated: deprecatedTag(member),
       description: jsDocDescription(member),
       freeform: freeformTag(member),
       internal: internalTag(member),

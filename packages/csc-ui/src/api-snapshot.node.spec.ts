@@ -46,6 +46,7 @@ interface Named {
 interface Typed {
   csc?: { defaultable?: boolean; signature?: string };
   default?: string;
+  deprecated?: boolean | string;
   name: string;
   type?: { text: string };
 }
@@ -158,6 +159,15 @@ const condense = (d: { tagName: string } & Declaration) => {
       .filter((f) => f.csc?.defaultable)
       .map((f) => f.name)
       .sort(),
+    // Props kept until the next major (ADR-0074); listed only where present.
+    ...(fields.some((f) => f.deprecated)
+      ? {
+          deprecated: fields
+            .filter((f) => f.deprecated)
+            .map((f) => f.name)
+            .sort(),
+        }
+      : {}),
     events: sortedObject(d.events.map((e) => [e.name, typeText(e)])),
     methods: sortedObject(
       d.members

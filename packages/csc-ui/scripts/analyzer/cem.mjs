@@ -101,11 +101,16 @@ const typeEntry = (prop) => {
   return text ? { type: { text } } : {};
 };
 
+/** CEM's own `deprecated` field: the IDE-data generators prefix the message. */
+const deprecatedEntry = (prop) =>
+  prop.deprecated ? { deprecated: prop.deprecated } : {};
+
 const field = (prop) => ({
   kind: 'field',
   name: prop.name,
   privacy: 'public',
   ...(prop.description ? { description: prop.description } : {}),
+  ...deprecatedEntry(prop),
   ...typeEntry(prop),
   ...(prop.default !== undefined ? { default: prop.default } : {}),
   ...typeCsc(prop),
@@ -115,6 +120,7 @@ const attribute = (prop) => ({
   fieldName: prop.name,
   name: kebab(prop.name),
   ...(prop.description ? { description: prop.description } : {}),
+  ...deprecatedEntry(prop),
   type: { text: attributeType(prop) },
   ...(prop.default !== undefined ? { default: prop.default } : {}),
   ...typeCsc(prop),

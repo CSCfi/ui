@@ -23,6 +23,8 @@
  *   - a boolean prop whose built-in default is `true` (ADR-0076)
  *   - a prop tagged both `@internal` and `@defaultable` (an app default is set
  *     by consumers, so the prop is public by definition)
+ *   - a `@deprecated` prop whose message names no replacement in backticks,
+ *     or that is also `@internal` (only public API is deprecated, ADR-0074)
  *   - a prop typed bare `string` without an `@freeform` tag
  *     (set-of-accepted-values props must be named exported unions; genuinely
  *     open-ended props declare it explicitly), or an `@freeform` tag on a
@@ -216,6 +218,18 @@ export const lintComponent = (
     if (prop.type === 'boolean' && String(prop.default).trim() === 'true') {
       errors.push(
         `prop "${prop.name}" is a boolean that defaults to true — name it for the non-default state (ADR-0076)`,
+      );
+    }
+
+    if (prop.deprecated && !/`[^`]+`/.test(String(prop.deprecated))) {
+      errors.push(
+        `prop "${prop.name}" is @deprecated without naming its replacement — e.g. "@deprecated Use \`new-name\`."`,
+      );
+    }
+
+    if (prop.deprecated && prop.internal) {
+      errors.push(
+        `prop "${prop.name}" is tagged both @internal and @deprecated — only public API is deprecated`,
       );
     }
 
