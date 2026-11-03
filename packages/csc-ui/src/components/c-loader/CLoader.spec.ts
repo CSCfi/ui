@@ -26,3 +26,15 @@ it('shows unless hide is set', async () => {
 
   expect(getComputedStyle(m.part('root')).visibility).toBe('hidden');
 });
+
+it("sets the spinner's stroke with thickness, which wins over the deprecated width", async () => {
+  const stroke = async (attrs: Record<string, number> = {}) =>
+    getComputedStyle(
+      (await mount('c-loader', { attrs })).deep('c-spinner', 'circle'),
+    ).strokeWidth;
+
+  expect(await stroke()).toBe('4px');
+  expect(await stroke({ thickness: 6 })).toBe('6px');
+  expect(await stroke({ width: 5 })).toBe('5px');
+  expect(await stroke({ thickness: 6, width: 5 })).toBe('6px');
+});

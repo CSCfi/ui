@@ -12,7 +12,7 @@
       :cy="size / 2"
       :r="radius"
       :style="{
-        strokeWidth: `${width}px`,
+        strokeWidth: `${strokeWidth}px`,
         strokeDasharray: 3.14 * size,
         transformOrigin: `${size / 2}px ${size / 2}px 0`,
         '--c-spinner-size': `${size}px`,
@@ -74,7 +74,14 @@ interface CSpinnerProps {
   size?: number;
 
   /**
+   * Stroke thickness in pixels: 2 unless set.
+   */
+  thickness?: number;
+
+  /**
    * Stroke width in pixels.
+   *
+   * @deprecated Use `thickness`.
    */
   width?: number;
 }
@@ -82,15 +89,21 @@ interface CSpinnerProps {
 const props = withDefaults(defineProps<CSpinnerProps>(), {
   color: 'var(--c-primary)',
   size: 24,
+  // Unset, so the deprecated `width` still sets the stroke until 5.0.
+  thickness: undefined,
   width: 2,
 });
 
-// Radius leaves room for the stroke so a thick `width` doesn't spill past the
-// size×size box (the SVG is `overflow-visible`). The inset is `max(2, width/2)`:
-// for the original's thin strokes (width ≤ 4) this is exactly `size/2 - 2`
-// — identical to the Stencil version — and only shrinks further when the
-// stroke is thick enough to otherwise overflow.
-const radius = computed(() => props.size / 2 - Math.max(2, props.width / 2));
+const strokeWidth = computed(() => props.thickness ?? props.width);
+
+// Radius leaves room for the stroke so a thick one doesn't spill past the
+// size×size box (the SVG is `overflow-visible`). The inset is
+// `max(2, stroke/2)`: for the original's thin strokes (≤ 4) this is exactly
+// `size/2 - 2` — identical to the Stencil version — and only shrinks further
+// when the stroke is thick enough to otherwise overflow.
+const radius = computed(
+  () => props.size / 2 - Math.max(2, strokeWidth.value / 2),
+);
 
 const ui = computed(() => spinner());
 </script>

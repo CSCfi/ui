@@ -4,7 +4,7 @@
       <!-- color="currentColor" so the spinner inherits the loader's text
            colour (text-primary-600 / any override) rather than the spinner's
            own primary-600 prop default. -->
-      <c-spinner :size :width color="currentColor" />
+      <c-spinner :size :thickness="thickness ?? width" color="currentColor" />
       <!-- The content-reveal animation (max-height grow, delayed by
            `content-delay`) is gated on `active` so it (re)starts each time the
            loader is shown. Without this it would run once when the element
@@ -110,7 +110,14 @@ interface CLoaderProps {
   size?: number;
 
   /**
+   * The spinner's stroke thickness in pixels: 4 unless set.
+   */
+  thickness?: number;
+
+  /**
    * The spinner's stroke width in pixels.
+   *
+   * @deprecated Use `thickness`.
    */
   width?: number;
 }
@@ -119,6 +126,8 @@ const props = withDefaults(defineProps<CLoaderProps>(), {
   contentDelay: 0,
   hide: false,
   size: 48,
+  // Unset, so the deprecated `width` still sets the stroke until 5.0.
+  thickness: undefined,
   width: 4,
 });
 

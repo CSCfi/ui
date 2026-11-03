@@ -1269,7 +1269,7 @@ export interface CListItemTitleElement extends Omit<HTMLElement, 'active'> {
 }
 
 /** A loading overlay that covers a container with a translucent scrim and a centred spinner, with an optional message below it, while that container's content loads. */
-export interface CLoaderElement extends Omit<HTMLElement, 'contentDelay' | 'hide' | 'size' | 'width'> {
+export interface CLoaderElement extends Omit<HTMLElement, 'contentDelay' | 'hide' | 'size' | 'thickness' | 'width'> {
   /**
    * Delay, in milliseconds, before the slotted message fades in once the
    * loader shows.
@@ -1283,7 +1283,13 @@ export interface CLoaderElement extends Omit<HTMLElement, 'contentDelay' | 'hide
   hide?: boolean;
   /** The spinner's diameter in pixels. */
   size?: number;
-  /** The spinner's stroke width in pixels. */
+  /** The spinner's stroke thickness in pixels: 4 unless set. */
+  thickness?: number;
+  /**
+   * The spinner's stroke width in pixels.
+   *
+   * @deprecated Use `thickness`.
+   */
   width?: number;
 }
 
@@ -2172,7 +2178,7 @@ export interface CSideNavigationItemElementEventMap {
   select: CustomEvent<{ value: string | undefined }>;
 }
 
-/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, whose `active` then means expanded rather than the current page. */
+/** One entry of a `c-side-navigation`: its label text, after an optional leading `c-icon`, goes in the default slot, and activating it fires `select` with its `value`; with `href` it is a real link, opened in `target`, and without one a button. Write `c-sub-navigation-item` children inside it to make it an expandable parent, shown open while `expanded`; an item without sub-items marks the page shown with `current`. */
 export interface CSideNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
   /**
    * On an item without sub-items, mark the current page
@@ -2298,7 +2304,7 @@ export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableT
 }
 
 /** A circular indeterminate activity indicator — pure motion with no value, for waits of unknown duration. */
-export interface CSpinnerElement extends Omit<HTMLElement, 'color' | 'size' | 'width'> {
+export interface CSpinnerElement extends Omit<HTMLElement, 'color' | 'size' | 'thickness' | 'width'> {
   /**
    * Stroke colour, the primary role by default; `currentColor` follows the
    * surrounding text colour.
@@ -2306,7 +2312,13 @@ export interface CSpinnerElement extends Omit<HTMLElement, 'color' | 'size' | 'w
   color?: string;
   /** Diameter in pixels. */
   size?: number;
-  /** Stroke width in pixels. */
+  /** Stroke thickness in pixels: 2 unless set. */
+  thickness?: number;
+  /**
+   * Stroke width in pixels.
+   *
+   * @deprecated Use `thickness`.
+   */
   width?: number;
 }
 
@@ -2338,7 +2350,7 @@ export interface CSubNavigationItemElementEventMap {
   select: CustomEvent<{ value: string | undefined }>;
 }
 
-/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `active`. Activating it fires `select` with its `value` and closes the mobile drawer. It does not mark itself as the current page: set `active` on the sub-item of the page shown, and on its parent so the parent is expanded. */
+/** A second-level entry of a `c-side-navigation`, written inside the `c-side-navigation-item` it belongs to (no `slot` attribute needed) and shown while that parent is `expanded`. Activating it fires `select` with its `value` and closes the mobile drawer. It does not mark itself as the current page: set `current` on the sub-item of the page shown, and `expanded` on its parent. */
 export interface CSubNavigationItemElement extends Omit<HTMLElement, 'active' | 'collapsed' | 'href' | 'loading' | 'target' | 'value'> {
   /**
    * Mark the sub-item as the current page (`aria-current="page"`); set `active`
