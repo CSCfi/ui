@@ -240,6 +240,130 @@ describe('tab row', () => {
 
     expect(document.activeElement).toBe(input);
   });
+
+  describe('indicator', () => {
+    // The strip's `::after` (`::before` in vertical tabs), scaled from its
+    // start edge and translated along the row.
+    const indicatorBox = (host: HTMLElement) => {
+      const strip =
+        host.shadowRoot!.querySelector<HTMLElement>('.c-tabs__scroll')!;
+
+      const vertical = host.classList.contains('c-tabs--vertical');
+
+      const ink = getComputedStyle(strip, vertical ? '::before' : '::after');
+
+      const [tx = 0, ty = 0] = ink.translate
+        .split(' ')
+        .map((v) => parseFloat(v) || 0);
+
+      const [sx = 1, sy = sx] = ink.scale
+        .split(' ')
+        .map((v) => (Number.isNaN(parseFloat(v)) ? 1 : parseFloat(v)));
+
+      const box = strip.getBoundingClientRect();
+
+      return vertical
+        ? { size: box.height * sy, start: box.top + ty }
+        : { size: box.width * sx, start: box.left + tx };
+    };
+
+    const expectUnder = (host: HTMLElement, value: string) => {
+      const vertical = host.classList.contains('c-tabs--vertical');
+
+      const t = host
+        .querySelector(`c-tab[value="${value}"]`)!
+        .getBoundingClientRect();
+
+      const ink = indicatorBox(host);
+
+      expect(
+        Math.abs(ink.start - (vertical ? t.top : t.left)),
+        'start',
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(ink.size - (vertical ? t.height : t.width)),
+        'size',
+      ).toBeLessThanOrEqual(1);
+    };
+
+    const mountThree = (attrs: Record<string, boolean | string> = {}) =>
+      mount('c-tabs', {
+        attrs,
+        html: `${tab('one') + tab('two') + tab('three')}<c-tab-items slot="items">${
+          panel('one') + panel('two') + panel('three')
+        }</c-tab-items>`,
+        props: { value: 'two' },
+      });
+
+    const select = (host: HTMLElement, value: string) =>
+      host.querySelector<HTMLElement>(`c-tab[value="${value}"]`)!.click();
+
+    it('sits under the selected tab wherever the tab set is on the page', async () => {
+      const m = await mountThree();
+
+      // The tab set's offset from the page must not reach the indicator,
+      // which measures a frame and 200ms after mount.
+      m.stage.style.margin = '40px 0 0 100px';
+      await wait(400);
+
+      expectUnder(m.host, 'two');
+
+      select(m.host, 'three');
+      await wait(400);
+
+      expectUnder(m.host, 'three');
+    });
+
+    it('sits beside the selected tab in vertical tabs', async () => {
+      const m = await mountThree({ vertical: true });
+
+      m.stage.style.margin = '40px 0 0 100px';
+      await wait(400);
+
+      expectUnder(m.host, 'two');
+
+      select(m.host, 'one');
+      await wait(400);
+
+      expectUnder(m.host, 'one');
+    });
+
+    it('sits under the selected tab when the row overflows', async () => {
+      const m = await mountRow();
+
+      m.stage.style.marginInlineStart = '100px';
+      select(m.host, MANY[8]!);
+      await wait(600);
+
+      expectUnder(m.host, MANY[8]!);
+    });
+
+    it('slides under a tab picked while a move waits', () =>
+      withMotion(async () => {
+        const m = await mountThree();
+
+        // The mount's moves are still waiting when this tab is picked.
+        select(m.host, 'three');
+        await wait(800);
+
+        expectUnder(m.host, 'three');
+
+        select(m.host, 'one');
+        await wait(800);
+
+        expectUnder(m.host, 'one');
+      }));
+
+    it('lands under the selected tab with disable-animation', () =>
+      withMotion(async () => {
+        const m = await mountRow({ 'disable-animation': true });
+
+        select(m.host, MANY[8]!);
+        await wait(600);
+
+        expectUnder(m.host, MANY[8]!);
+      }));
+  });
 });
 
 describe('APG tabs', () => {

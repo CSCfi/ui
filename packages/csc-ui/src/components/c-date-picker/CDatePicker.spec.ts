@@ -1020,19 +1020,10 @@ describe('focus ring', () => {
 });
 
 describe('motion', () => {
-  // The browser context emulates reduced motion; these specs opt back in.
   // Every animation is held at its start: the specs inspect a slide a frame
   // or two after it begins, and on a loaded runner (WebKit in CI) two frames
   // outlasted the 250ms slide. `finishAnimations` ends them.
-  const allowMotion = () => {
-    const real = window.matchMedia.bind(window);
-
-    vi.spyOn(window, 'matchMedia').mockImplementation((query) =>
-      query.includes('prefers-reduced-motion')
-        ? ({ ...real(query), matches: false } as MediaQueryList)
-        : real(query),
-    );
-
+  const holdAnimations = () => {
     const animate = Element.prototype.animate;
 
     vi.spyOn(Element.prototype, 'animate').mockImplementation(function (
@@ -1045,6 +1036,19 @@ describe('motion', () => {
 
       return animation;
     });
+  };
+
+  // The browser context emulates reduced motion; these specs opt back in.
+  const allowMotion = () => {
+    const real = window.matchMedia.bind(window);
+
+    vi.spyOn(window, 'matchMedia').mockImplementation((query) =>
+      query.includes('prefers-reduced-motion')
+        ? ({ ...real(query), matches: false } as MediaQueryList)
+        : real(query),
+    );
+
+    holdAnimations();
   };
 
   afterEach(() => vi.restoreAllMocks());
@@ -1287,6 +1291,8 @@ describe('motion', () => {
   });
 
   it('under reduced motion the slide is a crossfade', async () => {
+    holdAnimations();
+
     const m = await mountPicker({ value: '2031-09-17' });
 
     await open(m);
