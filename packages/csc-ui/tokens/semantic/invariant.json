@@ -5,10 +5,10 @@
   "inverse-on": "white",
   "inverse-primary": "primary-600",
   "inverse-error": "error-600",
-  "_comment-inverse-status": "The other button variants' inverted labels on inverse-surface (ADR-0079): the family's 600 step, or 700 for success, where 600 reads 4.4:1.",
+  "_comment-inverse-status": "The other button variants' inverted labels on inverse-surface (ADR-0079): the family's 600 step, or 700 for success, where 600 reads 4.4:1, and 800 for the yellow warning, where 700 reads 4.2:1 (ADR-0080).",
   "inverse-info": "info-600",
   "inverse-secondary": "secondary-600",
   "inverse-success": "success-700",
-  "inverse-warning": "warning-600",
+  "inverse-warning": "warning-800",
   "scrim": "black"
 }

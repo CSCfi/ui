@@ -27,7 +27,7 @@ export const DEFAULT_SEEDS = {
   primary: '#006778',
   secondary: '#830051',
   success: '#51a808',
-  warning: '#ff5800',
+  warning: '#ffc400',
 };
 
 // The chromatic families a consumer may re-seed (order = DEFAULT_SEEDS order).

@@ -2,12 +2,16 @@
  * Behaviour spec for c-alert's close button (glossary Closeable): `closeable`
  * renders it, pressing it fires `close`, and the alert stays put — removing
  * it is the consumer's job. An unset `type` is the neutral look, as on
- * c-status, and only a status type shows an icon.
+ * c-status, and only a status type shows an icon. Warning and error differ by
+ * hue.
  */
+import { converter } from 'culori';
 import { expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
-import { mount, recordEvents, settle } from '../../test/harness';
+import { mount, recordEvents, setThemeMode, settle } from '../../test/harness';
+
+const oklch = converter('oklch');
 
 it('closeable renders a close button that fires close', async () => {
   const m = await mount('c-alert', {
@@ -63,5 +67,25 @@ it('shows an icon for a status type and none for an unset or unknown type', asyn
 
   for (const m of [neutral, unknown]) {
     expect(m.host.shadowRoot!.querySelector('[part~="icon"]')).toBeNull();
+  }
+});
+
+// The warning and error families sat 11° of hue apart (orange #ff5800 against
+// red #dd0c0c) and read alike, salmon on salmon in dark mode. Their accent
+// edges must be told apart by hue alone.
+it('tells a warning from an error by hue in both modes', async () => {
+  for (const mode of ['light', 'dark'] as const) {
+    setThemeMode(mode);
+
+    const hue = async (type: string) => {
+      const m = await mount('c-alert', { attrs: { type }, html: 'Note' });
+
+      return oklch(getComputedStyle(m.part('root')).borderLeftColor)!
+        .h as number;
+    };
+
+    const apart = Math.abs((await hue('warning')) - (await hue('error')));
+
+    expect(Math.min(apart, 360 - apart), mode).toBeGreaterThanOrEqual(45);
   }
 });

@@ -708,7 +708,9 @@ const autocomplete = tv({
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
     content: 'relative flex w-full min-w-0 items-center',
     info: 'flex min-h-[42px] w-full cursor-default flex-nowrap items-center gap-2 px-[10px] text-sm whitespace-nowrap text-on-surface-muted',
-    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-warning',
+    // The yellow `warning` reads 1.6:1 on the panel; the icon takes the ink
+    // of the warning tint, as c-alert's icon does (ADR-0080).
+    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-warning-subtle',
     input:
       'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
     item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',

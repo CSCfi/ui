@@ -317,37 +317,37 @@
     },
     "warning": {
       "50": {
-        "value": "#fff8f6ff"
+        "value": "#fffaeeff"
       },
       "100": {
-        "value": "#ffddd2ff"
+        "value": "#fff0ceff"
       },
       "200": {
-        "value": "#ffc1adff"
+        "value": "#ffe6adff"
       },
       "300": {
-        "value": "#ffa384ff"
+        "value": "#ffdb88ff"
       },
       "400": {
-        "value": "#ff8256ff"
+        "value": "#ffd05dff"
       },
       "500": {
-        "value": "#ff5800ff"
+        "value": "#ffc400ff"
       },
       "600": {
-        "value": "#d04600ff"
+        "value": "#cd9d00ff"
       },
       "700": {
-        "value": "#a43500ff"
+        "value": "#9c7700ff"
       },
       "800": {
-        "value": "#792500ff"
+        "value": "#6f5300ff"
       },
       "900": {
-        "value": "#511600ff"
+        "value": "#443200ff"
       },
       "950": {
-        "value": "#2c0800ff"
+        "value": "#1e1400ff"
       }
     },
     "white": {

@@ -14,11 +14,14 @@ import { peekCap } from '../../shared/peekCap';
 import { fakeVisualViewport } from '../../test/fakeVisualViewport';
 import {
   consoleSpy,
+  contrastRatio,
   deepActiveElement,
   defineAll,
   matchScreenshotInBothModes,
   mount,
   recordEvents,
+  roleInMode,
+  setThemeMode,
   settle,
   settled,
   wrap,
@@ -172,6 +175,32 @@ describe('match marking', () => {
     ).toEqual(['JavaScript']);
 
     await matchScreenshotInBothModes(m.part('panel'), 'open-marked');
+  });
+
+  // The no-results icon sits on the panel's overlay surface; a yellow
+  // warning cannot reach 3:1 there, so it inks with the warning tint's ink.
+  it('draws its no-results icon at 3:1 on the panel in both modes', async () => {
+    for (const mode of ['light', 'dark'] as const) {
+      setThemeMode(mode);
+
+      const m = await mountAuto();
+
+      await open(m);
+      await userEvent.fill(search(m), 'zz');
+      await settle();
+
+      const icon = m.shadow('li[part~="info"] svg');
+
+      expect(
+        contrastRatio(
+          getComputedStyle(icon).color,
+          roleInMode(mode, '--c-surface-overlay'),
+        ),
+        mode,
+      ).toBeGreaterThanOrEqual(3);
+
+      document.body.replaceChildren();
+    }
   });
 
   it('treats regex metacharacters in the query literally', async () => {

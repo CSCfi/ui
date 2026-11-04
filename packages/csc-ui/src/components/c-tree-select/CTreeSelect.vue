@@ -765,7 +765,9 @@ const treeSelect = tv({
     headerAction:
       'shrink-0 cursor-pointer border-0 bg-transparent p-0 text-sm text-link hover:underline',
     info: 'flex min-h-[42px] w-full cursor-default flex-nowrap items-center gap-2 px-[10px] text-sm whitespace-nowrap text-on-surface-muted',
-    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-warning',
+    // The yellow `warning` reads 1.6:1 on the panel; the icon takes the ink
+    // of the warning tint, as c-alert's icon does (ADR-0080).
+    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-warning-subtle',
     // The readonly combobox is visually hidden (clip) but stays focusable and
     // keeps the flattened value for assistive technology.
     input:

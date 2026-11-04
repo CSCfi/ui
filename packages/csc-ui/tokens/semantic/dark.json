@@ -16,13 +16,13 @@
   "border-strong": "slate-400",
   "divider": "color-mix(in srgb, var(--c-white) 12%, transparent)",
 
-  "_comment-inverted": "Inverted-surface tier (ADR-0032): white pill on the dark page. Each status *-inverted role is the family's accent ink on white (coloured icon + alpha-wash halo — the wash lands on the pale subtle tint the light-mode alerts use); neutral inks reuse light mode's on-surface neutrals. Keep keys in sync with light.json.",
+  "_comment-inverted": "Inverted-surface tier (ADR-0032): white pill on the dark page. Each status *-inverted role is the family's accent ink on white (coloured icon + alpha-wash halo — the wash lands on the pale subtle tint the light-mode alerts use); neutral inks reuse light mode's on-surface neutrals. Warning takes warning-700, where the yellow warning-600 reads 2.5:1 on white (ADR-0080). Keep keys in sync with light.json.",
   "surface-inverted": "white",
   "on-surface-inverted": "slate-900",
   "on-surface-inverted-muted": "tertiary-600",
   "success-inverted": "success-600",
   "info-inverted": "info-600",
-  "warning-inverted": "warning-600",
+  "warning-inverted": "warning-700",
   "error-inverted": "error-600",
 
   "primary": "primary-300",

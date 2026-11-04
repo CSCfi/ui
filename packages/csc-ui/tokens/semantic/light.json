@@ -46,7 +46,7 @@
   "accent-subtle-hover": "accent-50",
   "on-accent-subtle": "accent-700",
 
-  "_comment-status-on": "The success, info and warning fills are too light for a white label (3.0, 4.3 and 3.2:1, under 2.3:1 on their hover fills), so text on them is dark: the family's 950 step, or black for info, where info-950 reads 4.2:1 (ADR-0079).",
+  "_comment-status-on": "The success, info and warning fills are too light for a white label (3.0, 4.3 and 1.6:1, under 2.3:1 on their hover fills), so text on them is dark: the family's 950 step, or black for info, where info-950 reads 4.2:1 (ADR-0079). Warning is yellow (ADR-0080), so its tint ink drops to warning-800: warning-700 reads 3.7:1 on its tint and 4.2:1 on white.",
   "success": "success-500",
   "success-hover": "success-300",
   "on-success": "success-950",
@@ -66,7 +66,7 @@
   "on-warning": "warning-950",
   "warning-subtle": "warning-100",
   "warning-subtle-hover": "warning-50",
-  "on-warning-subtle": "warning-700",
+  "on-warning-subtle": "warning-800",
 
   "error": "error-500",
   "error-hover": "error-300",

@@ -142,6 +142,15 @@ for (const r of ROLES) {
   add(`on-${r}-subtle`, `${r}-subtle`, TEXT, `on-${r}-subtle / ${r}-subtle`);
 }
 
+// A status tint's ink also draws straight on the surface: an outlined, ghost
+// or text button's label (ADR-0079), and an icon beside text, such as the
+// no-results row's warning icon on the overlay panel (ADR-0080).
+for (const r of ['success', 'info', 'warning', 'error']) {
+  for (const bg of ['surface', 'surface-overlay']) {
+    add(`on-${r}-subtle`, bg, TEXT, `on-${r}-subtle / ${bg}`);
+  }
+}
+
 // nav chrome
 add('on-nav', 'nav-surface', TEXT, 'on-nav / nav-surface');
 add('on-nav', 'nav-surface-hover', TEXT, 'on-nav / nav-surface-hover');
