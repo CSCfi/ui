@@ -605,7 +605,7 @@ const fileUpload = tv({
     actions: 'flex shrink-0 items-center',
     bar: 'block h-full bg-primary transition-[width] duration-200 ease-linear',
     choose:
-      'm-0 inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-csc-md border border-solid border-primary bg-transparent px-3 text-sm font-bold text-primary transition-colors duration-200 ease-in-out outline-none hover:not-disabled:bg-primary/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:pointer-events-none disabled:border-on-surface-disabled disabled:text-on-surface-disabled',
+      'm-0 inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-csc-md border border-solid border-primary bg-transparent px-3 text-sm font-bold text-primary transition-colors duration-200 ease-in-out outline-none hover:not-disabled:bg-primary/15 hover:not-disabled:text-on-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:pointer-events-none disabled:border-on-surface-disabled disabled:text-on-surface-disabled',
     chooseIcon: 'size-5 shrink-0 fill-current',
     compactPrompt: 'min-w-0 truncate',
     done: 'size-5 shrink-0 fill-current text-success',

@@ -870,7 +870,7 @@ const datePicker = tv({
   slots: {
     actions: 'flex shrink-0 justify-end px-3 pb-3',
     arrow:
-      'flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted transition-[opacity,visibility] duration-150 outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:opacity-40',
+      'flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-on-surface-muted transition-[opacity,visibility] duration-150 outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-on-primary-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:opacity-40',
     blank: 'p-0',
     // As tall as its content: the day grid's weeks (four to six). An open
     // list holds the height the grid had (`onBodyEnter`).
@@ -890,7 +890,7 @@ const datePicker = tv({
     monthName: '[grid-area:1/1]',
     monthNames: 'grid justify-items-center',
     option:
-      'flex min-h-10 cursor-pointer items-center gap-3 rounded px-3 text-sm text-on-surface outline-none select-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary-subtle aria-selected:font-medium aria-selected:text-primary',
+      'flex min-h-10 cursor-pointer items-center gap-3 rounded px-3 text-sm text-on-surface outline-none select-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary-subtle aria-selected:font-medium aria-selected:text-on-primary-subtle',
     panel:
       'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
     stepLabel: 'px-3 pt-3 pb-1 text-xs font-medium text-on-surface-muted',
@@ -901,7 +901,7 @@ const datePicker = tv({
     // A text button's look on a native button: the focus trap only sees
     // native buttons in the card.
     today:
-      'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-bold text-primary outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
+      'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-bold text-primary outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-on-primary-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
     viewButton:
       'flex h-9 cursor-pointer items-center gap-0.5 rounded-full border-0 bg-transparent pr-1.5 pl-3 text-sm font-medium text-on-surface tabular-nums outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     visuallyHidden:

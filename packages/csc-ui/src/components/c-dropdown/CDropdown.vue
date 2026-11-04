@@ -262,7 +262,7 @@ const dropdown = tv({
       'fixed m-0 mt-[-4px] overflow-visible rounded border-0 bg-transparent p-0 pt-1',
     // The wrapper inside the dialog; a flex column in the fullscreen layout.
     inner: '',
-    item: 'pointer-events-auto flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap outline-none select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary hover:ring-inset focus:bg-primary-subtle focus:text-primary focus:ring-1 focus:ring-primary focus:ring-inset aria-selected:rounded-none aria-selected:bg-primary-subtle aria-selected:text-on-primary-subtle hover:aria-selected:rounded focus:aria-selected:rounded',
+    item: 'pointer-events-auto flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap outline-none select-none hover:bg-primary-subtle hover:text-on-primary-subtle hover:ring-1 hover:ring-primary hover:ring-inset focus:bg-primary-subtle focus:text-on-primary-subtle focus:ring-1 focus:ring-primary focus:ring-inset aria-selected:rounded-none aria-selected:bg-primary-subtle aria-selected:text-on-primary-subtle hover:aria-selected:rounded focus:aria-selected:rounded',
     // Static list look; visibility + fade-in (`.active`) stay in the
     // escape-hatch <style>.
     list: 'pointer-events-auto m-0 h-max w-full scrollbar-hidden list-none overflow-y-auto overscroll-none rounded bg-surface-overlay p-0 text-on-surface shadow-[2px_4px_10px_#00000029] outline-none',

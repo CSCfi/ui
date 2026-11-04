@@ -531,9 +531,9 @@ const timePicker = tv({
       'h-8 flex-1 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-medium whitespace-nowrap text-on-surface-muted outline-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary aria-selected:text-on-primary aria-selected:hover:bg-primary-hover aria-selected:focus-visible:-outline-offset-4 aria-selected:focus-visible:outline-on-primary',
     // A text button's look on a native button: the focus trap only sees
     // native buttons in the card.
-    now: 'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-bold whitespace-nowrap text-primary outline-none hover:not-disabled:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
+    now: 'h-9 cursor-pointer rounded-csc-md border-0 bg-transparent px-3 text-sm font-bold whitespace-nowrap text-primary outline-none hover:not-disabled:bg-primary-subtle-hover hover:not-disabled:text-on-primary-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid disabled:cursor-default disabled:text-on-surface-disabled',
     option:
-      'flex h-10 cursor-pointer items-center justify-center rounded-csc-lg text-sm text-on-surface tabular-nums outline-none select-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary-subtle aria-selected:font-medium aria-selected:text-primary',
+      'flex h-10 cursor-pointer items-center justify-center rounded-csc-lg text-sm text-on-surface tabular-nums outline-none select-none hover:bg-primary-subtle-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid aria-selected:bg-primary-subtle aria-selected:font-medium aria-selected:text-on-primary-subtle',
     panel:
       'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
   },

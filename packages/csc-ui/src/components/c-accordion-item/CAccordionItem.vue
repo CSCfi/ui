@@ -167,7 +167,7 @@ const accordionItem = tv({
     contentWrapper:
       'grid grid-rows-[minmax(0,0fr)] overflow-hidden transition-[grid-template-rows] duration-300 ease-standard',
     header:
-      'relative m-0 grid min-h-[46px] w-full cursor-pointer grid-cols-[1fr_auto] items-center gap-x-2 rounded-[inherit] border-0 bg-transparent px-3 text-left text-primary transition-colors duration-200 ease-standard select-none [font:inherit] hover:bg-primary/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-primary/15 supports-corner-shape:[corner-shape:squircle]',
+      'relative m-0 grid min-h-[46px] w-full cursor-pointer grid-cols-[1fr_auto] items-center gap-x-2 rounded-[inherit] border-0 bg-transparent px-3 text-left text-primary transition-colors duration-200 ease-standard select-none [font:inherit] hover:bg-primary/8 hover:text-on-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-primary/15 active:text-on-primary-subtle supports-corner-shape:[corner-shape:squircle]',
     icon: 'flex h-6 items-center text-2xl text-primary *:flex *:h-6 *:items-center',
     indicator:
       'flex -rotate-90 items-center text-primary transition-transform duration-300 ease-standard',

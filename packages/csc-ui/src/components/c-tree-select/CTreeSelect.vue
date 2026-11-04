@@ -772,7 +772,7 @@ const treeSelect = tv({
     // keeps the flattened value for assistive technology.
     input:
       'absolute m-0 h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap outline-none [clip:rect(0_0_0_0)]',
-    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
+    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-on-primary-subtle data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
     itemLabel: 'min-w-0 truncate',
     itemMain: 'flex min-w-0 flex-auto flex-col',
     itemTitle: 'flex min-w-0 items-center gap-2',

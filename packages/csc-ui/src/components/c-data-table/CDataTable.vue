@@ -1519,7 +1519,7 @@ table.c-data-table th > div.cell {
 
 table.c-data-table th > div.cell.sortable:hover {
   background-color: var(--c-primary-subtle-hover);
-  color: var(--c-primary);
+  color: var(--c-on-primary-subtle);
   cursor: pointer;
 }
 

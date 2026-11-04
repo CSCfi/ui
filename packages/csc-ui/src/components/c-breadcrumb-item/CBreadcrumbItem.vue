@@ -111,7 +111,7 @@ const breadcrumbItem = tv({
     {
       class: {
         content:
-          'cursor-pointer text-primary hover:bg-primary/15 focus-visible:outline-primary',
+          'cursor-pointer text-primary hover:bg-primary/15 hover:text-on-primary-subtle focus-visible:outline-primary',
       },
       folded: false,
       interactive: true,
@@ -119,7 +119,7 @@ const breadcrumbItem = tv({
     {
       class: {
         content:
-          'cursor-pointer hover:bg-primary-subtle hover:text-primary focus-visible:outline-primary',
+          'cursor-pointer hover:bg-primary-subtle hover:text-on-primary-subtle focus-visible:outline-primary',
       },
       folded: true,
       interactive: true,

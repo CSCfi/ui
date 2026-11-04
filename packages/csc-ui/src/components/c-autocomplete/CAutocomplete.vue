@@ -713,7 +713,7 @@ const autocomplete = tv({
     infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-warning-subtle',
     input:
       'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
-    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
+    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-on-primary-subtle data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
     list: 'm-0 mt-1 w-full scrollbar-hidden list-none overflow-y-auto overscroll-none p-1 outline-none',
     panel:
