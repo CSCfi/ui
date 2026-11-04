@@ -72,7 +72,7 @@ const fieldMessage = tv({
     // The message line recolours separately from the control: an invalid
     // control with no `errorMessage` keeps showing its hint AS a hint.
     error: {
-      true: { root: 'text-error' },
+      true: { root: 'text-on-surface-error' },
     },
     // Under an on-top label the message lines up with the label, not the
     // field's inner padding.

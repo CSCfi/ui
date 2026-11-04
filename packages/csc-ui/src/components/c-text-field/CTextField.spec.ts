@@ -9,11 +9,15 @@ import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
+import { rasterise } from '../../test/conformance/paint';
 import {
   consoleSpy,
+  contrastRatio,
   matchScreenshotInBothModes,
   mount,
   recordEvents,
+  roleInMode,
+  setThemeMode,
   settle,
 } from '../../test/harness';
 
@@ -117,6 +121,46 @@ describe('invalid (ADR-0076)', () => {
 
     expect(message.textContent).toContain('With the country code');
     expect(input(m).getAttribute('aria-invalid')).toBe('false');
+  });
+
+  // Error text and the error outline are separate tokens (ADR-0080): in dark
+  // mode the outline is a vivid red that text cannot be (3.7:1).
+  it('inks its error message with on-surface-error and outlines with error, in both modes', async () => {
+    for (const mode of ['light', 'dark'] as const) {
+      setThemeMode(mode);
+
+      const m = await mount('c-text-field', {
+        attrs: {
+          'error-message': 'Enter a phone number',
+          invalid: true,
+          label: 'Phone',
+        },
+      });
+      await settle(400);
+
+      const message = getComputedStyle(m.shadow('[part="message"]')).color;
+
+      const outline = getComputedStyle(
+        m.deep('c-input', 'fieldset'),
+      ).borderTopColor;
+
+      expect(rasterise(message), mode).toEqual(
+        rasterise(roleInMode(mode, '--c-on-surface-error')),
+      );
+      expect(rasterise(outline), mode).toEqual(
+        rasterise(roleInMode(mode, '--c-error')),
+      );
+      expect(
+        contrastRatio(message, roleInMode(mode, '--c-surface')),
+        mode,
+      ).toBeGreaterThanOrEqual(4.5);
+
+      document.body.replaceChildren();
+    }
+
+    expect(roleInMode('dark', '--c-on-surface-error')).not.toBe(
+      roleInMode('dark', '--c-error'),
+    );
   });
 });
 

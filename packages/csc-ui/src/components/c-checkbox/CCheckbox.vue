@@ -191,7 +191,7 @@ const checkbox = tv({
     {
       class: {
         rippleEffect: 'bg-error',
-        root: 'text-error',
+        root: 'text-on-surface-error',
       },
       disabled: false,
       error: true,
@@ -254,7 +254,7 @@ const checkbox = tv({
     // The message line recolours separately from the box: an invalid checkbox
     // with no `errorMessage` keeps showing its hint AS a hint (neutral).
     messageError: {
-      true: { message: 'text-error' },
+      true: { message: 'text-on-surface-error' },
     },
   },
 });

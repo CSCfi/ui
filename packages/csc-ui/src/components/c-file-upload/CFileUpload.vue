@@ -662,7 +662,7 @@ const fileUpload = tv({
       error: {
         fileIcon: 'text-error',
         row: 'border-error',
-        status: 'text-error',
+        status: 'text-on-surface-error',
       },
     },
   },

@@ -569,6 +569,13 @@ export const TOKEN_GROUPS: TokenGroup[] = [
         purpose: 'Text on the sunken surface.',
         token: 'on-surface-sunken',
       },
+      {
+        dark: 'error-300',
+        light: 'error-500',
+        purpose:
+          'Error text on a surface: messages and required marks. Lighter than the error fill in dark mode.',
+        token: 'on-surface-error',
+      },
     ],
   },
   {

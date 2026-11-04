@@ -151,6 +151,15 @@ for (const r of ['success', 'info', 'warning', 'error']) {
   }
 }
 
+// Error text on the surfaces it sits on, apart from the error fill, which is
+// a vivid red in dark mode that only clears the non-text 3:1 (ADR-0080). The
+// dark overlay pair reads 4.0:1, as `text-error` did before.
+for (const bg of ['surface', 'surface-raised', 'surface-overlay']) {
+  add('on-surface-error', bg, TEXT, `on-surface-error / ${bg}`);
+}
+
+add('error', 'surface', UI, 'error / surface (outline, indicator)');
+
 // nav chrome
 add('on-nav', 'nav-surface', TEXT, 'on-nav / nav-surface');
 add('on-nav', 'nav-surface-hover', TEXT, 'on-nav / nav-surface-hover');

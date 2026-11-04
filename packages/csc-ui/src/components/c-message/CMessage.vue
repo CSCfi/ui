@@ -51,7 +51,7 @@ const message = tv({
   variants: {
     error: {
       false: { root: 'text-on-surface-muted' },
-      true: { root: 'text-error' },
+      true: { root: 'text-on-surface-error' },
     },
   },
 });

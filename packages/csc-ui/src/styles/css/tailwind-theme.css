@@ -96,6 +96,8 @@
   --color-error-subtle: var(--c-error-subtle);
   --color-error-subtle-hover: var(--c-error-subtle-hover);
   --color-on-error-subtle: var(--c-on-error-subtle);
+  /* Error text on a surface: lighter than the dark-mode error fill (ADR-0080). */
+  --color-on-surface-error: var(--c-on-surface-error);
 
   --color-link: var(--c-link);
   --color-link-hover: var(--c-link-hover);

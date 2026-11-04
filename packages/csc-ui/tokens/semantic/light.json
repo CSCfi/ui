@@ -74,6 +74,8 @@
   "error-subtle": "error-100",
   "error-subtle-hover": "error-50",
   "on-error-subtle": "error-700",
+  "_comment-on-surface-error": "Error text on a surface (ADR-0080). In light mode it is the error fill itself, 5.1:1 on white; dark mode splits the two.",
+  "on-surface-error": "error-500",
 
   "link": "link-500",
   "link-hover": "accent-100",

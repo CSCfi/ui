@@ -102,7 +102,7 @@ const radioGroup = tv({
   compoundVariants: [
     {
       class: {
-        items: 'text-error [--_c-radio-color:var(--c-error)]',
+        items: 'text-on-surface-error [--_c-radio-color:var(--c-error)]',
       },
       disabled: false,
       error: true,

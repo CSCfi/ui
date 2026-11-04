@@ -81,7 +81,7 @@ const progress = tv({
   },
   variants: {
     negative: {
-      true: { details: 'text-error' },
+      true: { details: 'text-on-surface-error' },
     },
     singleLine: {
       true: {

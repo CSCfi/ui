@@ -67,12 +67,14 @@
   "warning-subtle-hover": "warning-700",
   "on-warning-subtle": "warning-200",
 
-  "error": "error-300",
-  "error-hover": "error-200",
+  "_comment-error": "Error splits its fill from its text (ADR-0080). Fills, borders, rings and indicators sit on the vivid error-400 (3.7:1 on the surface, 5.1:1 under on-error), hover error-300. Error text cannot be that vivid (error-400 reads 3.7:1), so it takes on-surface-error on error-300: 5.3:1 on the surface, 4.0:1 on surface-overlay.",
+  "error": "error-400",
+  "error-hover": "error-300",
   "on-error": "error-950",
   "error-subtle": "error-700",
   "error-subtle-hover": "error-600",
   "on-error-subtle": "error-200",
+  "on-surface-error": "error-300",
 
   "link": "link-200",
   "link-hover": "link-100",
