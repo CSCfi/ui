@@ -242,9 +242,12 @@ const iconButton = tv({
       outlined: false,
       text: false,
     },
+    // Hover replaces the white, so the hovered white takes 15% of the variant
+    // mixed in, opaque: a see-through hover let the dark backdrop through
+    // under the dark label.
     {
       class: {
-        root: 'bg-inverse-surface text-(--_c-icon-button-inverse) hover:bg-(--_c-icon-button-inverse)/15 focus-visible:outline-inverse-on',
+        root: 'bg-inverse-surface text-(--_c-icon-button-inverse) hover:bg-[color-mix(in_oklab,var(--_c-icon-button-inverse)_15%,var(--c-inverse-surface))] focus-visible:outline-inverse-on',
       },
       ghost: false,
       inverted: true,

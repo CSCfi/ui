@@ -210,6 +210,35 @@ export function describeButtonVariants(
       }
     });
 
+    // Hover replaces the inverted look's white, so a see-through hover let the
+    // dark backdrop through under the dark label. Mode-invariant: light only.
+    it('stays light under the pointer, inverted, on a dark backdrop, in every variant', async () => {
+      for (const variant of VARIANTS) {
+        const { part, stage } = await mount(tag, {
+          attrs: { inverted: true, variant },
+          html,
+        });
+
+        stage.style.background = 'black';
+
+        const root = part('root');
+
+        await userEvent.hover(root);
+        await settled();
+
+        const { backgroundColor, color } = getComputedStyle(root);
+
+        expect(alpha(backgroundColor), `${variant} opaque`).toBe(1);
+        expect(
+          contrastRatio(color, backgroundColor),
+          variant,
+        ).toBeGreaterThanOrEqual(4.5);
+
+        await parkPointer();
+        document.body.replaceChildren();
+      }
+    });
+
     // A filled hover moves away from its label (ADR-0081): darker under a
     // white label, lighter under a dark one. Light mode had lightened every
     // fill, so white read 2.5–3.8:1 hovered.
