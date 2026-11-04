@@ -63,3 +63,6 @@ text read 3.0, 4.3 and 3.2:1 on the success, info and warning fills, and under
   orange fill, now at AA.
 - A spec checks every variant × appearance at AA in both modes, through the
   harness's `contrastRatio()`.
+- ADR-0080 made warning yellow and moved `inverse-warning` to warning-800
+  (7.2:1): the yellow warning-600 reads 2.5:1 on white. The badge count's fill
+  is yellow now, under the same dark label.

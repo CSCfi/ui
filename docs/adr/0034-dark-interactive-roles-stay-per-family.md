@@ -54,3 +54,6 @@ comfortable margins (`on-primary`/`primary` 6.31:1, `link`/`surface` 5.33:1,
   that pre-existing cross-family reference is out of this decision's scope
   and would need the same treatment if link re-theming fidelity ever
   matters there.
+- ADR-0080 moves the dark `error` fill to the vivid error-400 and gives error
+  text its own token, `on-surface-error`, on error-300: a family's dark fill
+  and its text on the surface need not be one step.

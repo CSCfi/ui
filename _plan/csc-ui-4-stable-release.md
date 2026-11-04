@@ -570,6 +570,9 @@ start migrating on the first alpha that carries D2–D4.
      c-icon-button in every appearance, app-defaultable; `danger` deprecated the same way. It brought the light-mode
      dark labels on the success/info/warning fills (the audit's white-label pairs, d95be1d4) and the lighter
      appearances' `on-<role>-subtle` ink. Plan: `_plan/csc-ui-button-variants.md`.
+   - **Same exception: the status colours** (user decision 2026-11-04, ADR-0080). Warning is yellow and error a
+     cooler red with vivid dark fills; error text takes the new `on-surface-error` token. Also fixed c-menu-item's
+     danger label contrast. Plan: `_plan/csc-ui-status-colours.md`. Parked: `_plan/light-hover-contrast.md`.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
