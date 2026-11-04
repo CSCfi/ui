@@ -175,13 +175,16 @@ const item = tv({
       'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
   },
   variants: {
-    // Destructive action — matches c-button's danger token (error-600). The
-    // keyboard-active (`[data-active]`) red state lives in the escape-hatch
-    // <style> since it must target the host attribute.
+    // Destructive action. The label is text on the menu's overlay surface at
+    // rest and on the `error-subtle` tint when hovered, so it inks with that
+    // tint's paired `on-error-subtle`: `error` itself read 4.0:1 on the dark
+    // overlay and 3.7:1 on the tint. The keyboard-active (`[data-active]`) red
+    // state lives in the escape-hatch <style> since it must target the host
+    // attribute.
     danger: {
       true: {
-        check: 'text-error',
-        root: 'text-error hover:bg-error-subtle hover:text-error hover:ring-error',
+        check: 'text-on-error-subtle',
+        root: 'text-on-error-subtle hover:bg-error-subtle hover:text-on-error-subtle hover:ring-error',
       },
     },
     disabled: {
@@ -444,6 +447,6 @@ onBeforeUnmount(() => {
 :host([data-active][data-danger]) [part='root'] {
   background-color: var(--c-error-subtle);
   box-shadow: inset 0 0 0 1px var(--c-error);
-  color: var(--c-error);
+  color: var(--c-on-error-subtle);
 }
 </style>
