@@ -65,3 +65,7 @@ rest, and the contrast audit only prints.
 - The shared button-variant spec measures every filled variant hovered, in
   both modes, and `src/test/tintInk.spec.ts` reads four tinted states as the
   page paints them.
+- ADR-0082 made every tint opaque: the role at a low alpha became the role
+  mixed into the page surface (`bg-tint-<role>/<n>`), which read the same on a
+  dark popover and the light page canvas. `lint:tint` now also fails a
+  see-through role background.

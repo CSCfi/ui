@@ -39,7 +39,7 @@ pnpm lint:tokens    # forbid direct palette-step utilities in SFCs
 pnpm lint:a11y      # host attribute fallthrough check
 pnpm lint:chart     # chart-data.ts matches the semantic maps (ADR-0040)
 pnpm lint:focus     # a focus ring under outline-none restates outline-solid (Tailwind v4)
-pnpm lint:tint      # text on a role's tint uses on-<role>-subtle, never the role (ADR-0081)
+pnpm lint:tint      # tints are opaque (bg-tint-*) and text on them uses on-<role>-subtle (ADR-0081/0082)
 pnpm lint:engines   # lists every chromiumOnly() spec; no other engine switch (ADR-0077)
 pnpm test           # browser + node projects; test:browser / test:node / test:watch
 pnpm test:update    # rewrite the visual baselines of the browser project

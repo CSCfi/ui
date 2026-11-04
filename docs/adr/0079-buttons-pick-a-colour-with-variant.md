@@ -87,6 +87,8 @@ text read 3.0, 4.3 and 3.2:1 on the success, info and warning fills, and under
     before), and secondary falls short in every state, already 4.35:1 as a
     text button with no wash. Only a lighter dark ink can fix that, so it is
     parked in `_plan/dark-overlay-contrast.md`. The library's own lighter
-    buttons on overlays are icons, held to 3:1.
+    buttons on overlays are icons, held to 3:1. Resolved the same day by
+    ADR-0082: the ghost and hover tints are opaque, mixed into the page
+    surface, and dark secondary's ink is secondary-100.
   - The spec checks the ring's colour, both washes and every lighter
     appearance hovered at AA, on the page surface.

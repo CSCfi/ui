@@ -579,6 +579,10 @@ start migrating on the first alpha that carries D2–D4.
    - **Same exception: the outlined border and the ghost wash** (user decision 2026-11-04, ADR-0079 amended). The
      outlined border takes the variant's fill, a stronger ghost wash (14%), one 20% hover for the lighter
      appearances and no pressed step. Plan: `_plan/button-outline-ghost.md`.
+   - **Same exception: opaque tints** (user decision 2026-11-04, ADR-0082). Every role wash under text is the role
+     mixed into the page surface, so lighter buttons and alerts read on dark popovers and the light canvas; dark
+     secondary's tint ink is secondary-100; `lint:tint` fails a see-through role background; the inverted filled
+     hover no longer goes dark. Plan: `_plan/dark-overlay-contrast.md`.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
