@@ -285,12 +285,13 @@ const sizeVariants = {
 // The variant's colours as private custom properties on `root`, which the
 // appearance compounds below paint with — one set of compounds for every
 // colour (ADR-0079). `fill`, `fill-hover` and `on-fill` paint the filled and
-// pressed looks (the fill also rings the filled look's focus) and tint the
-// lighter ones; `ink` is the label, outline and focus ring of the lighter
-// appearances: the role's subtle ink, as c-alert's, since the role itself
-// drops under AA on its own tint (dark primary read 3.8:1 on the hover tint).
-// `inverse` is the label of the inverted filled look. Hoisted, like the
-// sizes, so the runtime guard below can test membership.
+// pressed looks (the fill also rings the filled look's focus), tint the
+// lighter ones and border the outlined one, whose edge is then the filled
+// edge; `ink` is the label and focus ring of the lighter appearances: the
+// role's subtle ink, as c-alert's, since the role itself drops under AA on
+// its own tint (dark primary read 3.8:1 on the hover tint). `inverse` is the
+// label of the inverted filled look. Hoisted, like the sizes, so the runtime
+// guard below can test membership.
 const variantVariants = {
   danger: {
     root: '[--_c-button-fill-hover:var(--c-error-hover)] [--_c-button-fill:var(--c-error)] [--_c-button-ink:var(--c-on-error-subtle)] [--_c-button-inverse:var(--c-inverse-error)] [--_c-button-on-fill:var(--c-on-error)]',
@@ -334,9 +335,12 @@ const button = tv({
       text: false,
     },
     // ---- ghost -----------------------------------------------------------
+    // The lighter appearances share one 20% hover wash over the ghost's 14%,
+    // and none darkens further while pressed (the ripple marks the press):
+    // dark secondary's label reads 4.6:1 hovered and fell under AA at 22%.
     {
       class: {
-        root: 'bg-(--_c-button-fill)/8 text-(--_c-button-ink) hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink) active:bg-(--_c-button-fill)/22',
+        root: 'bg-(--_c-button-fill)/14 text-(--_c-button-ink) hover:bg-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
       },
       ghost: true,
       inverted: false,
@@ -351,7 +355,7 @@ const button = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-button-ink) hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink)',
+        root: 'bg-transparent text-(--_c-button-ink) hover:bg-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
       },
       inverted: false,
       text: true,
@@ -366,7 +370,7 @@ const button = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-button-ink) ring-2 ring-(--_c-button-ink) ring-inset hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink)',
+        root: 'bg-transparent text-(--_c-button-ink) ring-2 ring-(--_c-button-fill) ring-inset hover:bg-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
       },
       inverted: false,
       outlined: true,

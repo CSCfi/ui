@@ -9,6 +9,7 @@ import { userEvent } from 'vitest/browser';
 import { applyDefaults } from '../shared/appDefaults';
 import { rasterise } from './conformance/paint';
 import {
+  chromiumOnly,
   contrastRatio,
   defineAll,
   matchScreenshotInBothModes,
@@ -56,6 +57,26 @@ const over = (top: string, under: string): string => {
   const mix = (c: number, i: number) => Math.round(c * t + below[i]! * (1 - t));
 
   return `rgb(${mix(r!, 0)} ${mix(g!, 1)} ${mix(b!, 2)})`;
+};
+
+/** A colour's opacity, 0–1, as painted. */
+const alpha = (value: string): number => rasterise(value)[3]! / 255;
+
+/**
+ * The outlined ring's colour, rasterised: the inset shadow among the computed
+ * `box-shadow` layers (Tailwind keeps transparent placeholders around it).
+ */
+const ringColour = (boxShadow: string): number[] => {
+  const ring = boxShadow
+    .split(/,(?![^(]*\))/)
+    .find((layer) => layer.includes('inset'));
+
+  return rasterise(
+    (ring ?? '')
+      .replace('inset', '')
+      .replaceAll(/-?[\d.]+px/g, '')
+      .trim(),
+  );
 };
 
 export function describeButtonVariants(
@@ -219,6 +240,112 @@ export function describeButtonVariants(
           document.body.replaceChildren();
         }
       }
+    });
+
+    // The outlined edge is the filled edge: a border is not text, so it takes
+    // the role, as every other border does (ADR-0080). The label's ink read
+    // near-black in light mode (primary-700).
+    it('borders the outlined look with the variant’s fill, in both modes', async () => {
+      for (const mode of MODES) {
+        setThemeMode(mode);
+
+        for (const variant of VARIANTS) {
+          const { boxShadow } = await paint({
+            appearance: 'outlined',
+            variant,
+          });
+
+          expect(ringColour(boxShadow), `${mode} ${variant}`).toEqual(
+            role(mode, `--c-${ROLE[variant]}`),
+          );
+
+          document.body.replaceChildren();
+        }
+      }
+    });
+
+    it('washes the ghost look at 14%, in both modes', async () => {
+      for (const mode of MODES) {
+        setThemeMode(mode);
+
+        for (const variant of VARIANTS) {
+          const { backgroundColor } = await paint({
+            appearance: 'ghost',
+            variant,
+          });
+
+          expect(alpha(backgroundColor), `${mode} ${variant}`).toBeCloseTo(
+            0.14,
+            2,
+          );
+
+          document.body.replaceChildren();
+        }
+      }
+    });
+
+    // One hover wash for the three lighter appearances, over the ghost's
+    // resting one. The labels keep AA on it over the page surface (dark
+    // secondary is the lowest, 4.6:1); on a dark popover they do not, a known
+    // case in ADR-0079. One test per appearance: each hover waits out the
+    // transition.
+    for (const appearance of ['outlined', 'ghost', 'text']) {
+      it(`washes the ${appearance} look at 20% hovered, at AA, in both modes`, async () => {
+        for (const mode of MODES) {
+          setThemeMode(mode);
+
+          const surface = roleInMode(mode, '--c-surface');
+
+          for (const variant of VARIANTS) {
+            const { part } = await mount(tag, {
+              attrs: { appearance, variant },
+              html,
+            });
+
+            const root = part('root');
+
+            await userEvent.hover(root);
+            await settled();
+
+            const { backgroundColor, color } = getComputedStyle(root);
+
+            const at = `${mode} ${variant} hovered`;
+
+            expect(alpha(backgroundColor), at).toBeCloseTo(0.2, 2);
+            expect(
+              contrastRatio(color, over(backgroundColor, surface)),
+              at,
+            ).toBeGreaterThanOrEqual(4.5);
+
+            await parkPointer();
+            document.body.replaceChildren();
+          }
+        }
+      });
+    }
+
+    // No pressed step: a darker pressed wash took dark secondary under AA
+    // (4.5:1 at 22%), and the ripple already marks the press.
+    chromiumOnly(
+      'holds the button :active with a held Space, which Firefox’s WebDriver BiDi input does not, even on a plain <button>',
+    )('keeps a held ghost button’s wash', async () => {
+      const { part } = await mount(tag, {
+        attrs: { appearance: 'ghost', variant: 'primary' },
+        html,
+      });
+
+      const root = part('root');
+
+      root.focus();
+
+      const rest = getComputedStyle(root).backgroundColor;
+
+      await userEvent.keyboard('[Space>]');
+      expect(root.matches(':active'), 'held').toBe(true);
+      expect(rasterise(getComputedStyle(root).backgroundColor)).toEqual(
+        rasterise(rest),
+      );
+      await userEvent.keyboard('[/Space]');
     });
 
     if (pressable) {

@@ -105,8 +105,9 @@ interface CAccordionItemEvents {
 // paired with that wash, `on-primary-subtle`, which keeps AA contrast in dark
 // mode where plain primary falls just short.
 //
-// The header is transparent at rest so the frame reads as one surface, with
-// c-button's ghost hover/active washes. The wash takes the root's corners and
+// The header is transparent at rest so the frame reads as one surface, with a
+// light primary wash hovered and a stronger one pressed, lighter than
+// c-button's. The wash takes the root's corners and
 // squircle shape, but only the top ones on an expanded item, so it never
 // rounds off inside the card. The content is a raised card inside
 // the wash: 8px inset, 12px padding, a 25% primary inset hairline. `root`
