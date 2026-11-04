@@ -11,6 +11,7 @@
       appearance="ghost"
       part="scroll-back"
       size="x-small"
+      variant="primary"
       @click="strip.back()"
     >
       <c-icon :path="mdiChevronLeft" />
@@ -58,6 +59,7 @@
       appearance="ghost"
       part="scroll-forward"
       size="x-small"
+      variant="primary"
       @click="strip.forward()"
     >
       <c-icon :path="mdiChevronRight" />
@@ -265,6 +267,7 @@ const strip = useScrollStrip(scrollerRef);
 type CTabButtonEl = {
   asTab?: boolean;
   disabled?: boolean;
+  variant?: string;
 } & HTMLElement;
 
 // An aria-label on the element (or on the c-tabs around it, which passes its
@@ -391,9 +394,12 @@ const suppressActiveFill = () => {
 };
 
 const setupButtons = () => {
-  // Each button is a tab of the tablist, not a toggle button.
+  // Each button is a tab of the tablist, not a toggle button. Its colour is
+  // the pill's, which has one: `primary`, whatever the button or an app
+  // default says (ADR-0079).
   buttons().forEach((button) => {
     button.asTab = true;
+    button.variant = 'primary';
   });
   suppressActiveFill();
   observeButtons();

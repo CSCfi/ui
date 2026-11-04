@@ -19,6 +19,7 @@
             :class="ui.itemsPerPageValue()"
             appearance="text"
             size="small"
+            variant="primary"
           >
             {{ pageSize }}
 
@@ -45,6 +46,7 @@
           :disabled="page <= 1"
           :size="buttonSize"
           appearance="text"
+          variant="primary"
           @click="decreasePage"
         >
           <span class="sr-only">{{ t.previousPage }}</span>
@@ -62,6 +64,7 @@
             :size="buttonSize"
             appearance="text"
             aria-hidden="true"
+            variant="primary"
             disabled
           >
             <svg height="16" viewBox="0 0 24 24" width="16">
@@ -76,6 +79,7 @@
             :aria-current="page === btn.number ? 'page' : undefined"
             :aria-label="t.page(btn.number!, totalPages)"
             :size="buttonSize"
+            variant="primary"
             @click="setPage(btn.number!)"
           >
             {{ btn.number }}
@@ -88,7 +92,8 @@
           :aria-label="t.nextPage"
           :disabled="page >= totalPages"
           :size="buttonSize"
-          text
+          appearance="text"
+          variant="primary"
           @click="increasePage"
         >
           <span class="sr-only">{{ t.nextPage }}</span>

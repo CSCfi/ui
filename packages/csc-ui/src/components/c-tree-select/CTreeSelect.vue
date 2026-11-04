@@ -92,6 +92,7 @@
           :disabled
           appearance="text"
           size="x-small"
+          variant="primary"
           @click="onReset"
           @keydown="onButtonKeyDown('reset', $event)"
         >
@@ -104,6 +105,7 @@
             :disabled
             appearance="text"
             size="x-small"
+            variant="primary"
             @click="onChevronClick"
             @keydown="onButtonKeyDown('chevron', $event)"
           >

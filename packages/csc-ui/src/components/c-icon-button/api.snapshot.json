@@ -10,11 +10,15 @@
     "outlined": "boolean = false",
     "path": "string = ''",
     "size": "'default' | 'small' | 'x-small' = 'default'",
-    "text": "boolean = false"
+    "text": "boolean = false",
+    "variant": "'danger' | 'info' | 'primary' | 'secondary' | 'success' | 'warning' = 'primary'"
   },
   "cssProperties": [],
-  "defaultable": [],
+  "defaultable": [
+    "variant"
+  ],
   "deprecated": [
+    "danger",
     "ghost",
     "outlined",
     "text"
@@ -38,7 +42,8 @@
     "outlined": "boolean = false",
     "path": "string = ''",
     "size": "'default' | 'small' | 'x-small' = 'default'",
-    "text": "boolean = false"
+    "text": "boolean = false",
+    "variant": "'danger' | 'info' | 'primary' | 'secondary' | 'success' | 'warning' = 'primary'"
   },
   "slots": [
     "default"

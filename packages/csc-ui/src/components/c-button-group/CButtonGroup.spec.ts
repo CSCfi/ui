@@ -9,7 +9,13 @@ import { describe, expect, it } from 'vitest';
 
 import type { Mounted } from '../../test/harness';
 
-import { matchScreenshotInBothModes, mount, settled } from '../../test/harness';
+import { rasterise } from '../../test/conformance/paint';
+import {
+  matchScreenshotInBothModes,
+  mount,
+  roleInMode,
+  settled,
+} from '../../test/harness';
 
 const LABELS = ['Day', 'Week', 'Month', 'Quarter', 'Year'];
 
@@ -140,5 +146,29 @@ describe('c-button-group', () => {
     const wrapped = await mountGroup('display:block;width:260px');
 
     await matchScreenshotInBothModes(wrapped.stage, 'wrapped');
+  });
+});
+
+describe('c-button-group variant', () => {
+  // The group owns its buttons' appearance, not their colour: each keeps its
+  // variant and paints its own pressed fill in it (ADR-0079).
+  it('leaves each button its variant, and a pressed one fills with it', async () => {
+    const m = await mount('c-button-group', {
+      html: '<c-button value="yes" variant="success">Yes</c-button><c-button value="no" variant="danger">No</c-button>',
+      props: { value: 'no' },
+    });
+
+    await settled();
+
+    const [yes, no] = [...m.host.querySelectorAll('c-button')].map((b) =>
+      b.shadowRoot!.querySelector('button')!,
+    );
+
+    expect(rasterise(getComputedStyle(no!).backgroundColor)).toEqual(
+      rasterise(roleInMode('light', '--c-error')),
+    );
+    expect(rasterise(getComputedStyle(yes!).color)).toEqual(
+      rasterise(roleInMode('light', '--c-on-success-subtle')),
+    );
   });
 });

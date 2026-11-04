@@ -12,6 +12,7 @@
       <c-icon-button
         ref="closeRef"
         appearance="text"
+        variant="primary"
         inverted
         @click="closeMenu"
       >

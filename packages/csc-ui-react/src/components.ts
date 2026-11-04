@@ -214,10 +214,10 @@ export const CBreadcrumbItem = createComponent({
   tagName: 'c-breadcrumb-item',
 });
 
-/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one primary (filled, the default `appearance`) button per view; secondary actions use `appearance="outlined"`, `"ghost"` or `"text"`. */
+/** Buttons trigger actions — submitting a form, opening a modal, confirming a choice. Use one filled button (the default `appearance`) per view for its main action; other actions use `appearance="outlined"`, `"ghost"` or `"text"`. */
 export const CButton = createComponent({
   displayName: 'CButton',
-  elementClass: elementClass<CButtonElement>(['active', 'appearance', 'danger', 'disabled', 'fit', 'ghost', 'href', 'inverted', 'loading', 'noRadius', 'outlined', 'size', 'target', 'text', 'type', 'value']),
+  elementClass: elementClass<CButtonElement>(['active', 'appearance', 'danger', 'disabled', 'fit', 'ghost', 'href', 'inverted', 'loading', 'noRadius', 'outlined', 'size', 'target', 'text', 'type', 'value', 'variant']),
   react: React,
   tagName: 'c-button',
 });
@@ -365,7 +365,7 @@ export const CIcon = createComponent({
 /** An icon-only button: a round native button that shows a single icon and takes its accessible name from an `aria-label` on the element. */
 export const CIconButton = createComponent({
   displayName: 'CIconButton',
-  elementClass: elementClass<CIconButtonElement>(['appearance', 'badge', 'danger', 'disabled', 'ghost', 'inverted', 'loading', 'outlined', 'path', 'size', 'text']),
+  elementClass: elementClass<CIconButtonElement>(['appearance', 'badge', 'danger', 'disabled', 'ghost', 'inverted', 'loading', 'outlined', 'path', 'size', 'text', 'variant']),
   react: React,
   tagName: 'c-icon-button',
 });

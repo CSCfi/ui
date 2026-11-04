@@ -141,6 +141,7 @@
           :disabled
           appearance="text"
           size="x-small"
+          variant="primary"
           @click="onReset"
           @keydown="onButtonKeyDown('reset', $event)"
         >
@@ -153,6 +154,7 @@
             :disabled
             appearance="text"
             size="x-small"
+            variant="primary"
             @click="toggleDropdown"
             @keydown="onButtonKeyDown('chevron', $event)"
           >

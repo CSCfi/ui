@@ -31,7 +31,7 @@ import {
         <c-icon [path]="mdiDotsVertical"></c-icon>
       </c-icon-button>
 
-      <c-icon-button aria-label="Delete" danger>
+      <c-icon-button aria-label="Delete" variant="danger">
         <c-icon [path]="mdiDelete"></c-icon>
       </c-icon-button>
 

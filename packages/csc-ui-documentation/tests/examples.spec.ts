@@ -42,6 +42,7 @@ const SCREENSHOT = new Set([
   'c-alert/types',
   'c-badge/basic',
   'c-button/appearances',
+  'c-button/variants',
   'c-card/basic',
   'c-checkbox/basic',
   'c-data-table/basic',

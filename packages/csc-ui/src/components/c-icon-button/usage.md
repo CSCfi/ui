@@ -6,7 +6,7 @@ the button itself (the slot wins when both are given). Listen to the native
 `click` event; a disabled or loading button does not deliver it.
 
 ```vue
-<c-icon-button aria-label="Delete" danger @click="remove">
+<c-icon-button aria-label="Delete" variant="danger" @click="remove">
   <c-icon :path="mdiDelete" />
 </c-icon-button>
 ```
@@ -22,13 +22,24 @@ the button itself (the slot wins when both are given). Listen to the native
 
 ## Appearances
 
-`appearance` matches `c-button`'s: `filled` (the default) primary button for
-the main action, then `outlined`, `ghost` (a light primary tint) and `text`
-(no fill) for lower emphasis. The 3.x `outlined`, `ghost` and `text` boolean
-attributes still work until 5.0; `appearance` wins when both are set. `danger` turns the filled button into the error
-role for a destructive action; it has no effect on the other appearances.
-`inverted` is for a fixed dark or brand-coloured backdrop: it paints the
-`inverse-*` family, which looks the same in both theme modes.
+`appearance` matches `c-button`'s: `filled` (the default) for the main
+action, then `outlined`, `ghost` (a light tint) and `text` (no fill) for lower
+emphasis. The 3.x `outlined`, `ghost` and `text` boolean attributes still work
+until 5.0; `appearance` wins when both are set. `inverted` is for a fixed dark
+or brand-coloured backdrop: it paints the `inverse-*` family, which looks the
+same in both theme modes.
+
+## Variants
+
+`variant` matches `c-button`'s and colours every appearance: `primary` (the
+default), `secondary`, `success`, `info`, `warning`, or `danger` for a
+destructive action. The filled success, info and warning buttons draw a dark
+icon, which stays visible on their lighter fills; inverted, only the filled
+look shows the colour. An app can change the default with
+`applyDefaults({ 'c-icon-button': { variant: 'secondary' } })`; the icon
+buttons the library draws inside its own components keep `primary`. The
+`danger` attribute of earlier releases still works until 5.0; `variant` wins
+when both are set.
 
 ## Sizes
 

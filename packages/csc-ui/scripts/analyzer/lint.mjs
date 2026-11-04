@@ -335,13 +335,15 @@ const lintDefaultable = (component, errors) => {
 
   // `appDefault('<name>', <built-in>)` — the literal may itself hold quotes
   // or an identifier (`DEFAULT_TEXTS`), never a nested call. A third
-  // argument names the deprecated prop the call resolves along with it.
+  // argument names the deprecated prop the call resolves along with it; a
+  // fourth, a mapper identifier, marks that prop as one of another shape,
+  // which is not defaultable itself.
   const resolved = new Map(
     [
       ...scriptSource.matchAll(
-        /(?<![\w.])appDefault\(\s*'([^']+)'\s*,\s*([^()]+?)(?:\s*,\s*'([^']+)')?\s*\)/g,
+        /(?<![\w.])appDefault\(\s*'([^']+)'\s*,\s*([^()]+?)(?:\s*,\s*'([^']+)'(?:\s*,\s*(\w+))?)?\s*,?\s*\)/g,
       ),
-    ].flatMap((m) => [[m[1], m[2]], ...(m[3] ? [[m[3], m[2]]] : [])]),
+    ].flatMap((m) => [[m[1], m[2]], ...(m[3] && !m[4] ? [[m[3], m[2]]] : [])]),
   );
 
   if (defaultable.length && !useTags.length) {

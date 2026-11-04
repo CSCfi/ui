@@ -8,8 +8,6 @@
 
     <c-button appearance="text">Text</c-button>
 
-    <c-button danger>Danger</c-button>
-
     <c-button disabled>Disabled</c-button>
   </div>
 </template>

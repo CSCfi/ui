@@ -24,6 +24,7 @@ export type {
   CButtonAppearance,
   CButtonSize,
   CButtonType,
+  CButtonVariant,
 } from './components/c-button/CButton.vue';
 
 export type {
@@ -77,6 +78,7 @@ export type {
 export type {
   CIconButtonAppearance,
   CIconButtonSize,
+  CIconButtonVariant,
 } from './components/c-icon-button/CIconButton.vue';
 
 export type {

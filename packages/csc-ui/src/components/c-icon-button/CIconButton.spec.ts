@@ -2,8 +2,10 @@
  * Behaviour spec for c-icon-button: the host's ARIA attributes name and
  * describe the inner native button.
  */
+import { mdiCheck } from '@mdi/js';
 import { describe, expect, it } from 'vitest';
 
+import { describeButtonVariants } from '../../test/buttonVariants';
 import {
   mount,
   roleInMode,
@@ -11,6 +13,10 @@ import {
   settle,
   settled,
 } from '../../test/harness';
+
+describeButtonVariants('c-icon-button', {
+  html: `<svg viewBox="0 0 24 24"><path d="${mdiCheck}" fill="currentColor" /></svg>`,
+});
 
 describe('c-icon-button', () => {
   it('forwards host ARIA attributes to the button under their own names', async () => {

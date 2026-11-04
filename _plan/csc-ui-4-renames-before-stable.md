@@ -137,6 +137,11 @@ Found on the way:
 - At the end: `pnpm build`, the React build, the docs example smoke for the touched canons (Vue, React, TypeScript),
   the touched specs on Firefox, and the dist manifest showing `deprecated` on every old name.
 
+## Followed by
+
+- The buttons' colour `variant` (2026-11-03), which deprecates `danger` the same way:
+  `_plan/csc-ui-button-variants.md`, ADR-0079.
+
 ## Release
 
 - rc.2 can ship now with the c-tabs fix (5fd35a8d); these renames then go out as rc.3. MyCSC (on rc.1, branch

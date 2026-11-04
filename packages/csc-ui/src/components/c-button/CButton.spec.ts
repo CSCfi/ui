@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
+import { describeButtonVariants } from '../../test/buttonVariants';
 import {
   matchScreenshotInBothModes,
   mount,
@@ -8,6 +9,8 @@ import {
   setThemeMode,
   settled,
 } from '../../test/harness';
+
+describeButtonVariants('c-button', { html: 'Save', pressable: true });
 
 describe('c-button', () => {
   it('upgrades with adopted styles and a painted root', async () => {

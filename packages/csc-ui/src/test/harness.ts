@@ -13,6 +13,7 @@ import { commands, page, server, userEvent } from 'vitest/browser';
 import type { CThemeMode } from '../theme/themeMode';
 
 import { defineCustomElements } from '../index';
+import { rasterise } from './conformance/paint';
 
 /** Register every tag (idempotent). `mount()` calls it; hand-built DOM must. */
 export const defineAll = defineCustomElements;
@@ -87,6 +88,37 @@ export function roleInMode(mode: CThemeMode, role = '--c-on-surface'): string {
   probe.remove();
 
   return value;
+}
+
+/** WCAG relative luminance of sRGB bytes. */
+const luminance = ([r, g, b]: number[]): number => {
+  const lin = (byte: number) => {
+    const c = byte / 255;
+
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+
+  return 0.2126 * lin(r!) + 0.7152 * lin(g!) + 0.0722 * lin(b!);
+};
+
+/**
+ * WCAG contrast ratio of an ink against an opaque ground, both computed
+ * colours. Both are rasterised, so an `oklch()` token and Chromium's `oklab()`
+ * spelling of a mix compare as the sRGB the page paints; a translucent ink is
+ * composited over the ground first, as the eye sees it.
+ */
+export function contrastRatio(ink: string, ground: string): number {
+  const under = rasterise(ground);
+
+  const [r, g, b, a] = rasterise(ink);
+
+  const alpha = a! / 255;
+
+  const seen = [r!, g!, b!].map((c, i) => c * alpha + under[i]! * (1 - alpha));
+
+  const [hi, lo] = [luminance(seen), luminance(under)].sort((x, y) => y - x);
+
+  return (hi! + 0.05) / (lo! + 0.05);
 }
 
 /**

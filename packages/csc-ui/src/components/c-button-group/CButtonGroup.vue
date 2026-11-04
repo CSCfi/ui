@@ -144,7 +144,7 @@ defineOptions({ inheritAttrs: false });
  * customizable via `::part(root)`. The host stays `display:contents` (global).
  *
  * The track is an opaque fill plus a load-bearing hairline (ADR-0042). The
- * fill stays opaque on purpose: the unselected labels are `primary` text
+ * fill stays opaque on purpose: the unselected labels are text-button ink
  * sitting directly on it, and an opaque fill keeps their ground constant
  * (AA on every surface) wherever the control is placed; the padding and the
  * grid gap show the fill around an active button's own fill. The fill alone

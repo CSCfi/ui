@@ -36,3 +36,4 @@ Two Vue `defineCustomElement` facts shape the mechanism. A Boolean prop with `de
 - The props table marks defaultable props with an "app default" badge; the Customization page owns the walkthrough and a live playground that resets its own tags on unmount.
 - `src/tag-name-map.ts` gains one value export (`DEFAULTABLE_PROPS`) and is no longer types-only.
 - A defaultable prop that replaces a deprecated one (ADR-0074) resolves the pair per layer: instance (new name, then old) → app default (new, then old) → built-in, through `appDefault()`'s third argument. Both names stay defaultable until the old one goes. First used by the fields' `hideMessage`, which replaces `hideDetails` (2026-11-03).
+- A replaced prop of another shape takes a mapper as `appDefault()`'s fourth argument and is read at the instance only: the buttons' `variant` reads a deprecated `danger` boolean as `'danger'` (ADR-0079).

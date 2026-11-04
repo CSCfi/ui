@@ -15,11 +15,15 @@
     "target": "string = ''",
     "text": "boolean = false",
     "type": "'button' | 'reset' | 'submit' = 'button'",
-    "value": "number | string"
+    "value": "number | string",
+    "variant": "'danger' | 'info' | 'primary' | 'secondary' | 'success' | 'warning' = 'primary'"
   },
   "cssProperties": [],
-  "defaultable": [],
+  "defaultable": [
+    "variant"
+  ],
   "deprecated": [
+    "danger",
     "ghost",
     "outlined",
     "text"
@@ -48,7 +52,8 @@
     "target": "string = ''",
     "text": "boolean = false",
     "type": "'button' | 'reset' | 'submit' = 'button'",
-    "value": "number | string"
+    "value": "number | string",
+    "variant": "'danger' | 'info' | 'primary' | 'secondary' | 'success' | 'warning' = 'primary'"
   },
   "slots": [
     "default",

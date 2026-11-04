@@ -29,6 +29,7 @@
         :size="buttonSize"
         appearance="text"
         aria-haspopup="dialog"
+        variant="primary"
         @click="onCalendarClick"
       >
         <c-icon :path="mdiCalendar" :size="iconSize" />

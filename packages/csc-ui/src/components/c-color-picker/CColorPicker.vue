@@ -77,6 +77,7 @@
           :disabled
           appearance="text"
           size="x-small"
+          variant="primary"
           @click="onSwatchClear"
         >
           <c-icon :path="mdiClose" :size="20" />
@@ -88,6 +89,7 @@
           :disabled
           appearance="text"
           size="x-small"
+          variant="primary"
           @click="onChevronClick"
         >
           <c-icon :path="mdiChevronDown" :size="24" />
@@ -127,6 +129,7 @@
         :size="buttonSize"
         appearance="text"
         aria-haspopup="dialog"
+        variant="primary"
         @click="onColorButtonClick"
       >
         <span

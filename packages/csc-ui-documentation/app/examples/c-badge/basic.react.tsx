@@ -5,6 +5,7 @@ import { mdiBellOutline, mdiEmailOutline } from '@mdi/js';
 const styles = `
 c-badge.success-badge::part(root) {
   background-color: var(--c-success);
+  color: var(--c-on-success);
 }
 `;
 

@@ -56,3 +56,5 @@ change to it, but a reviewer still decides by eye whether a diff is breaking.
   `_plan/csc-ui-4-renames-before-stable.md`), so the first stable release
   already teaches the final names; the old ones are deprecated from 4.0.0
   and go in 5.0.
+- The buttons' `danger` boolean followed the same path when `variant` came
+  in before 4.0.0 (ADR-0079).

@@ -9,6 +9,7 @@
     :class="ui.root()"
     appearance="text"
     part="root"
+    variant="primary"
   >
     <c-icon :path="menuIcon" />
   </c-icon-button>
