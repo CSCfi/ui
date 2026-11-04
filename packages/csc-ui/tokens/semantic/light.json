@@ -41,11 +41,12 @@
   "on-secondary-subtle": "secondary-700",
 
   "accent": "accent-500",
+  "_comment-accent": "Accent is a light fill like success, info and warning, so its labels are dark (ADR-0081): white read 2.14:1 on it and accent-700 4.32:1 on its tint.",
   "accent-hover": "accent-300",
-  "on-accent": "white",
+  "on-accent": "accent-950",
   "accent-subtle": "accent-100",
   "accent-subtle-hover": "accent-50",
-  "on-accent-subtle": "accent-700",
+  "on-accent-subtle": "accent-800",
 
   "_comment-status-on": "The success, info and warning fills are too light for a white label (3.0, 4.3 and 1.6:1, under 2.3:1 on their hover fills), so text on them is dark: the family's 950 step, or black for info, where info-950 reads 4.2:1 (ADR-0079). Warning is yellow (ADR-0080), so its tint ink drops to warning-800: warning-700 reads 3.7:1 on its tint and 4.2:1 on white.",
   "success": "success-500",
@@ -79,10 +80,11 @@
   "on-surface-error": "error-500",
 
   "link": "link-500",
-  "link-hover": "accent-100",
+  "_comment-link": "Link's hovers stay in the family (ADR-0081): they were accent-100, which read 1.18:1 under the white label and as text on white.",
+  "link-hover": "link-600",
   "on-link": "white",
   "link-subtle": "link-100",
-  "link-subtle-hover": "accent-100",
+  "link-subtle-hover": "link-50",
   "on-link-subtle": "link-700",
 
   "nav-surface": "primary-500",
