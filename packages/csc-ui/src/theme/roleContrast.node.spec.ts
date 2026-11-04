@@ -90,3 +90,46 @@ it('pairs every role’s text with its ground at AA in both modes', () => {
 
   expect(failures).toEqual([]);
 });
+
+// A text or outlined button draws its label in the tint's ink straight on
+// whatever surface rung it sits on (ADR-0082): a popover's overlay in dark
+// mode, the page canvas (sunken) in light. Dark secondary read 4.35:1 on the
+// overlay.
+const BUTTON_ROLES = [
+  'primary',
+  'secondary',
+  'success',
+  'info',
+  'warning',
+  'error',
+];
+
+const RUNGS = [
+  'surface',
+  'surface-raised',
+  'surface-overlay',
+  'surface-muted',
+  'surface-sunken',
+];
+
+it('reads every button colour’s tint ink on every surface rung in both modes', () => {
+  const failures: string[] = [];
+
+  for (const [mode, map] of Object.entries(MODES)) {
+    const role = (name: string) => hex({ ...invariant, ...map }[name]!);
+
+    for (const r of BUTTON_ROLES) {
+      for (const rung of RUNGS) {
+        const value = ratio(role(`on-${r}-subtle`), role(rung));
+
+        if (value < 4.5) {
+          failures.push(
+            `${mode} on-${r}-subtle / ${rung}: ${value.toFixed(2)}:1`,
+          );
+        }
+      }
+    }
+  }
+
+  expect(failures).toEqual([]);
+});
