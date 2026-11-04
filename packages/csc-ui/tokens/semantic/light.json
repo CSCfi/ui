@@ -25,15 +25,16 @@
   "warning-inverted": "warning-400",
   "error-inverted": "error-400",
 
+  "_comment-hover": "A filled role's hover moves away from its label (ADR-0081): white-label roles darken to step 600, where step 300 read 2.5–3.8:1 under white; dark-label roles (success, info, warning, accent) keep lightening to 300.",
   "primary": "primary-500",
-  "primary-hover": "primary-300",
+  "primary-hover": "primary-600",
   "on-primary": "white",
   "primary-subtle": "primary-100",
   "primary-subtle-hover": "primary-50",
   "on-primary-subtle": "primary-700",
 
   "secondary": "secondary-500",
-  "secondary-hover": "secondary-300",
+  "secondary-hover": "secondary-600",
   "on-secondary": "white",
   "secondary-subtle": "secondary-100",
   "secondary-subtle-hover": "secondary-50",
@@ -69,7 +70,7 @@
   "on-warning-subtle": "warning-800",
 
   "error": "error-500",
-  "error-hover": "error-300",
+  "error-hover": "error-600",
   "on-error": "white",
   "error-subtle": "error-100",
   "error-subtle-hover": "error-50",

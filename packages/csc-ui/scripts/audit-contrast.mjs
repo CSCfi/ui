@@ -136,9 +136,11 @@ for (const bg of [
   add('on-surface-muted', bg, TEXT, `on-surface-muted / ${bg}`);
 }
 
-// solid role + its on-color
+// solid role + its on-color, at rest and hovered: a hover fill keeps the label
+// (ADR-0081)
 for (const r of ROLES) {
   add(`on-${r}`, r, TEXT, `on-${r} / ${r}`);
+  add(`on-${r}`, `${r}-hover`, TEXT, `on-${r} / ${r}-hover`);
   add(`on-${r}-subtle`, `${r}-subtle`, TEXT, `on-${r}-subtle / ${r}-subtle`);
 }
 

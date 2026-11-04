@@ -4,6 +4,7 @@
  * baselines.
  */
 import { describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
 import { applyDefaults } from '../shared/appDefaults';
 import { rasterise } from './conformance/paint';
@@ -12,6 +13,7 @@ import {
   defineAll,
   matchScreenshotInBothModes,
   mount,
+  parkPointer,
   roleInMode,
   setThemeMode,
   settle,
@@ -182,6 +184,38 @@ export function describeButtonVariants(
             `${mode} ${variant} inverted`,
           ).toEqual(role(mode, `--c-inverse-${ROLE[variant]}`));
 
+          document.body.replaceChildren();
+        }
+      }
+    });
+
+    // A filled hover moves away from its label (ADR-0081): darker under a
+    // white label, lighter under a dark one. Light mode had lightened every
+    // fill, so white read 2.5–3.8:1 hovered.
+    it('reads at AA hovered, filled, in every variant and both modes', async () => {
+      for (const mode of MODES) {
+        setThemeMode(mode);
+
+        for (const variant of VARIANTS) {
+          const { part } = await mount(tag, { attrs: { variant }, html });
+
+          const root = part('root');
+
+          await userEvent.hover(root);
+          await settled();
+
+          const { backgroundColor, color } = getComputedStyle(root);
+
+          expect(
+            rasterise(backgroundColor),
+            `${mode} ${variant} hover fill`,
+          ).toEqual(role(mode, `--c-${ROLE[variant]}-hover`));
+          expect(
+            contrastRatio(color, backgroundColor),
+            `${mode} ${variant} hovered`,
+          ).toBeGreaterThanOrEqual(4.5);
+
+          await parkPointer();
           document.body.replaceChildren();
         }
       }
