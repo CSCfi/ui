@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
 import { applyDefaults } from '../shared/appDefaults';
-import { rasterise } from './conformance/paint';
+import { over, rasterise, tintOf } from './conformance/paint';
 import {
   chromiumOnly,
   contrastRatio,
@@ -46,18 +46,14 @@ const ROLE: Record<Variant, string> = {
 
 const MODES = ['light', 'dark'] as const;
 
-/** A translucent colour composited over an opaque one, as the eye sees it. */
-const over = (top: string, under: string): string => {
-  const [r, g, b, a] = rasterise(top);
-
-  const below = rasterise(under);
-
-  const t = a! / 255;
-
-  const mix = (c: number, i: number) => Math.round(c * t + below[i]! * (1 - t));
-
-  return `rgb(${mix(r!, 0)} ${mix(g!, 1)} ${mix(b!, 2)})`;
-};
+/** The surface rungs a button can sit on. */
+const RUNGS = [
+  'surface',
+  'surface-raised',
+  'surface-overlay',
+  'surface-muted',
+  'surface-sunken',
+] as const;
 
 /** A colour's opacity, 0–1, as painted. */
 const alpha = (value: string): number => rasterise(value)[3]! / 255;
@@ -293,7 +289,11 @@ export function describeButtonVariants(
       }
     });
 
-    it('washes the ghost look at 14%, in both modes', async () => {
+    // A tint is opaque, the variant mixed into the page surface (ADR-0082),
+    // so it reads the same on a card, a popover or the page canvas. A
+    // see-through wash let a dark popover through: primary's ghost read
+    // 4.29:1 there.
+    it('tints the ghost look with 14% of its variant, opaque, in both modes', async () => {
       for (const mode of MODES) {
         setThemeMode(mode);
 
@@ -303,9 +303,8 @@ export function describeButtonVariants(
             variant,
           });
 
-          expect(alpha(backgroundColor), `${mode} ${variant}`).toBeCloseTo(
-            0.14,
-            2,
+          expect(rasterise(backgroundColor), `${mode} ${variant}`).toEqual(
+            tintOf(ROLE[variant], 14),
           );
 
           document.body.replaceChildren();
@@ -313,17 +312,13 @@ export function describeButtonVariants(
       }
     });
 
-    // One hover wash for the three lighter appearances, over the ghost's
-    // resting one. The labels keep AA on it over the page surface (dark
-    // secondary is the lowest, 4.6:1); on a dark popover they do not, a known
-    // case in ADR-0079. One test per appearance: each hover waits out the
-    // transition.
+    // One hover tint for the three lighter appearances, over the ghost's
+    // resting one; dark secondary's label is the lowest on it, 4.6:1. One test
+    // per appearance: each hover waits out the transition.
     for (const appearance of ['outlined', 'ghost', 'text']) {
-      it(`washes the ${appearance} look at 20% hovered, at AA, in both modes`, async () => {
+      it(`tints the ${appearance} look with 20% hovered, at AA, in both modes`, async () => {
         for (const mode of MODES) {
           setThemeMode(mode);
-
-          const surface = roleInMode(mode, '--c-surface');
 
           for (const variant of VARIANTS) {
             const { part } = await mount(tag, {
@@ -340,14 +335,47 @@ export function describeButtonVariants(
 
             const at = `${mode} ${variant} hovered`;
 
-            expect(alpha(backgroundColor), at).toBeCloseTo(0.2, 2);
+            expect(rasterise(backgroundColor), at).toEqual(
+              tintOf(ROLE[variant], 20),
+            );
             expect(
-              contrastRatio(color, over(backgroundColor, surface)),
+              contrastRatio(color, backgroundColor),
               at,
             ).toBeGreaterThanOrEqual(4.5);
 
             await parkPointer();
             document.body.replaceChildren();
+          }
+        }
+      });
+
+      // At rest a text or outlined button is transparent, so its label sits
+      // on whatever surface rung is behind it (a popover is lighter in dark
+      // mode, the page canvas darker in light).
+      it(`reads the ${appearance} look at AA at rest on every surface rung, in both modes`, async () => {
+        for (const mode of MODES) {
+          setThemeMode(mode);
+
+          for (const rung of RUNGS) {
+            const ground = roleInMode(mode, `--c-${rung}`);
+
+            for (const variant of VARIANTS) {
+              const { part, stage } = await mount(tag, {
+                attrs: { appearance, variant },
+                html,
+              });
+
+              stage.style.background = ground;
+
+              const { backgroundColor, color } = getComputedStyle(part('root'));
+
+              expect(
+                contrastRatio(color, over(backgroundColor, ground)),
+                `${mode} ${rung} ${variant}`,
+              ).toBeGreaterThanOrEqual(4.5);
+
+              document.body.replaceChildren();
+            }
           }
         }
       });

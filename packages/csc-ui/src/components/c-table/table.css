@@ -142,5 +142,5 @@ c-table > table.c-table.c-table--mobile td span.c-table__mobile-label {
   padding-right: 8px;
 }
 c-table > table.c-table.c-table--mobile td:nth-of-type(even) {
-  background-color: color-mix(in srgb, var(--c-primary) 5%, transparent);
+  background-color: color-mix(in srgb, var(--c-primary) 5%, var(--c-surface));
 }

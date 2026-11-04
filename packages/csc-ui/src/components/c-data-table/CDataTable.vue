@@ -701,7 +701,7 @@ const EXPANDER_COL = '__expander';
 const ui = tv({
   slots: {
     banner:
-      'flex min-h-10 items-center gap-3 border-b border-border bg-primary-subtle px-3 py-1 text-sm text-on-primary-subtle',
+      'flex min-h-10 items-center gap-3 border-b border-border bg-primary-subtle px-3 py-1 text-sm text-on-primary-subtle [--_c-tint-ground:var(--c-primary-subtle)] [--_c-tint-scale:0.5]',
     pagination: 'flex min-h-12 items-center px-2',
     root: 'relative box-border block w-full max-w-full bg-surface text-base text-on-surface',
     viewport: 'max-w-full overflow-auto',
@@ -1483,6 +1483,8 @@ table.c-data-table caption:empty {
    pinned cells stay opaque over scrolled-under content. */
 table.c-data-table tr {
   --_c-data-table-row-bg: var(--c-surface);
+  /* A button's tint mixes into the row it sits on (ADR-0082). */
+  --_c-tint-ground: var(--_c-data-table-row-bg);
 }
 
 table.c-data-table th,
@@ -1698,10 +1700,12 @@ table.c-data-table tbody tr.interactive {
 
 table.c-data-table tbody tr.interactive:hover {
   --_c-data-table-row-bg: var(--c-primary-subtle-hover);
+  --_c-tint-scale: 0.5;
 }
 
 table.c-data-table tbody tr.selected {
   --_c-data-table-row-bg: var(--c-primary-subtle);
+  --_c-tint-scale: 0.5;
 }
 
 /* Selected: 4px accent on the row's left edge. */

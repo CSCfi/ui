@@ -6,8 +6,16 @@
  * box and nothing was ever hidden.
  */
 import { describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
-import { mount, settled } from '../../test/harness';
+import { rasterise, tintOf } from '../../test/conformance/paint';
+import {
+  contrastRatio,
+  mount,
+  parkPointer,
+  setThemeMode,
+  settled,
+} from '../../test/harness';
 
 const COLUMNS = [
   { header: 'Project', key: 'name', pinned: 'left' },
@@ -210,5 +218,72 @@ describe('c-data-table for assistive technology', () => {
     expect(
       first!.querySelector('c-icon-button')!.getAttribute('aria-label'),
     ).toBe('Details of Aurora');
+  });
+});
+
+// The banner and a selected row are tinted containers: a button on them tints
+// into the container at half its share (ADR-0082). Mixed into the page
+// surface, the hover patch was a shade lighter than a light banner and all
+// but invisible on it (1.04:1).
+describe('c-data-table tinted containers', () => {
+  it('tints a hovered button into the banner and a selected row, at AA, in both modes', async () => {
+    for (const mode of ['light', 'dark'] as const) {
+      setThemeMode(mode);
+
+      const m = await mount('c-data-table', {
+        props: {
+          columns: COLUMNS,
+          data: DATA,
+          expandedContent: () => 'More',
+          getRowId: (row: { name: string }) => row.name,
+          pageSize: 1,
+          selection: 'multiple',
+        },
+      });
+
+      await settled();
+
+      m.shadowAll('thead c-checkbox')[0]!
+        .shadowRoot!.querySelector('input')!
+        .click();
+      await settled();
+
+      const cases: [string, HTMLElement, HTMLElement][] = [
+        [
+          'banner',
+          m.part('banner').querySelector('c-button')!,
+          m.part('banner'),
+        ],
+        [
+          'selected row',
+          m.shadow('tbody tr.selected c-icon-button'),
+          m.shadow('tbody tr.selected td'),
+        ],
+      ];
+
+      for (const [where, button, container] of cases) {
+        const root =
+          button.shadowRoot!.querySelector<HTMLElement>('[part~="root"]')!;
+
+        await userEvent.hover(root);
+        await settled();
+
+        const ground = getComputedStyle(container).backgroundColor;
+
+        const { backgroundColor, color } = getComputedStyle(root);
+
+        expect(rasterise(backgroundColor), `${mode} ${where}`).toEqual(
+          tintOf('primary', 10, ground),
+        );
+        expect(
+          contrastRatio(color, backgroundColor),
+          `${mode} ${where}`,
+        ).toBeGreaterThanOrEqual(4.5);
+
+        await parkPointer();
+      }
+
+      document.body.replaceChildren();
+    }
   });
 });

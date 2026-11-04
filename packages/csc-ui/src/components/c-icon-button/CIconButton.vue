@@ -247,7 +247,7 @@ const iconButton = tv({
     // under the dark label.
     {
       class: {
-        root: 'bg-inverse-surface text-(--_c-icon-button-inverse) hover:bg-[color-mix(in_oklab,var(--_c-icon-button-inverse)_15%,var(--c-inverse-surface))] focus-visible:outline-inverse-on',
+        root: 'bg-inverse-surface text-(--_c-icon-button-inverse) hover:bg-[color-mix(in_srgb,var(--_c-icon-button-inverse)_15%,var(--c-inverse-surface))] focus-visible:outline-inverse-on',
       },
       ghost: false,
       inverted: true,
@@ -257,7 +257,7 @@ const iconButton = tv({
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-(--_c-icon-button-fill)/14 text-(--_c-icon-button-ink) hover:bg-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
+        root: 'bg-tint-(--_c-icon-button-fill)/14 text-(--_c-icon-button-ink) hover:bg-tint-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
       },
       ghost: true,
       inverted: false,
@@ -272,7 +272,7 @@ const iconButton = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-icon-button-ink) hover:bg-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
+        root: 'bg-transparent text-(--_c-icon-button-ink) hover:bg-tint-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
       },
       inverted: false,
       text: true,
@@ -287,7 +287,7 @@ const iconButton = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-icon-button-ink) ring-2 ring-(--_c-icon-button-fill) ring-inset hover:bg-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
+        root: 'bg-transparent text-(--_c-icon-button-ink) ring-2 ring-(--_c-icon-button-fill) ring-inset hover:bg-tint-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
       },
       inverted: false,
       outlined: true,

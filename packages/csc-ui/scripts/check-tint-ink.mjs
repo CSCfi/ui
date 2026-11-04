@@ -2,12 +2,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /**
- * Guard for text drawn in a role's own colour on that role's tint (ADR-0081).
+ * Guard for text on a role's tint (ADR-0081, ADR-0082).
  *
- * A role's tint (`<role>-subtle`, its `-hover`, or the role at a low alpha)
- * pairs with one ink, `on-<role>-subtle`. The role itself does not read on it:
- * primary on its tint was 3.72:1 in dark mode, error 2.56:1, warning 1.42:1 in
- * light mode. The ring or outline may stay the role; the text may not.
+ * A role's tint (`<role>-subtle`, its `-hover`, or the role mixed into the
+ * page surface, `bg-tint-<role>/<n>`) pairs with one ink, `on-<role>-subtle`.
+ * The role itself does not read on it: primary on its tint was 3.72:1 in dark
+ * mode, error 2.56:1, warning 1.42:1 in light mode. The ring or outline may
+ * stay the role; the text may not.
+ *
+ * A tint is opaque, so it reads the same on any surface. A see-through role
+ * background (`bg-primary/15`, `bg-(--_c-button-fill)/20`, or a `<style>` or
+ * component `.css` background mixing a role with `transparent`) let the
+ * ground decide: primary's ghost read 4.29:1 on a dark popover, an alert's
+ * success heading 4.25:1 on the light page canvas. Those fail too, except a
+ * ripple or a selection indicator's hover ring, which carry no text.
  *
  * Flags a class string where, under one state (`hover:`, `focus:`,
  * `data-[active]:`, … or none), the background is a role's tint and the text
@@ -25,7 +33,22 @@ const ROOTS = [
 
 const ROLES = 'primary|secondary|accent|success|info|warning|error|link';
 
-const TINT = new RegExp(`^bg-(${ROLES})(?:-subtle(?:-hover)?|\\/\\d+)$`);
+const TINT = new RegExp(
+  `^bg-(?:tint-)?(${ROLES})(?:-subtle(?:-hover)?|\\/\\d+)$`,
+);
+
+// A role's colour, or a component's private colour variable, at an alpha.
+const SEE_THROUGH = new RegExp(
+  `^bg-(?:(?:${ROLES})(?:-subtle(?:-hover)?)?|\\(--_c-[a-z0-9-]+\\))\\/\\d+$`,
+);
+
+const CSS_SEE_THROUGH = new RegExp(
+  `background(?:-color)?:\\s*color-mix\\([^;]*var\\(--c-(?:${ROLES})[^;]*,\\s*transparent\\s*\\)`,
+);
+
+// Decorative layers with no text on them may stay see-through: a ripple, or
+// the hover ring of a selection control's indicator.
+const DECORATIVE = /ripple|indicator/;
 
 // Text colours only: `text-sm` or `text-center` must not stand in for one.
 const TEXT_COLOUR = new RegExp(
@@ -80,7 +103,11 @@ const textIn = (states, texts) => {
 const vueFiles = ROOTS.flatMap((root) =>
   fs
     .readdirSync(root, { recursive: true })
-    .filter((f) => typeof f === 'string' && f.endsWith('.vue'))
+    .filter(
+      (f) =>
+        typeof f === 'string' &&
+        (f.endsWith('.vue') || (f.endsWith('.css') && !f.includes('__'))),
+    )
     .map((f) => path.join(root, f)),
 ).sort();
 
@@ -111,6 +138,15 @@ for (const file of vueFiles) {
       .filter((t) => t.role);
 
     for (const t of tokens) {
+      if (SEE_THROUGH.test(t.utility)) {
+        report(
+          rel,
+          src,
+          match.index,
+          `${t.states.map((s) => `${s}:`).join('')}${t.utility} is see-through; tint with bg-tint-…/<n>, the role mixed into the page surface (ADR-0082)`,
+        );
+      }
+
       const role = TINT.exec(t.utility)?.[1];
 
       if (!role) continue;
@@ -130,11 +166,22 @@ for (const file of vueFiles) {
     }
   }
 
-  // Escape-hatch <style> rules.
-  for (const match of src.matchAll(/\{[^{}]*\}/g)) {
-    const tint = CSS_TINT.exec(match[0])?.[1];
+  // Escape-hatch <style> rules and component sheets.
+  for (const match of src.matchAll(/([^{}]*)\{([^{}]*)\}/g)) {
+    const [, selector, body] = match;
 
-    if (tint && CSS_TEXT.exec(match[0])?.[1] === tint) {
+    if (CSS_SEE_THROUGH.test(body) && !DECORATIVE.test(selector)) {
+      report(
+        rel,
+        src,
+        match.index + selector.length,
+        `a see-through role background; mix the role into var(--c-surface) instead of transparent (ADR-0082)`,
+      );
+    }
+
+    const tint = CSS_TINT.exec(body)?.[1];
+
+    if (tint && CSS_TEXT.exec(body)?.[1] === tint) {
       report(
         rel,
         src,
@@ -147,11 +194,11 @@ for (const file of vueFiles) {
 
 if (hitCount === 0) {
   console.log(
-    `✓ text on a role's tint takes the tint's ink in ${vueFiles.length} SFCs.`,
+    `✓ every role tint is opaque and inked with on-<role>-subtle in ${vueFiles.length} SFCs and sheets.`,
   );
 } else {
   console.error(
-    `✗ ${hitCount} place${hitCount === 1 ? '' : 's'} draw a role's colour as text on its own tint (ADR-0081).`,
+    `✗ ${hitCount} place${hitCount === 1 ? '' : 's'} put text on a see-through role background or a role's colour on its own tint (ADR-0081, ADR-0082).`,
   );
   process.exit(1);
 }

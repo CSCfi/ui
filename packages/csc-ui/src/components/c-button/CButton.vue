@@ -330,7 +330,7 @@ const button = tv({
     // under the dark label.
     {
       class: {
-        root: 'bg-inverse-surface text-(--_c-button-inverse) hover:bg-[color-mix(in_oklab,var(--_c-button-inverse)_15%,var(--c-inverse-surface))] focus-visible:outline-inverse-on',
+        root: 'bg-inverse-surface text-(--_c-button-inverse) hover:bg-[color-mix(in_srgb,var(--_c-button-inverse)_15%,var(--c-inverse-surface))] focus-visible:outline-inverse-on',
       },
       ghost: false,
       inverted: true,
@@ -338,12 +338,14 @@ const button = tv({
       text: false,
     },
     // ---- ghost -----------------------------------------------------------
-    // The lighter appearances share one 20% hover wash over the ghost's 14%,
-    // and none darkens further while pressed (the ripple marks the press):
-    // dark secondary's label reads 4.6:1 hovered and fell under AA at 22%.
+    // The lighter appearances share one 20% hover tint over the ghost's 14%,
+    // both opaque, the variant mixed into the page surface (ADR-0082), so they
+    // read the same on a popover or the page canvas. None darkens further
+    // while pressed (the ripple marks the press): dark secondary's label reads
+    // 4.6:1 hovered and fell under AA at 22%.
     {
       class: {
-        root: 'bg-(--_c-button-fill)/14 text-(--_c-button-ink) hover:bg-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
+        root: 'bg-tint-(--_c-button-fill)/14 text-(--_c-button-ink) hover:bg-tint-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
       },
       ghost: true,
       inverted: false,
@@ -358,7 +360,7 @@ const button = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-button-ink) hover:bg-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
+        root: 'bg-transparent text-(--_c-button-ink) hover:bg-tint-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
       },
       inverted: false,
       text: true,
@@ -373,7 +375,7 @@ const button = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-button-ink) ring-2 ring-(--_c-button-fill) ring-inset hover:bg-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
+        root: 'bg-transparent text-(--_c-button-ink) ring-2 ring-(--_c-button-fill) ring-inset hover:bg-tint-(--_c-button-fill)/20 focus-visible:outline-(--_c-button-ink)',
       },
       inverted: false,
       outlined: true,

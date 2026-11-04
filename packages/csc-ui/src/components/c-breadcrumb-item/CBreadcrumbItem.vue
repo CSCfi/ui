@@ -111,7 +111,7 @@ const breadcrumbItem = tv({
     {
       class: {
         content:
-          'cursor-pointer text-primary hover:bg-primary/15 hover:text-on-primary-subtle focus-visible:outline-primary',
+          'cursor-pointer text-primary hover:bg-tint-primary/15 hover:text-on-primary-subtle focus-visible:outline-primary',
       },
       folded: false,
       interactive: true,
