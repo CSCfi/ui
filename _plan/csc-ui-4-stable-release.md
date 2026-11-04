@@ -572,7 +572,10 @@ start migrating on the first alpha that carries D2–D4.
      appearances' `on-<role>-subtle` ink. Plan: `_plan/csc-ui-button-variants.md`.
    - **Same exception: the status colours** (user decision 2026-11-04, ADR-0080). Warning is yellow and error a
      cooler red with vivid dark fills; error text takes the new `on-surface-error` token. Also fixed c-menu-item's
-     danger label contrast. Plan: `_plan/csc-ui-status-colours.md`. Parked: `_plan/light-hover-contrast.md`.
+     danger label contrast. Plan: `_plan/csc-ui-status-colours.md`.
+   - **Same exception: hover and tint contrast** (user decision 2026-11-04, ADR-0081). Light white-label fills darken
+     on hover, accent takes dark labels, link's hovers stay in the family, text on a role's tint takes its ink (new
+     `lint:tint` guard, 22 places). Plan: `_plan/light-hover-contrast.md`.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both

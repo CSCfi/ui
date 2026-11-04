@@ -66,3 +66,6 @@ text read 3.0, 4.3 and 3.2:1 on the success, info and warning fills, and under
 - ADR-0080 made warning yellow and moved `inverse-warning` to warning-800
   (7.2:1): the yellow warning-600 reads 2.5:1 on white. The badge count's fill
   is yellow now, under the same dark label.
+- ADR-0081 darkened the light-mode hover of the white-label fills (primary,
+  secondary, danger), which read 2.5–3.8:1 hovered, and the spec now checks
+  every filled variant hovered.
