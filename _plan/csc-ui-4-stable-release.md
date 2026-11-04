@@ -576,6 +576,9 @@ start migrating on the first alpha that carries D2–D4.
    - **Same exception: hover and tint contrast** (user decision 2026-11-04, ADR-0081). Light white-label fills darken
      on hover, accent takes dark labels, link's hovers stay in the family, text on a role's tint takes its ink (new
      `lint:tint` guard, 22 places). Plan: `_plan/light-hover-contrast.md`.
+   - **Same exception: the outlined border and the ghost wash** (user decision 2026-11-04, ADR-0079 amended). The
+     outlined border takes the variant's fill, a stronger ghost wash (14%), one 20% hover for the lighter
+     appearances and no pressed step. Plan: `_plan/button-outline-ghost.md`.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
