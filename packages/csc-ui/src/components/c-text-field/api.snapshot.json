@@ -84,6 +84,7 @@
     "unmaskedValue": "string"
   },
   "slots": [
+    "default",
     "post",
     "pre"
   ],

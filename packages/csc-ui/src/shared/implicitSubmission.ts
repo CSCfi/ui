@@ -54,7 +54,12 @@ const blocksImplicitSubmission = (el: Element): boolean => {
   if (TEXT_FIELD_TAGS.has(el.localName))
     return !(Number((el as { rows?: number }).rows) > 1);
 
-  return el instanceof HTMLInputElement && TEXT_INPUT_TYPES.has(el.type);
+  // A text field's slotted input is counted through its field.
+  return (
+    el instanceof HTMLInputElement &&
+    TEXT_INPUT_TYPES.has(el.type) &&
+    el.parentElement?.localName !== 'c-text-field'
+  );
 };
 
 /**
@@ -106,4 +111,41 @@ export const submitOnEnter = (
   setTimeout(() => {
     if (!event.defaultPrevented) submitImplicitly(form);
   });
+};
+
+/**
+ * The keydown of a page's own input inside a csc-ui field (c-text-field's
+ * slotted input, ADR-0083): the browser runs its own implicit submission
+ * there, blind to `<c-button type="submit">`, so a plain Enter that the page
+ * has not cancelled by the end of its dispatch is cancelled here and
+ * submitted by this rule instead. A listener that stops the event first
+ * leaves the browser's own submission in place.
+ */
+export const submitOnEnterInstead = (
+  event: KeyboardEvent,
+  form: HTMLFormElement | null,
+): void => {
+  if (
+    !form ||
+    event.key !== 'Enter' ||
+    event.isComposing ||
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey
+  )
+    return;
+
+  // A listener added to a later target while an event is dispatched hears
+  // that same event: `window` is the last.
+  window.addEventListener(
+    'keydown',
+    (last) => {
+      if (last !== event || event.defaultPrevented) return;
+
+      event.preventDefault();
+      submitImplicitly(form);
+    },
+    { once: true },
+  );
 };

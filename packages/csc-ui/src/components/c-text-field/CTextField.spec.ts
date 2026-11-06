@@ -2,8 +2,8 @@
  * Behaviour spec for c-text-field's value events (CONTEXT.md "Value events",
  * "Commit"; ADR-0075), its input mask (CONTEXT.md "Input mask", "Complete";
  * ADR-0059) and `invalid`, which markup can set — `valid`, defaulting to true,
- * could never be turned off from an attribute (ADR-0076), and its part in a
- * native form (ADR-0084).
+ * could never be turned off from an attribute (ADR-0076), its part in a
+ * native form (ADR-0084) and its slotted input (ADR-0083).
  */
 import { describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
@@ -16,6 +16,7 @@ import {
   contrastRatio,
   matchScreenshotInBothModes,
   mount,
+  type MountedInForm,
   mountInForm,
   recordEvents,
   roleInMode,
@@ -639,5 +640,174 @@ describe('form association (ADR-0084)', () => {
 
     expect(marked.form.checkValidity()).toBe(true);
     marked.unmount();
+  });
+});
+
+describe('slotted input (ADR-0083)', () => {
+  type Slotted = { input: HTMLInputElement } & MountedInForm<FieldHost>;
+
+  const slottedField = async (
+    html = '<input name="user" autocomplete="username">',
+    props: Record<string, unknown> = {},
+  ): Promise<Slotted> => {
+    const m = await mountInForm<FieldHost>('c-text-field', {
+      attrs: { style: 'width: 320px' },
+      html,
+      props: { label: 'User', ...props },
+    });
+
+    await settle();
+
+    return { ...m, input: m.host.querySelector('input')! };
+  };
+
+  it('frames the page’s own input, which the form owns and submits itself', async () => {
+    const m = await slottedField();
+
+    expect(m.input.parentElement).toBe(m.host);
+    expect(m.input.form).toBe(m.form);
+    expect(m.input.getAttribute('autocomplete')).toBe('username');
+    expect(m.host.shadowRoot!.querySelector('input')).toBeNull();
+
+    await userEvent.type(m.input, 'ada');
+    await settle();
+
+    expect(m.entries('user')).toEqual(['ada']);
+    expect([...new FormData(m.form).keys()]).toEqual(['user']);
+    m.unmount();
+  });
+
+  it('bridges the value both ways, one input event per keystroke', async () => {
+    const m = await slottedField();
+
+    const events = recordEvents(m.host, ['change', 'input', 'update:value']);
+
+    await userEvent.type(m.input, 'a');
+    await settle();
+
+    expect(events.names()).toEqual(['update:value', 'input']);
+    expect(m.host.value).toBe('a');
+
+    events.clear();
+    m.host.value = 'bob';
+    await settle();
+
+    expect(m.input.value).toBe('bob');
+
+    m.input.value = 'carol';
+    await settle();
+
+    expect(m.host.value).toBe('carol');
+    expect(events.names()).toEqual([]);
+    m.unmount();
+  });
+
+  it('names and describes the input with strings, keeping the page’s own', async () => {
+    const m = await slottedField('<input name="user">', {
+      errorMessage: 'Unknown user',
+      hint: 'Your CSC username',
+    });
+
+    expect(m.input.getAttribute('aria-label')).toBe('User');
+    expect(m.input.getAttribute('aria-description')).toBe('Your CSC username');
+
+    (m.host as { invalid: boolean } & FieldHost).invalid = true;
+    await settle();
+
+    expect(m.input.getAttribute('aria-description')).toBe('Unknown user');
+    expect(m.input.getAttribute('aria-invalid')).toBe('true');
+    m.unmount();
+
+    const own = await slottedField('<input aria-label="Login" name="user">');
+
+    expect(own.input.getAttribute('aria-label')).toBe('Login');
+    own.unmount();
+  });
+
+  it('the password toggle reveals the slotted input', async () => {
+    const m = await slottedField(
+      '<input name="password" type="password" autocomplete="current-password">',
+      { label: 'Password' },
+    );
+
+    await userEvent.click(m.shadow('button[aria-label="Show password"]'));
+    await settle();
+
+    expect(m.input.type).toBe('text');
+
+    await userEvent.click(m.shadow('button[aria-label="Hide password"]'));
+    await settle();
+
+    expect(m.input.type).toBe('password');
+    m.unmount();
+  });
+
+  it('Enter submits through a c-button submit button, once', async () => {
+    const m = await slottedField('<input name="user">');
+
+    const password = document.createElement('c-text-field');
+
+    password.innerHTML = '<input name="password" type="password">';
+    password.setAttribute('label', 'Password');
+
+    const button = document.createElement('c-button');
+
+    button.setAttribute('type', 'submit');
+    button.textContent = 'Log in';
+    m.fieldset.append(password, button);
+    await settle();
+
+    const submits = recordEvents(m.form, ['submit']);
+
+    await userEvent.type(password.querySelector('input')!, 'secret{Enter}');
+    await settle();
+
+    expect(submits.records).toHaveLength(1);
+
+    // With one text input left, the browser alone would submit on Enter: its
+    // rule cannot see the loading c-button.
+    password.remove();
+    (button as { loading: boolean } & HTMLElement).loading = true;
+    await settle();
+    await userEvent.type(m.input, '{Enter}');
+    await settle();
+
+    expect(submits.records).toHaveLength(1);
+    m.unmount();
+  });
+
+  it('renders as the field’s own input does', async () => {
+    const own = await mountField({ label: 'User', value: 'ada' });
+
+    const m = await slottedField('<input name="user" value="ada">');
+
+    const keys = [
+      'color',
+      'font-family',
+      'font-size',
+      'height',
+      'line-height',
+      'padding-bottom',
+      'padding-left',
+      'padding-top',
+      'width',
+    ];
+
+    const styleOf = (el: Element) =>
+      Object.fromEntries(
+        keys.map((key) => [key, getComputedStyle(el).getPropertyValue(key)]),
+      );
+
+    expect(styleOf(m.input)).toEqual(styleOf(input(own)));
+    own.unmount();
+    m.unmount();
+  });
+
+  it('host props the input replaces are ignored, with a warning', async () => {
+    const m = await slottedField('<input name="user">', { name: 'login' });
+
+    consoleSpy.expect(/name ignored beside a slotted <input>/);
+    expect(m.entries('login')).toEqual([]);
+    m.unmount();
   });
 });

@@ -111,3 +111,42 @@ submit on it:
 
 A mask applies to a single-line field of type `text`, `tel` or `search`;
 other types (and a textarea) ignore it.
+
+## Password managers
+
+A password manager fills only the inputs it can see, and Safari's and
+Firefox's, like several extensions, do not look inside a component's shadow
+root. For a username, a password or a one-time code, write the `<input>`
+yourself inside the field: it stays in the page, where every password
+manager finds it, and the field frames it with its label, message and
+password toggle.
+
+```vue
+<form action="/login" method="post">
+  <c-text-field label="Username">
+    <input v-model="username" autocomplete="username" name="username" />
+  </c-text-field>
+
+  <c-text-field label="Password">
+    <input
+      v-model="password"
+      autocomplete="current-password"
+      name="password"
+      type="password"
+    />
+  </c-text-field>
+
+  <c-button type="submit">Log in</c-button>
+</form>
+```
+
+The input's own attributes apply — `type`, `name`, `autocomplete`,
+`required`, `disabled`, `placeholder` and the rest — and the field's props of
+those names are ignored, with a console warning. `autocomplete` tells the
+manager what the input holds: `username`, `current-password`, `new-password`
+(where it offers to generate one) or `one-time-code`. In a form the input
+submits and validates itself.
+
+The field's `value` and its value events still work, so `v-model` goes on the
+field or on the input. `mask`, `rows` and `trim-whitespace` do not apply to a
+slotted input.
