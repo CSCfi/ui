@@ -13,6 +13,9 @@ Amended by ADR-0025 (2026-08-10): the "single-select keeps the signature
 sliding indicator" split is reversed — `c-button-group` renders no indicator
 in any mode; the sliding indicator moves into `c-tab-buttons`.
 
+Amended by ADR-0084 (2026-11-05): the library-wide decision on form
+association is made — `c-button-group` is form-associated and gains `name`.
+
 ## Context
 
 `c-tab-buttons` conflated three roles: a standalone segmented value picker

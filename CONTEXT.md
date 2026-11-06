@@ -176,7 +176,7 @@ The filled button ending the row under the body of a date, time or colour picker
 _Avoid_: OK, Save, Apply, confirm button, submit
 
 **Bad input**:
-The state of a **date picker**, **time picker** or **colour picker** after committing text that names no enabled value — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A colour picker reaches it only through unparseable text: a colour outside sRGB is mapped into it, not rejected. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**. Only typing produces it; a pick in a panel never does.
+The state of a **date picker**, **time picker** or **colour picker** after committing text that names no enabled value — unparseable, disabled or out of range: the text stays as typed, the value is `null`, and the host exposes `:state(bad-input)` and `badInput`. A colour picker reaches it only through unparseable text: a colour outside sRGB is mapped into it, not rejected. A fact the component reports, not a verdict — the consumer decides whether it is an error and writes the **error message**; only a **validating form** counts it against a submit. Only typing produces it; a pick in a panel never does.
 _Avoid_: Invalid date / invalid time (validity is the consumer's judgement), parse error
 
 ### Time picker
@@ -603,8 +603,16 @@ _Avoid_: Color (c-icon's free CSS colour), intent, tone, type (the native button
 The public pressed state of a button — the selected look plus `aria-pressed`. Set by consumers for standalone toggle buttons, or driven by `c-button-group` on its children.
 _Avoid_: Selected, pressed (canonical prop name is `active`; _pressed_ is only the ARIA mechanism)
 
+**Form-associated**:
+A **value control** that takes part in a native `<form>` the way a built-in control does: its value submits under its `name`, `form.reset()` returns it to its `value` attribute, a disabled `<fieldset>` disables it, and a **validating form** checks it. Every form-facing value control is form-associated except the **file upload**, whose files travel through its **upload function**; `c-tabs`, `c-accordion`, `c-modal` and `c-pagination` hold values but are not form fields. `c-button` and `c-icon-button` are form-associated without a value: a disabled fieldset disables them, and `c-button` submits or resets its form.
+_Avoid_: Submittable, form control (a `c-button` is a form control and holds no value), form-aware
+
+**Validating form**:
+A native `<form>` without `novalidate` around **form-associated** controls. Its submit stops at a control that is **required** and empty, in **bad input**, **out of range** or **incomplete**, or a `c-otp-input` short of its `length`, and the browser shows its own bubble there; the field's look still follows only its `invalid` prop, and a consumer's `invalid` never stops a submit. Under `novalidate` nothing stops the submit and validity is wholly the consumer's.
+_Avoid_: Native validation (unqualified), HTML5 validation, constraint validation (fine for the browser mechanism, not for the form)
+
 **Required**:
-A field-level demand from the *form*: this field must be answered before submission. Surfaces as the asterisk on the **label** and `aria-required`. Purely declarative on the component — enforcement is the consumer's validation logic. Distinct from **mandatory**.
+A field-level demand from the *form*: this field must be answered before submission. Surfaces as the asterisk on the **label** and `aria-required`. On the component it is declarative: only a **validating form** enforces it, and everywhere else enforcement is the consumer's validation logic. Distinct from **mandatory**.
 _Avoid_: Mandatory (see below), obligatory
 
 **Mandatory** (`c-button-group`):
@@ -639,6 +647,14 @@ _Avoid_: Validation (the Stencil-era prop name; validation is the consumer's act
 The line under a form control where its **hint** or **error message** shows, stamped as the `message` part. It keeps its room while empty, so an error appearing at runtime doesn't push the content below it down; `hide-message` removes it and its room. Until 5.0 the 3.x `hide-details` still hides it while `hide-message` is unset (**deprecated**). On `c-pagination` and `c-progress-bar`, `hide-details` is not this: it hides their own `details` part, by the rule that `hide-<part>` hides that part.
 _Avoid_: Details (the 3.x name; on a field there is nothing else under the control), message area, helper line
 
+**Slotted input**:
+A native `<input>` the consumer writes inside a `c-text-field`, which the field frames with its **label**, **message line** and password toggle instead of rendering an input of its own. It stays in the page, so every browser's and extension's password manager can fill it, and it submits and validates itself in a native form. Its native attributes are the consumer's and the field reads them; the field's `value` passes through to it. The way to a field a password manager fills; masks, `rows` and `trim-whitespace` don't apply to it.
+_Avoid_: Open input, light-DOM input, autofill input, credential input (it serves any autofill and plain native submission), `c-text-field-open` (the removed 3.x tag)
+
+**Slotted button**:
+A native `<button>` the consumer writes inside a `c-button`, which the button frames with its **appearance**, **variant**, size, ripple and loading state instead of rendering a button of its own. It fills the button's whole box and stays in the page, so a password manager that reads a form's submit button finds it and its text. Its native attributes (`type`, `disabled`, `name`, `value`, `form`) are the consumer's; an icon goes inside it. The submit button of a form a password manager reads.
+_Avoid_: Native button mode, light-DOM button, open button
+
 **Number field** (`c-number-field`):
 A **value control** for a number — an integer, or one with up to `decimals` fraction digits — whose value is a JS `number` (`null` when it holds no digit) while it shows grouped text (`1 234 567,89`), regrouped on every keystroke (ADR-0060). Emits `update:value` and `input` on every keystroke and every **step** that changes the number; `change` on **commit** (a step is one). Distinct from `c-text-field type="number"`, the native number input, and from an **input mask**, which shapes text into fixed slots.
 _Avoid_: Numeric input, number input (the native one), amount field
@@ -656,7 +672,7 @@ The thousands separator a **number field** inserts between groups of three integ
 _Avoid_: Thousands separator (fine in prose), delimiter, grouping character
 
 **Out of range**:
-A **number field**'s state while its number is below `min` or above `max`: the number is kept and emitted, and the host exposes `:state(out-of-range)` and `outOfRange`. A fact the component reports, like **bad input** — never clamped; the consumer writes the **error message**.
+A **number field**'s state while its number is below `min` or above `max`: the number is kept and emitted, and the host exposes `:state(out-of-range)` and `outOfRange`. A fact the component reports, like **bad input** — never clamped; the consumer writes the **error message**, and only a **validating form** counts it against a submit.
 _Avoid_: Invalid (validity is the consumer's judgement), overflow, clamped
 
 **Input mask**:
@@ -684,7 +700,7 @@ A bracketed trailing part of an **input mask** (`#####[-####]`, `+358 #####[####
 _Avoid_: Optional token (each token of a section is optional, but the section is the concept), optional group, repeat
 
 **Complete** (mask):
-A masked field's text fills every *required* **mask token** — those outside **optional sections**. Text short of that stays as typed and is **incomplete** — `maskComplete` false and the `incomplete` **custom state** (an empty field is neither incomplete nor complete). A fact the component reports, like **bad input**; whether an incomplete value is an error is the consumer's validation.
+A masked field's text fills every *required* **mask token** — those outside **optional sections**. Text short of that stays as typed and is **incomplete** — `maskComplete` false and the `incomplete` **custom state** (an empty field is neither incomplete nor complete). A fact the component reports, like **bad input**; whether an incomplete value is an error is the consumer's validation, and only a **validating form** counts it against a submit.
 _Avoid_: Valid (validity is the consumer's judgement), filled (a field holding any text)
 
 ### Data table
@@ -773,7 +789,7 @@ A parametrised browser test that runs the shared contract of one component *kind
 _Avoid_: contract test, shared spec, generic test
 
 **Value control**:
-A component that holds a persistent `value` and reports changes through the **value events** — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically. A pointer drag (the **colour picker**'s **colour area** and sliders, `c-slider`) fires `update:value` and `input` on each move and `change` once, on release. The **file upload** also emits once when an upload settles, done or failed, and when `startUploads()` starts files (ADR-0071). Includes the **value-selection** fields, the **date picker**, the **time picker**, the **colour picker**, the **file upload**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
+A component that holds a persistent `value` and reports changes through the **value events** — the population a plain Vue `v-model` binds to. Emission happens only on user interaction, never when `value` is set programmatically — except that a form reset of a **form-associated** control emits `update:value` and `input` (never `change`), so a bound model follows it. A pointer drag (the **colour picker**'s **colour area** and sliders, `c-slider`) fires `update:value` and `input` on each move and `change` once, on release. The **file upload** also emits once when an upload settles, done or failed, and when `startUploads()` starts files (ADR-0071). Includes the **value-selection** fields, the **date picker**, the **time picker**, the **colour picker**, the **file upload**, the selection controls, `c-text-field`, `c-slider`, `c-tabs`, `c-button-group`, `c-accordion`, `c-modal`, `c-pagination`, `c-otp-input`.
 _Avoid_: value component, form control (a `c-button` is a control but holds no value), input
 
 **Value events**:
@@ -829,3 +845,11 @@ _Avoid_: custom lint rule (a guard is not an oxlint or ESLint rule), check (unqu
 > **Dev:** So what actually broke for a 3.x app on upgrade?
 >
 > **Lead:** Every camelCase event: `changeValue` becomes `change` or `update:value`, the side navigation's `itemChange` becomes `select`, and the autocomplete's `changeQuery` became `change:query`. There's no compatibility shim; the upgrade is all-at-once.
+>
+> **Dev:** My login form posts to the server. Do I need a `c-form` to collect the fields?
+>
+> **Lead:** No — there is no such tag. Keep a native `<form>`: every **form-associated** field submits under its `name`, and `<c-button type="submit">` sends it. For the username and password, write a **slotted input** inside each `c-text-field`, with `autocomplete` on the input, so Safari's and Firefox's password managers can fill it.
+>
+> **Dev:** And `required`? We show our own error messages.
+>
+> **Lead:** Then add `novalidate`. Without it the form is a **validating form**: an empty required field stops the submit with the browser's bubble, though the field only turns red when you set `invalid`.

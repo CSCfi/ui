@@ -4,7 +4,10 @@ Date: 2026-10-12
 
 ## Status
 
-Accepted
+Accepted. Amended by ADR-0084 (2026-11-05): the other value controls are
+form-associated, so "a native form would submit the files but not the text
+fields beside them" no longer holds; the file upload stays out of forms
+because its upload function carries the files.
 
 ## Context
 

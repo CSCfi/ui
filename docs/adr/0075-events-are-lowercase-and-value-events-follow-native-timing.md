@@ -7,6 +7,11 @@ Date: 2026-10-23
 Accepted. Supersedes ADR-0021; amends ADR-0017 (its grandfather clause is
 gone). Lands before `4.0.0-rc.1`.
 
+Amended by ADR-0084 (2026-11-05): a form reset of a form-associated control
+emits `update:value` and `input`, never `change`. Amended by ADR-0083: a
+`c-text-field` with a slotted input dispatches only `update:value`; the
+input's own `input` and `change` bubble through the host.
+
 ## Context
 
 ADR-0017 made every new event name all-lowercase but kept the camelCase
