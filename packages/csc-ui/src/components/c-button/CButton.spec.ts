@@ -152,6 +152,51 @@ describe('c-button in a form', () => {
   });
 });
 
+describe('c-button keys while loading or disabled', () => {
+  // Only the keys that would activate it are held back: Tab moves on, or the
+  // button would trap keyboard focus while its action runs.
+  it('Tab moves past a loading button and a disabled link; Enter and Space do nothing', async () => {
+    for (const attrs of [
+      { loading: true, type: 'submit' },
+      { disabled: true, href: '#c-button-keys' },
+    ] as Record<string, boolean | string>[]) {
+      const label = JSON.stringify(attrs);
+
+      const form = document.createElement('form');
+
+      const before = document.createElement('input');
+
+      const after = document.createElement('input');
+
+      const seen: string[] = [];
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        seen.push('submit');
+      });
+      document.body.append(form);
+
+      const m = await mount('c-button', { attrs, html: 'Go' });
+
+      form.append(before, m.host.parentElement!, after);
+      before.focus();
+      await userEvent.tab();
+
+      expect(m.host.shadowRoot!.activeElement, label).toBe(m.part('root'));
+
+      await userEvent.keyboard('{Enter}');
+      await userEvent.keyboard(' ');
+      await userEvent.tab();
+
+      expect(document.activeElement, label).toBe(after);
+      expect(seen, label).toEqual([]);
+      expect(location.hash, label).not.toBe('#c-button-keys');
+      m.unmount();
+      form.remove();
+    }
+  });
+});
+
 describe('c-button appearance', () => {
   const paint = async (attrs: Record<string, boolean | string>) => {
     const { part } = await mount('c-button', { attrs, html: 'Save' });

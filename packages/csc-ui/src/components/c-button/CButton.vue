@@ -671,9 +671,13 @@ const onClick = (event: MouseEvent) => {
 };
 
 const onKeydown = (event: KeyboardEvent) => {
+  // Disabled or loading, the keys that would activate it do nothing; every
+  // other key goes on its way — Tab held back would trap the focus here.
   if (props.disabled || props.loading) {
-    event.preventDefault();
-    event.stopPropagation();
+    if (event.key === 'Enter' || event.code === 'Space') {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
     return;
   }
