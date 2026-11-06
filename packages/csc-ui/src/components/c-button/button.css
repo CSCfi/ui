@@ -1,0 +1,52 @@
+/*
+ * c-button's slotted button — a DOCUMENT-level sheet, not a shadow sheet.
+ *
+ * The consumer's <button> stays in the page so a password manager that reads
+ * a form's submit button finds it (ADR-0085). It is injected once into
+ * document.head by injectButtonStyles.ts — the slotted input's pattern
+ * (ADR-0083, ADR-0037).
+ *
+ * Every selector is scoped `c-button > button.c-button__slotted`: the child
+ * combinator plus the class the button stamps keep the rules off every other
+ * button. Deliberately UNLAYERED, so they beat a consumer's generic
+ * `button { … }` reset while a selector naming the scope still overrides
+ * them. The button fills c-button's `root`, which paints the look: the colour,
+ * radius, padding and focus ring come through the private custom properties
+ * `root` sets, inherited through the slot.
+ */
+
+c-button > button.c-button__slotted {
+  align-items: center;
+  align-self: stretch;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: inherit;
+  corner-shape: inherit;
+  cursor: inherit;
+  display: flex;
+  font: inherit;
+  gap: 0.5rem;
+  grid-area: 1 / 1;
+  justify-content: center;
+  justify-self: stretch;
+  letter-spacing: inherit;
+  margin: 0;
+  min-width: 0;
+  opacity: var(--_c-button-label-opacity, 1);
+  outline: none;
+  padding: 0 var(--_c-button-pad-x);
+  text-align: center;
+  text-decoration: none;
+  text-transform: inherit;
+  transition: opacity 200ms;
+  white-space: nowrap;
+}
+
+c-button > button.c-button__slotted:focus-visible {
+  outline: 2px solid var(--_c-button-ring);
+  outline-offset: 2px;
+}

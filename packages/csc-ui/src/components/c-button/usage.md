@@ -92,11 +92,37 @@ What each field submits under its `name`:
 
 `c-file-upload` takes no part: its upload function sends the files.
 
+## Slotted button
+
+A password manager reads a form's submit button to tell what the form is
+for, and cannot find the native button inside a `c-button`'s shadow root:
+Proton Pass, for one, then offers no password to generate on a sign-up form.
+For the submit button of a form a password manager reads — sign up, log in,
+change password — write the `<button>` yourself inside the `c-button`:
+
+```vue
+<c-button :loading="saving">
+  <button type="submit">Create account</button>
+</c-button>
+```
+
+The button fills the `c-button`, which paints it with its appearance,
+variant, size, ripple and loading spinner, and it stays in the page, where
+every password manager finds it. Its own attributes apply — `type`,
+`disabled`, `name`, `value`, `form` — and it submits its form natively. The
+`c-button`'s `type`, `href`, `target` and `value` are ignored, and so are
+the `icon` and `description` slots (put an icon inside the button), each
+with a console warning. `loading` cancels the button's clicks; set
+`disabled` on the button, where assistive technology hears it.
+
+Every other form keeps `<c-button type="submit">`.
+
 ## Accessibility
 
 The `root` part is a native `<button>` (or `<a>` when `href` is set), so
 focus, keyboard activation and screen-reader semantics come from the
-platform. When only an icon is slotted, provide an accessible name on the
+platform; with a slotted button, the page's own `<button>` is the control and
+`root` only paints. When only an icon is slotted, provide an accessible name on the
 host, e.g. `aria-label="Close"`.
 
 ## Customization

@@ -13,7 +13,11 @@
       />
     </c-text-field>
 
-    <c-button type="submit">Log in</c-button>
+    <!-- The submit button is the page's own too: a password manager reads it
+         to tell what the form is for. -->
+    <c-button>
+      <button type="submit">Log in</button>
+    </c-button>
 
     <p v-if="loggedIn">Logged in as {{ loggedIn }}</p>
   </form>

@@ -136,7 +136,9 @@ password toggle.
     />
   </c-text-field>
 
-  <c-button type="submit">Log in</c-button>
+  <c-button>
+    <button type="submit">Log in</button>
+  </c-button>
 </form>
 ```
 
@@ -146,6 +148,13 @@ those names are ignored, with a console warning. `autocomplete` tells the
 manager what the input holds: `username`, `current-password`, `new-password`
 (where it offers to generate one) or `one-time-code`. In a form the input
 submits and validates itself.
+
+A password manager decides what a form is for — logging in, signing up,
+changing a password — partly from its submit button, which it cannot find
+inside a `c-button`'s shadow root: Proton Pass then offers no password to
+generate on a sign-up form, whatever the page's headings say. Write the
+submit button yourself inside the `c-button`, as above: a **slotted button**,
+which the `c-button` paints (see `c-button`).
 
 The field's `value` and its value events still work, so `v-model` goes on the
 field or on the input. `mask`, `rows` and `trim-whitespace` do not apply to a

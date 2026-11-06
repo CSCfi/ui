@@ -40,6 +40,9 @@ const isSubmitButton = (el: Element): boolean => {
   if (el.localName === 'c-button') {
     const button = el as { href?: string; type?: string } & Element;
 
+    // A slotted button (ADR-0085) is counted as itself.
+    if (el.querySelector(':scope > button.c-button__slotted')) return false;
+
     return button.type === 'submit' && !button.href;
   }
 

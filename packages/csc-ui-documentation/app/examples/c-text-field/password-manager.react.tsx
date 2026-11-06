@@ -35,7 +35,11 @@ export const PasswordManager = () => {
         />
       </CTextField>
 
-      <CButton type="submit">Log in</CButton>
+      {/* The submit button is the page's own too: a password manager reads it
+          to tell what the form is for. */}
+      <CButton>
+        <button type="submit">Log in</button>
+      </CButton>
 
       {loggedIn && <p>Logged in as {loggedIn}</p>}
     </form>
