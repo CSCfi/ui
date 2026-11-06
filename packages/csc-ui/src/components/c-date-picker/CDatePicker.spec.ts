@@ -17,6 +17,7 @@ import {
   deepActiveElement,
   matchScreenshotInBothModes,
   mount,
+  mountInForm,
   recordEvents,
   settle,
   settled,
@@ -2278,5 +2279,49 @@ describe('visual', () => {
     await finishAnimations(m);
 
     await matchScreenshotInBothModes(m.part('panel'), 'range-end-month');
+  });
+});
+
+describe('form association (ADR-0084)', () => {
+  it('a range submits one ISO 8601 interval, a side empty while it has none', async () => {
+    const m = await mountInForm<{ value: unknown } & HTMLElement>(
+      'c-date-picker',
+      { attrs: { name: 'stay' }, props: { label: 'Stay', range: true } },
+    );
+
+    expect(m.entries('stay')).toEqual(['']);
+
+    m.host.value = { end: '2031-09-05', start: '2031-09-01' };
+    await settle();
+
+    expect(m.entries('stay')).toEqual(['2031-09-01/2031-09-05']);
+
+    m.host.value = { end: null, start: '2031-09-01' };
+    await settle();
+
+    expect(m.entries('stay')).toEqual(['2031-09-01/']);
+    // A half range is a value, but not the answer a required range asks for.
+    (m.host as { required?: boolean }).required = true;
+    await settle();
+
+    expect(m.form.checkValidity()).toBe(false);
+    m.unmount();
+  });
+
+  it('bad input stops a validating form', async () => {
+    const m = await mountInForm('c-date-picker', {
+      attrs: { name: 'day' },
+      props: { label: 'Day' },
+    });
+
+    const input = m.deep<HTMLInputElement>('input');
+
+    await userEvent.type(input, '31.02.2031');
+    await userEvent.keyboard('{Enter}');
+    await settle();
+
+    expect(m.entries('day')).toEqual(['']);
+    expect(m.form.checkValidity()).toBe(false);
+    m.unmount();
   });
 });

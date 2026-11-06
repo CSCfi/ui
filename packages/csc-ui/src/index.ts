@@ -1,4 +1,4 @@
-import { components } from './registry';
+import { components, formAssociatedTags } from './registry';
 import { defineElement } from './shared/defineElement';
 
 export type { CAccordionValue } from './components/c-accordion/CAccordion.vue';
@@ -219,6 +219,8 @@ export type { VNode, VNodeChild } from 'vue';
  */
 export function defineCustomElements(): void {
   for (const [tag, component] of components) {
-    defineElement(tag, component as never);
+    defineElement(tag, component as never, {
+      formAssociated: formAssociatedTags.has(tag),
+    });
   }
 }

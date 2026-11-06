@@ -16,6 +16,7 @@ import {
   defineAll,
   matchScreenshotInBothModes,
   mount,
+  mountInForm,
   recordEvents,
   settle,
   settled,
@@ -757,5 +758,32 @@ describe('value attribute', () => {
 
     expect(m.host.value).toBe('se');
     expect(combobox(m).value).toBe('Sweden');
+  });
+});
+
+describe('form association (ADR-0084)', () => {
+  it('multiple submits one entry per pick, in pick order', async () => {
+    const m = await mountInForm<{ value: unknown } & HTMLElement>('c-select', {
+      attrs: { name: 'countries' },
+      html: [
+        '<c-option value="fi">Finland</c-option>',
+        '<c-option value="se">Sweden</c-option>',
+        '<c-option value="no">Norway</c-option>',
+      ].join(''),
+      props: { label: 'Countries', multiple: true },
+    });
+
+    expect(m.entries('countries')).toEqual([]);
+
+    m.host.value = ['se', 'fi'];
+    await settle();
+
+    expect(m.entries('countries')).toEqual(['se', 'fi']);
+
+    m.form.reset();
+    await settle();
+
+    expect(m.entries('countries')).toEqual([]);
+    m.unmount();
   });
 });

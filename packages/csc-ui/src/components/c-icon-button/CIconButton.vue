@@ -3,7 +3,7 @@
     :aria-busy="loading ? 'true' : undefined"
     :aria-disabled="loading ? 'true' : undefined"
     :class="ui.root()"
-    :disabled
+    :disabled="disabledResolved"
     part="root"
     @click="onClick"
   >
@@ -169,6 +169,7 @@ import { computed, useTemplateRef } from 'vue';
 import { useAppDefault } from '../../shared/appDefaults';
 import { resolveAppearance } from '../../shared/buttonAppearance';
 import { dangerAsVariant } from '../../shared/buttonVariant';
+import { useFormAssociation } from '../../shared/useFormAssociation';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
@@ -422,6 +423,16 @@ const props = withDefaults(defineProps<CIconButtonProps>(), {
   variant: undefined,
 });
 
+// The element is form-associated without a value (ADR-0084): a disabled
+// `<fieldset>` around it disables it, as it would a native button.
+const { formDisabled } = useFormAssociation({
+  name: () => undefined,
+  reset: () => {},
+  value: () => null,
+});
+
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
+
 const appearance = computed(() => resolveAppearance(props));
 
 // Defaultable props resolve host attribute → own property → app default →
@@ -440,7 +451,7 @@ const variantResolved = appDefault(
 // the defaults.
 const ui = computed(() =>
   iconButton({
-    disabled: props.disabled,
+    disabled: disabledResolved.value,
     ghost: appearance.value === 'ghost',
     inverted: props.inverted,
     loading: props.loading,
@@ -471,7 +482,7 @@ const { ripples, spawn: spawnRipple } = useRipple({
 });
 
 const onClick = (event: MouseEvent) => {
-  if (props.disabled || props.loading) {
+  if (disabledResolved.value || props.loading) {
     event.preventDefault();
     event.stopPropagation();
 

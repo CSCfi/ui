@@ -41,6 +41,7 @@
         :aria-label="`Enter code - digit number - ${i} of ${length}`"
         :aria-required="required ? 'true' : undefined"
         :class="ui.input()"
+        :disabled="formDisabled || undefined"
         :name="`${resolvedId}--digit-${i}`"
         autocapitalize="off"
         autocomplete="off"
@@ -96,6 +97,12 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import FormLabel from '../../shared/FormLabel.vue';
+import { submitOnEnter } from '../../shared/implicitSubmission';
+import {
+  formatMessage,
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useIdReferences } from '../../shared/useIdReferences';
@@ -223,6 +230,13 @@ interface COtpInputProps {
   length?: number;
 
   /**
+   * The name the code submits under in a native `<form>`, as typed so far
+   *
+   * @freeform
+   */
+  name?: string;
+
+  /**
    * Set as required — shows the required marker on the label
    */
   required?: boolean;
@@ -245,6 +259,7 @@ const props = withDefaults(defineProps<COtpInputProps>(), {
   invalid: false,
   label: '',
   length: 6,
+  name: '',
   required: false,
   value: '',
 });
@@ -398,7 +413,10 @@ const onKeyDown = (event: KeyboardEvent) => {
     emitValue();
   }
 
-  if (event.key === 'Enter') commit();
+  if (event.key === 'Enter') {
+    commit();
+    submitOnEnter(event, form());
+  }
 };
 
 const onInput = (event: InputEvent) => {
@@ -482,6 +500,31 @@ onMounted(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => rootRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The code submits as typed so far. A required empty one, and one short of
+// its `length` (like an incomplete mask), stop a validating form, the bubble
+// at the first empty box. A disabled fieldset disables the boxes.
+const { form, formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value }) => emitModelInput(host, value ?? ''),
+  validity: () => {
+    const code = props.value ?? '';
+
+    if (code.length >= props.length) return null;
+
+    if (code === '' && !coerceBoolean(props.required)) return null;
+
+    return {
+      anchor: inputs()[code.length] ?? inputs()[0],
+      flags: code === '' ? { valueMissing: true } : { tooShort: true },
+      message:
+        code === '' ? nativeMessage({ required: true }) : formatMessage(),
+    };
+  },
+  value: () => props.value ?? '',
+});
 
 /**
  * Focus its first digit box, as `focus()` does on a native control: the element renders

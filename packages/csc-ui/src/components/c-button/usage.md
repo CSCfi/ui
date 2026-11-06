@@ -53,16 +53,44 @@ wins when both are set.
 
 ## In a form
 
-`type="submit"` submits the `<form>` around the button (validating it first,
-as `form.requestSubmit()` does) and `type="reset"` resets it; the default
-`button` does nothing to the form. A disabled or loading button, or one with
-an `href`, never submits.
+`type="submit"` submits the button's `<form>` — the one around it, or the one
+its `form` attribute names — validating it first, as `form.requestSubmit()`
+does, and `type="reset"` resets it; the default `button` does nothing to the
+form. A disabled or loading button, or one with an `href`, never submits,
+and a disabled `<fieldset>` around the button disables it.
+
+The fields beside it take part in the form as native controls do: each
+submits its value under its `name`, `form.reset()` returns it to the value
+its markup set, and a disabled `<fieldset>` disables it. Enter in a
+single-line text field submits the form through its first submit button,
+`c-button` included, so a loading button stops that submit too.
+
+A form without `novalidate` is checked before it submits: a `required` field
+left empty, a date or colour that is bad input, a number out of range, an
+incomplete mask or a partly filled code stops the submit, and the browser
+points at the field with its own message. The field's look follows only its
+`invalid` prop, so an app that shows its own error messages adds `novalidate`
+and checks the fields itself:
 
 ```vue
-<form @submit.prevent="save">
+<form novalidate @submit.prevent="save">
+  <c-text-field v-model="name" label="Name" name="name" required />
   <c-button type="submit">Save</c-button>
 </form>
 ```
+
+What each field submits under its `name`:
+
+| Field                                            | Submits                                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Text, number, code, colour, date and time fields | Its text, `''` when empty; a number as a plain JS number (`1234.5`), never the grouped text |
+| A `range` date or time picker                    | One ISO 8601 interval, `2026-11-01/2026-11-30`, with a side left empty while it has none    |
+| `c-select`, `c-autocomplete`, `c-tree-select`    | The picked value (an item's `value`), `''` without one; one entry per pick with `multiple`  |
+| `c-checkbox`, `c-switch`                         | Its `true-value` while on (`on` for `true`), nothing while off                              |
+| `c-radio-group`, `c-button-group`                | The picked value, nothing without one; one entry per active button with `multiple`          |
+| `c-slider`                                       | Its value                                                                                   |
+
+`c-file-upload` takes no part: its upload function sends the files.
 
 ## Accessibility
 

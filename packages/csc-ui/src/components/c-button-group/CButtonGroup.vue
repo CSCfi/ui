@@ -72,6 +72,14 @@ interface CButtonGroupProps {
   multiple?: boolean;
 
   /**
+   * The name the active button's value submits under in a native `<form>` —
+   * one entry per active button with `multiple`, nothing while none is active
+   *
+   * @freeform
+   */
+  name?: string;
+
+  /**
    * Set as required — shows the required marker on the label
    */
   required?: boolean;
@@ -111,8 +119,12 @@ import {
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import FormLabel from '../../shared/FormLabel.vue';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useIdReferences } from '../../shared/useIdReferences';
-import { emitModelChange } from '../../shared/valueEvents';
+import { emitModelChange, emitModelInput } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-button-group>`. */
 interface CButtonGroupEvents {
@@ -214,6 +226,7 @@ const props = withDefaults(defineProps<CButtonGroupProps>(), {
   label: '',
   mandatory: false,
   multiple: false,
+  name: '',
   required: false,
   size: 'default',
   value: null,
@@ -241,7 +254,7 @@ const isMultiple = computed(() => coerceBoolean(props.multiple));
 // the default size.
 const ui = computed(() =>
   buttonGroup({
-    disabled: coerceBoolean(props.disabled),
+    disabled: coerceBoolean(props.disabled) || formDisabled.value,
     size: props.size in sizeVariants ? props.size : 'default',
   }),
 );
@@ -606,6 +619,41 @@ onBeforeUnmount(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => groupRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The active button's value submits — one entry per active button with
+// `multiple`, nothing while none is. A required group with none active stops
+// a validating form. A disabled fieldset disables the buttons themselves:
+// they are form-associated too.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value }) => {
+    if (isMultiple.value) emitModelInput(host, []);
+    else if (value === null) emitModelInput(host, null);
+    else emitModelInput(host, isIndexBased ? Number(value) : value);
+  },
+  validity: () => {
+    const picked = selectedValues(internalValue.value);
+
+    if (!coerceBoolean(props.required) || picked.length > 0) return null;
+
+    const first = buttons().find((b) => !b.disabled);
+
+    return {
+      anchor: (first && nativeControlOf(first)) || groupRef.value,
+      flags: { valueMissing: true },
+      message: nativeMessage({ name: 'group', required: true, type: 'radio' }),
+    };
+  },
+  value: () => {
+    const picked = selectedValues(internalValue.value).map(String);
+
+    if (isMultiple.value) return picked;
+
+    return picked[0] ?? null;
+  },
+});
 
 /**
  * Focus its tab stop: the selected button, else the first enabled one, as `focus()` does on a native control: the element renders

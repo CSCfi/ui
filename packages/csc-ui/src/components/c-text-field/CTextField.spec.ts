@@ -2,7 +2,8 @@
  * Behaviour spec for c-text-field's value events (CONTEXT.md "Value events",
  * "Commit"; ADR-0075), its input mask (CONTEXT.md "Input mask", "Complete";
  * ADR-0059) and `invalid`, which markup can set — `valid`, defaulting to true,
- * could never be turned off from an attribute (ADR-0076).
+ * could never be turned off from an attribute (ADR-0076), and its part in a
+ * native form (ADR-0084).
  */
 import { describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
@@ -15,6 +16,7 @@ import {
   contrastRatio,
   matchScreenshotInBothModes,
   mount,
+  mountInForm,
   recordEvents,
   roleInMode,
   setThemeMode,
@@ -520,5 +522,122 @@ describe('type', () => {
 
     expect(input(m).type).toBe('password');
     expect(m.shadow('button[aria-label="Show password"]')).not.toBeNull();
+  });
+});
+
+describe('form association (ADR-0084)', () => {
+  const inForm = (
+    options: {
+      attrs?: Record<string, string>;
+      props?: Record<string, unknown>;
+    } = {},
+  ) =>
+    mountInForm<FieldHost>('c-text-field', {
+      attrs: { name: 'phone', ...options.attrs },
+      props: { label: 'Phone', ...options.props },
+    });
+
+  it('submits the text under its name, as typed', async () => {
+    const m = await inForm({ props: { value: 'Ada' } });
+
+    expect(m.entries('phone')).toEqual(['Ada']);
+
+    await userEvent.type(input(m), ' L');
+    await settle();
+
+    expect(m.entries('phone')).toEqual(['Ada L']);
+    m.unmount();
+  });
+
+  it('submits an empty field as an empty string, and nothing without a name', async () => {
+    const m = await inForm();
+
+    expect(m.entries('phone')).toEqual(['']);
+
+    m.host.removeAttribute('name');
+    await settle();
+
+    expect([...new FormData(m.form).keys()]).toEqual([]);
+    m.unmount();
+  });
+
+  it('a form reset returns to the authored value and emits input, not change', async () => {
+    const m = await inForm({ attrs: { value: 'Ada' } });
+
+    await userEvent.type(input(m), 'x');
+    await settle();
+
+    const events = recordEvents(m.host, ['change', 'update:value']);
+
+    m.form.reset();
+    await settle();
+
+    expect(m.host.value).toBe('Ada');
+    expect(input(m).value).toBe('Ada');
+    expect(events.names()).toEqual(['update:value']);
+    m.unmount();
+  });
+
+  it('a value bound as a property resets to empty', async () => {
+    const m = await inForm({ props: { value: 'Bob' } });
+
+    m.form.reset();
+    await settle();
+
+    expect(m.host.value).toBe('');
+    m.unmount();
+  });
+
+  it('a disabled fieldset disables it, and it submits nothing', async () => {
+    const m = await inForm({ props: { value: 'Ada' } });
+
+    m.fieldset.disabled = true;
+    await settle();
+
+    expect(input(m).disabled).toBe(true);
+    expect(m.entries('phone')).toEqual([]);
+
+    m.fieldset.disabled = false;
+    await settle();
+
+    expect(input(m).disabled).toBe(false);
+    m.unmount();
+  });
+
+  it('a required empty field stops a validating form, and novalidate lets it through', async () => {
+    const m = await inForm({ props: { required: true } });
+
+    const submits = recordEvents(m.form, ['submit']);
+
+    m.form.requestSubmit();
+    expect(m.form.checkValidity()).toBe(false);
+    expect(submits.records).toHaveLength(0);
+
+    m.form.noValidate = true;
+    m.form.requestSubmit();
+    expect(submits.records).toHaveLength(1);
+    m.unmount();
+  });
+
+  it('checks the type and an incomplete mask, never the invalid prop', async () => {
+    const email = await inForm({ props: { type: 'email', value: 'ada' } });
+
+    expect(email.form.checkValidity()).toBe(false);
+    email.unmount();
+
+    const masked = await inForm({ props: { mask: '###', value: '12' } });
+
+    expect(masked.form.checkValidity()).toBe(false);
+
+    masked.host.value = '123';
+    await settle();
+
+    expect(masked.form.checkValidity()).toBe(true);
+    masked.unmount();
+
+    const marked = await inForm({ props: { invalid: true, value: 'ada' } });
+
+    expect(marked.form.checkValidity()).toBe(true);
+    marked.unmount();
   });
 });

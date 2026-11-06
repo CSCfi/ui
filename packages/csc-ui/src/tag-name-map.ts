@@ -230,7 +230,10 @@ export interface CAutocompleteElement extends Omit<HTMLElement, 'clearable' | 'd
    * a DOM property
    */
   multiple?: boolean;
-  /** Input field name */
+  /**
+   * The name the picked value submits under in a native `<form>` — one entry
+   * per value with `multiple`
+   */
   name?: string;
   /** Placeholder for the in-panel search input */
   placeholder?: string;
@@ -423,7 +426,7 @@ export interface CButtonGroupElementEventMap {
 }
 
 /** A button group is a segmented control: a compact group of choices rendered as plain `c-button` children, where activating a button takes effect immediately (switching a view, picking a billing period). Selection is exclusive by default; set `multiple` to let several buttons be active at once. Give the group a `label` when it acts as a form field so the choice it represents is named for every user. */
-export interface CButtonGroupElement extends Omit<HTMLElement, 'disabled' | 'label' | 'mandatory' | 'multiple' | 'required' | 'size' | 'value'> {
+export interface CButtonGroupElement extends Omit<HTMLElement, 'disabled' | 'label' | 'mandatory' | 'multiple' | 'name' | 'required' | 'size' | 'value'> {
   /** Disable the whole group — every slotted c-button is disabled and the selection can no longer be changed. */
   disabled?: boolean;
   /** Label of the button group, shown above the buttons */
@@ -441,6 +444,11 @@ export interface CButtonGroupElement extends Omit<HTMLElement, 'disabled' | 'lab
    * form — bind `value` as a DOM property (`:value.prop` in Vue).
    */
   multiple?: boolean;
+  /**
+   * The name the active button's value submits under in a native `<form>` —
+   * one entry per active button with `multiple`, nothing while none is active
+   */
+  name?: string;
   /** Set as required — shows the required marker on the label */
   required?: boolean;
   /** Size of the buttons */
@@ -594,8 +602,8 @@ export interface CCheckboxElement extends Omit<HTMLElement, 'checked' | 'disable
    */
   label?: string;
   /**
-   * `name` of the inner checkbox input. The component is not
-   * form-associated, so it does not submit with a `<form>`.
+   * The name the checkbox submits under in a native `<form>` while it is
+   * checked: its `true-value`, or `on` when that is `true`
    */
   name?: string;
   /** Set as required — shows the required marker on the label */
@@ -702,7 +710,10 @@ export interface CColorPickerElement extends Omit<HTMLElement, 'alpha' | 'cleara
   label?: string;
   /** Label on top of the field */
   labelOnTop?: boolean;
-  /** Input field name */
+  /**
+   * The name the colour submits under in a native `<form>`, in the
+   * picker's notation
+   */
   name?: string;
   /** Placeholder of the input; an example of the notation when empty */
   placeholder?: string;
@@ -969,7 +980,10 @@ export interface CDatePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
    * bounds the calendar's navigation
    */
   min?: string;
-  /** Input field name */
+  /**
+   * The name the date submits under in a native `<form>`, as its ISO text;
+   * a `range` as one ISO 8601 interval, `start/end`
+   */
   name?: string;
   /** Placeholder of the input; the `format` pattern when empty */
   placeholder?: string;
@@ -1619,7 +1633,10 @@ export interface CNumberFieldElement extends Omit<HTMLElement, 'decimals' | 'dec
   max?: null | number;
   /** The smallest number in range; a smaller one is kept and reported as out of range. At `0` or above, the minus key is ignored */
   min?: null | number;
-  /** Name of the input */
+  /**
+   * The name the number submits under in a native `<form>`, written as a
+   * plain JS number (`1234.5`)
+   */
   name?: string;
   /** Placeholder of the input */
   placeholder?: string;
@@ -1704,7 +1721,7 @@ export interface COtpInputElementEventMap {
 }
 
 /** A one-time-code field: a row of single-digit boxes, filled in order as the user types or pastes a code, under a group label and above a hint or error message. */
-export interface COtpInputElement extends Omit<HTMLElement, 'autofocus' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'label' | 'length' | 'required' | 'value'> {
+export interface COtpInputElement extends Omit<HTMLElement, 'autofocus' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'invalid' | 'label' | 'length' | 'name' | 'required' | 'value'> {
   /** Focus the first digit when the field mounts. */
   autofocus?: boolean;
   /** Error message shown in place of the hint while the input is invalid */
@@ -1731,6 +1748,8 @@ export interface COtpInputElement extends Omit<HTMLElement, 'autofocus' | 'error
   label?: string;
   /** Number of digits in the code, one box each */
   length?: number;
+  /** The name the code submits under in a native `<form>`, as typed so far */
+  name?: string;
   /** Set as required — shows the required marker on the label */
   required?: boolean;
   /**
@@ -1955,7 +1974,7 @@ export interface CRadioGroupElementEventMap {
 }
 
 /** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
-export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'inline' | 'invalid' | 'label' | 'required' | 'value'> {
+export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'errorMessage' | 'hideDetails' | 'hideMessage' | 'hint' | 'inline' | 'invalid' | 'label' | 'name' | 'required' | 'value'> {
   /** Disable the radio group */
   disabled?: boolean;
   /** Error message shown in place of the hint while the group is invalid */
@@ -1982,6 +2001,11 @@ export interface CRadioGroupElement extends Omit<HTMLElement, 'disabled' | 'erro
   invalid?: boolean;
   /** Label of the radio group */
   label?: string;
+  /**
+   * The name the picked radio's value submits under in a native `<form>`;
+   * nothing submits while no radio is picked
+   */
+  name?: string;
   /** Set as required */
   required?: boolean;
   /**
@@ -2085,7 +2109,10 @@ export interface CSelectElement extends Omit<HTMLElement, 'clearable' | 'disable
    * Arrays have no attribute form — bind `value` as a DOM property
    */
   multiple?: boolean;
-  /** Input field name */
+  /**
+   * The name the picked value submits under in a native `<form>` — one entry
+   * per value with `multiple`
+   */
   name?: string;
   /** Display the option as selection (only with <c-option> elements) */
   optionAsSelection?: boolean;
@@ -2298,10 +2325,7 @@ export interface CSliderElement extends Omit<HTMLElement, 'disabled' | 'disableT
   max?: number;
   /** The smallest value. */
   min?: number;
-  /**
-   * `name` of the inner range input. The component is not
-   * form-associated, so it does not submit with a `<form>`.
-   */
+  /** The name the value submits under in a native `<form>` */
   name?: string;
   /** Number of segments the tick marks divide the track into. */
   segments?: number;
@@ -2463,7 +2487,7 @@ export interface CSwitchElementEventMap {
 }
 
 /** A toggle for a binary setting that takes effect immediately: a native switch control with a label. */
-export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'label' | 'loading' | 'required' | 'trueValue' | 'value'> {
+export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled' | 'falseValue' | 'label' | 'loading' | 'name' | 'required' | 'trueValue' | 'value'> {
   /**
    * Whether the switch is on: the boolean view of `value`. Setting it sets
    * `value` to `trueValue` or `falseValue`; reading it reports whether
@@ -2485,6 +2509,11 @@ export interface CSwitchElement extends Omit<HTMLElement, 'checked' | 'disabled'
    * saved. The switch ignores toggles meanwhile and is announced as busy
    */
   loading?: boolean;
+  /**
+   * The name the switch submits under in a native `<form>` while it is on:
+   * its `true-value`, or `on` when that is `true`
+   */
+  name?: string;
   /** Set as required — shows the required marker on the label */
   required?: boolean;
   /** The value when the switch is on */
@@ -2784,10 +2813,7 @@ export interface CTextFieldElement extends Omit<HTMLElement, 'autocapitalize' | 
   max?: null | number;
   /** Smallest value of a `type="number"` field, as the native `min` attribute */
   min?: null | number;
-  /**
-   * `name` of the inner input. The component is not form-associated, so it
-   * does not submit with a `<form>`.
-   */
+  /** The name the text submits under in a native `<form>` */
   name?: string;
   /**
    * Placeholder of the input. Beside a floating `label` it shows only while
@@ -2930,7 +2956,10 @@ export interface CTimePickerElement extends Omit<HTMLElement, 'clearable' | 'dis
    * the step
    */
   minuteStep?: number;
-  /** Input field name */
+  /**
+   * The name the time submits under in a native `<form>`, as its ISO text;
+   * a `range` as one ISO 8601 interval, `start/end`
+   */
   name?: string;
   /** Placeholder of the input; the `format` pattern when empty */
   placeholder?: string;
@@ -3210,7 +3239,7 @@ export interface CTreeSelectElement extends Omit<HTMLElement, 'allowBranch' | 'c
    * form — bind as a DOM property
    */
   levelLabels?: string[];
-  /** Input field name */
+  /** The name the picked value submits under in a native `<form>` */
   name?: string;
   /** Placeholder for the search input inside the panel */
   placeholder?: string;

@@ -9,7 +9,7 @@
       ref="cInputRef"
       :active="isOpen"
       :data-hide-details="String(hideMessageResolved)"
-      :disabled
+      :disabled="disabledResolved"
       :filled="hasSelection"
       :input-id
       :invalid
@@ -48,7 +48,7 @@
           :aria-expanded="isOpen"
           :aria-label="accessibleName"
           :class="ui.input()"
-          :disabled
+          :disabled="disabledResolved"
           :name="name || undefined"
           :value="inputValue"
           aria-haspopup="listbox"
@@ -89,7 +89,7 @@
         <c-icon-button
           v-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :disabled
+          :disabled="disabledResolved"
           appearance="text"
           size="x-small"
           variant="primary"
@@ -102,7 +102,7 @@
         <span v-else :class="ui.chevron()">
           <c-icon-button
             :aria-label="t.toggleOptions"
-            :disabled
+            :disabled="disabledResolved"
             appearance="text"
             size="x-small"
             variant="primary"
@@ -592,7 +592,7 @@ interface CTreeSelectProps {
   levelLabels?: string[];
 
   /**
-   * Input field name
+   * The name the picked value submits under in a native `<form>`
    *
    * @freeform
    */
@@ -685,11 +685,15 @@ import { applyPeekCap } from '../../shared/peekCap';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
-import { emitModelChange } from '../../shared/valueEvents';
+import { emitModelChange, emitModelInput } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-tree-select>`. */
 interface CTreeSelectEvents {
@@ -858,6 +862,9 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
 });
 
 const host = useHost();
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
 
 const { controlAttrs } = useControlAttrs();
 
@@ -1552,7 +1559,7 @@ const {
   panelStyle,
 } = useAnchoredPanel({
   anchor: anchorRef,
-  disabled: () => props.disabled,
+  disabled: () => disabledResolved.value,
   field: cInputRef,
   fullscreen: narrow,
   host,
@@ -1585,7 +1592,7 @@ const {
 // ---- keyboard / interaction ---------------------------------------------
 
 const onFieldClick = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
 
   if (isOpen.value) closePanel(false);
   else openPanel();
@@ -1616,7 +1623,7 @@ const onButtonKeyDown = (src: 'chevron' | 'reset', event: KeyboardEvent) => {
 };
 
 const onFieldKeyDown = (event: KeyboardEvent) => {
-  if (props.disabled || isOpen.value) return;
+  if (disabledResolved.value || isOpen.value) return;
 
   if ([' ', 'ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) {
     event.preventDefault();
@@ -1797,6 +1804,26 @@ watch(activeIndex, (now, before) => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => fieldRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The pick submits its value (an item's `value` with `return-object`), `''`
+// while there is none. A required field without a pick stops a validating
+// form.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value: authored }) => emitModelInput(host, authored),
+  validity: () =>
+    !props.required || hasSelection.value
+      ? null
+      : {
+          anchor: fieldRef.value,
+          flags: { valueMissing: true },
+          message: nativeMessage('select'),
+        },
+  value: () =>
+    committedValue.value == null ? '' : String(committedValue.value),
+});
 
 /**
  * Focus its combobox, as `focus()` does on a native control: the element renders

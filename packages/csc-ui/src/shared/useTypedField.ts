@@ -20,7 +20,13 @@ import {
   watch,
 } from 'vue';
 
+import { submitOnEnter } from './implicitSubmission';
 import { applyMask, type MaskSlot } from './inputMask';
+import {
+  formatMessage,
+  nativeMessage,
+  useFormAssociation,
+} from './useFormAssociation';
 import {
   emitModelChange,
   emitModelInput,
@@ -60,6 +66,9 @@ export interface UseTypedFieldOptions {
   /** The custom element host: the model events dispatch from it. */
   host: HTMLElement | null;
 
+  /** Whether the panel is open: Enter in the field then submits no form. */
+  isOpen: () => boolean;
+
   /** The field label (props.label). */
   label: () => string;
 
@@ -68,6 +77,9 @@ export interface UseTypedFieldOptions {
 
   /** The typing mask derived from `pattern`; without one, typing is free. */
   mask?: Readonly<Ref<MaskSlot[]>>;
+
+  /** The name the value submits under in a native `<form>` (props.name). */
+  name: () => string | undefined;
 
   /** The end inputs' accessible names under `range`. */
   names: () => { end: string; start: string };
@@ -86,6 +98,9 @@ export interface UseTypedFieldOptions {
 
   /** Whether the field holds a start and an end. */
   range: Readonly<Ref<boolean>>;
+
+  /** Whether the form demands an answer (props.required). */
+  required: () => boolean;
 
   /** What a committed range with its start after its end becomes: swapped, or kept as typed. */
   reversed: 'keep' | 'swap';
@@ -428,6 +443,8 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
     if (event.key === 'Enter') {
       commitText(end);
 
+      if (!options.isOpen()) submitOnEnter(event, form());
+
       return;
     }
 
@@ -437,6 +454,54 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
       options.onOpenRequest();
     }
   };
+
+  // ---- form association (ADR-0084) ---------------------------------------------
+
+  // The value submits as its ISO text; a range as one ISO 8601 interval,
+  // `start/end`, a side left empty while it has none. Bad input and a required
+  // field without its value — both ends, under `range` — stop a validating
+  // form.
+  const { form, formDisabled } = useFormAssociation({
+    name: options.name,
+    reset: ({ value }) => {
+      const next: TypedFieldEnds = {
+        end: null,
+        start: !range.value && codec.isValue(value) ? value : null,
+      };
+
+      ends.value = next;
+      syncTexts();
+      emitModelInput(options.host, toValue(next));
+    },
+    validity: () => {
+      if (badInput.value) {
+        return {
+          anchor: badStart.value ? startInput.value : endInput.value,
+          flags: { badInput: true },
+          message: formatMessage(),
+        };
+      }
+
+      const { end, start } = ends.value;
+
+      const answered = range.value ? start !== null && end !== null : !!start;
+
+      if (!options.required() || answered) return null;
+
+      return {
+        anchor: start === null ? startInput.value : endInput.value,
+        flags: { valueMissing: true },
+        message: nativeMessage({ required: true }),
+      };
+    },
+    value: () => {
+      const { end, start } = ends.value;
+
+      if (!range.value || (start === null && end === null)) return start ?? '';
+
+      return `${start ?? ''}/${end ?? ''}`;
+    },
+  });
 
   const onClear = (event?: Event) => {
     event?.stopPropagation();
@@ -464,6 +529,7 @@ export const useTypedField = (options: UseTypedFieldOptions) => {
     endText,
     field,
     focused,
+    formDisabled,
     hasContent,
     hasText,
     inputLabel,

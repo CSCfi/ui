@@ -4,6 +4,7 @@
     "label": "string = ''",
     "mandatory": "boolean = false",
     "multiple": "boolean = false",
+    "name": "string = ''",
     "required": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "value": "number | string = null"
@@ -28,6 +29,7 @@
     "label": "string = ''",
     "mandatory": "boolean = false",
     "multiple": "boolean = false",
+    "name": "string = ''",
     "required": "boolean = false",
     "size": "'default' | 'small' = 'default'",
     "value": "CButtonGroupValue = null"

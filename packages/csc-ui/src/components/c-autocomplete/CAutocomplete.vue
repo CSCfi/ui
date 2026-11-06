@@ -9,7 +9,7 @@
       ref="cInputRef"
       :active="isOpen"
       :data-hide-details="String(hideMessageResolved)"
-      :disabled
+      :disabled="disabledResolved"
       :filled="hasSelection"
       :input-id
       :invalid
@@ -52,7 +52,7 @@
           :aria-expanded="isOpen"
           :aria-label="accessibleName"
           :class="ui.input()"
-          :disabled
+          :disabled="disabledResolved"
           :name="name || undefined"
           :value="inputValue"
           aria-haspopup="listbox"
@@ -117,7 +117,7 @@
         <c-icon-button
           v-else-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :disabled
+          :disabled="disabledResolved"
           appearance="text"
           size="x-small"
           variant="primary"
@@ -130,7 +130,7 @@
         <span v-else :class="ui.chevron()">
           <c-icon-button
             :aria-label="t.toggleOptions"
-            :disabled
+            :disabled="disabledResolved"
             appearance="text"
             size="x-small"
             variant="primary"
@@ -523,7 +523,8 @@ interface CAutocompleteProps {
   multiple?: boolean;
 
   /**
-   * Input field name
+   * The name the picked value submits under in a native `<form>` — one entry
+   * per value with `multiple`
    *
    * @freeform
    */
@@ -637,11 +638,19 @@ import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
-import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
+import {
+  emitModelChange,
+  emitModelInput,
+  seedModelValue,
+} from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-autocomplete>`. */
 interface CAutocompleteEvents {
@@ -820,6 +829,9 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
 });
 
 const host = useHost();
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
 
 const { controlAttrs } = useControlAttrs();
 
@@ -1414,7 +1426,7 @@ const {
   panelStyle,
 } = useAnchoredPanel({
   anchor: anchorRef,
-  disabled: () => props.disabled,
+  disabled: () => disabledResolved.value,
   field: cInputRef,
   fullscreen: narrow,
   host,
@@ -1460,7 +1472,7 @@ const seedActiveIndex = () => {
 // ---- keyboard / interaction ---------------------------------------------
 
 const onFieldClick = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
 
   if (isOpen.value) closePanel(false);
   else openPanel();
@@ -1491,7 +1503,7 @@ const onButtonKeyDown = (src: 'chevron' | 'reset', event: KeyboardEvent) => {
 };
 
 const onFieldKeyDown = (event: KeyboardEvent) => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
 
   // `multiple`: Backspace on the (closed) readonly field removes the last
   // pick. The search input has its own handler, where Backspace edits the
@@ -1807,6 +1819,31 @@ onBeforeUnmount(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => fieldRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The pick submits its value (an item's `value` with `return-object`), `''`
+// while there is none; `multiple` submits one entry per pick. The query is
+// never submitted. A required field without a pick stops a validating form.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value: authored }) =>
+    emitModelInput(host, multipleOn.value ? [] : authored),
+  validity: () =>
+    !props.required || hasSelection.value
+      ? null
+      : {
+          anchor: fieldRef.value,
+          flags: { valueMissing: true },
+          message: nativeMessage('select'),
+        },
+  value: () =>
+    multipleOn.value
+      ? selectedValues.value.map(String)
+      : selectedValue.value == null
+        ? ''
+        : String(selectedValue.value),
+});
 
 /**
  * Focus its combobox, as `focus()` does on a native control: the element renders

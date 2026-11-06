@@ -5,7 +5,7 @@
     :clear-label="t.clearSelection"
     :clearable
     :control-attrs
-    :disabled
+    :disabled="disabledResolved"
     :error-message
     :field="typed"
     :hide-details="hideMessageResolved"
@@ -25,7 +25,7 @@
       <c-icon-button
         ref="calendarButtonRef"
         :aria-label="t.openCalendar"
-        :disabled
+        :disabled="disabledResolved"
         :size="buttonSize"
         appearance="text"
         aria-haspopup="dialog"
@@ -646,7 +646,8 @@ interface CDatePickerProps {
   min?: string;
 
   /**
-   * Input field name
+   * The name the date submits under in a native `<form>`, as its ISO text;
+   * a `range` as one ISO 8601 interval, `start/end`
    *
    * @freeform
    */
@@ -1233,6 +1234,11 @@ const clamp = (iso: string): string => {
 
 // ---- the typed field -------------------------------------------------------
 
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(
+  () => props.disabled || typed.formDisabled.value,
+);
+
 const typed = useTypedField({
   accessibleName: () => accessibleName.value,
   codec: {
@@ -1248,9 +1254,11 @@ const typed = useTypedField({
       monthMode.value ? parseMonth(text, pattern) : parseDate(text, pattern),
   },
   host,
+  isOpen: () => isOpen.value,
   label: () => props.label,
   labelOnTop: labelOnTopResolved,
   mask: dateMask,
+  name: () => props.name,
   names: () =>
     monthMode.value
       ? { end: t.value.endMonth, start: t.value.startMonth }
@@ -1260,6 +1268,7 @@ const typed = useTypedField({
   pattern,
   placeholder: () => props.placeholder,
   range: rangeOn,
+  required: () => props.required,
   reversed: 'swap',
   value: () => (monthMode.value ? toMonthValue(props.value) : props.value),
 });
@@ -2272,7 +2281,7 @@ const {
   panelStyle,
 } = useAnchoredPanel({
   anchor: typed.anchor,
-  disabled: () => props.disabled,
+  disabled: () => disabledResolved.value,
   field: typed.field,
   fullscreen: narrow,
   host,

@@ -20,7 +20,7 @@
       ref="cInputRef"
       :active="dropdownVisible"
       :data-hide-details="String(hideMessageResolved)"
-      :disabled
+      :disabled="disabledResolved"
       :filled="hasSelection"
       :input-id
       :invalid
@@ -64,7 +64,7 @@
             :aria-label="accessibleName"
             :aria-owns="inputId + '-items'"
             :class="ui.input()"
-            :disabled
+            :disabled="disabledResolved"
             :name="name || undefined"
             :value="inputValue"
             aria-autocomplete="list"
@@ -138,7 +138,7 @@
         <c-icon-button
           v-else-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :disabled
+          :disabled="disabledResolved"
           appearance="text"
           size="x-small"
           variant="primary"
@@ -151,7 +151,7 @@
         <span v-else :class="ui.chevron()">
           <c-icon-button
             :aria-label="t.toggleOptions"
-            :disabled
+            :disabled="disabledResolved"
             appearance="text"
             size="x-small"
             variant="primary"
@@ -309,7 +309,8 @@ interface CSelectProps {
   multiple?: boolean;
 
   /**
-   * Input field name
+   * The name the picked value submits under in a native `<form>` — one entry
+   * per value with `multiple`
    *
    * @freeform
    */
@@ -415,8 +416,16 @@ import {
   toggleAllValues,
 } from '../../shared/selectAll';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useIdReferences } from '../../shared/useIdReferences';
-import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
+import {
+  emitModelChange,
+  emitModelInput,
+  seedModelValue,
+} from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-select>`. */
 interface CSelectEvents {
@@ -547,6 +556,9 @@ const props = withDefaults(defineProps<CSelectProps>(), {
 });
 
 const host = useHost();
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
 
 const { controlAttrs } = useControlAttrs();
 
@@ -1125,7 +1137,7 @@ const onReset = (event: Event) => {
 };
 
 const onInputClick = () => {
-  if (!props.disabled) openDropdown();
+  if (!disabledResolved.value) openDropdown();
 };
 
 const onUpdateInput = () => {
@@ -1159,7 +1171,7 @@ const updateStatusText = () => {
 };
 
 const onInputFocus = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
   updateStatusText();
 };
 
@@ -1209,7 +1221,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
   const items = dropdownItems.value;
 
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
 
   // `multiple`: Backspace on the readonly field input removes the last pick.
   // Only when the input itself is the target (the real target, not the
@@ -1523,6 +1535,31 @@ onBeforeUnmount(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => inputRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The pick submits its value (an item's `value` with `return-object`), `''`
+// while there is none, as a native select's empty option does; `multiple`
+// submits one entry per pick. A required field without a pick stops a
+// validating form.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value: authored }) =>
+    emitModelInput(host, multipleOn.value ? [] : authored),
+  validity: () =>
+    !props.required || hasSelection.value
+      ? null
+      : {
+          anchor: inputRef.value,
+          flags: { valueMissing: true },
+          message: nativeMessage('select'),
+        },
+  value: () => {
+    const picked = dropdownSelected.value.map(String);
+
+    return multipleOn.value ? picked : (picked[0] ?? '');
+  },
+});
 
 /**
  * Focus its combobox, as `focus()` does on a native control: the element renders

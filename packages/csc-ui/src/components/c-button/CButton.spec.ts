@@ -5,8 +5,11 @@ import { describeButtonVariants } from '../../test/buttonVariants';
 import {
   matchScreenshotInBothModes,
   mount,
+  mountInForm,
+  recordEvents,
   roleInMode,
   setThemeMode,
+  settle,
   settled,
 } from '../../test/harness';
 
@@ -266,5 +269,51 @@ describe('c-button disabled', () => {
         ).toBe(roleInMode(mode, '--c-on-surface-disabled'));
       }
     }
+  });
+});
+
+describe('c-button form association (ADR-0084)', () => {
+  it('a disabled fieldset disables it, and it submits nothing', async () => {
+    const m = await mountInForm('c-button', {
+      attrs: { type: 'submit' },
+      html: 'Go',
+    });
+
+    const submits = recordEvents(m.form, ['submit']);
+
+    m.fieldset.disabled = true;
+    await settle();
+
+    const button = m.shadow<HTMLButtonElement>('button');
+
+    expect(button.disabled).toBe(true);
+    button.click();
+    expect(submits.records).toHaveLength(0);
+    m.unmount();
+  });
+
+  it('`form` names a form elsewhere on the page', async () => {
+    const form = document.createElement('form');
+
+    form.id = 'elsewhere';
+
+    const seen: string[] = [];
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      seen.push('submit');
+    });
+    document.body.append(form);
+
+    const m = await mount('c-button', {
+      attrs: { form: 'elsewhere', type: 'submit' },
+      html: 'Go',
+    });
+
+    await userEvent.click(m.shadow('button'));
+
+    expect(seen).toEqual(['submit']);
+    m.unmount();
+    form.remove();
   });
 });

@@ -11,8 +11,9 @@ const internalsOf = new WeakMap<HTMLElement, ElementInternals | null>();
 
 /**
  * The single path to the host's internals — custom states (`useHostStates`,
- * ADR-0035) go through it. `null` where internals are unavailable (SSR, an
- * ancient browser): callers degrade to a silent no-op.
+ * ADR-0035) and form association (`useFormAssociation`, ADR-0084) both go
+ * through it. `null` where internals are unavailable (SSR, an ancient
+ * browser): callers degrade to a silent no-op.
  */
 export const useElementInternals = (): ElementInternals | null => {
   const host = useHost();

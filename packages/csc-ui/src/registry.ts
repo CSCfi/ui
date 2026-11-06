@@ -190,5 +190,30 @@ export const components: ReadonlyArray<readonly [string, unknown]> = [
   ['c-data-table', CDataTable],
 ];
 
+/**
+ * The tags whose elements take part in a native `<form>` (ADR-0084): every
+ * value control that is a form field — not c-file-upload, whose upload
+ * function carries its files, nor c-tabs, c-accordion, c-modal and
+ * c-pagination — and the buttons, without a value.
+ */
+export const formAssociatedTags: ReadonlySet<string> = new Set([
+  'c-autocomplete',
+  'c-button',
+  'c-button-group',
+  'c-checkbox',
+  'c-color-picker',
+  'c-date-picker',
+  'c-icon-button',
+  'c-number-field',
+  'c-otp-input',
+  'c-radio-group',
+  'c-select',
+  'c-slider',
+  'c-switch',
+  'c-text-field',
+  'c-time-picker',
+  'c-tree-select',
+]);
+
 /** Every tag `defineCustomElements()` registers, internal ones included. */
 export const registeredTags: ReadonlyArray<string> = components.map(([t]) => t);

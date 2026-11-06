@@ -5,7 +5,7 @@
     :clear-label="t.clearSelection"
     :clearable
     :control-attrs
-    :disabled
+    :disabled="disabledResolved"
     :error-message
     :field="typed"
     :hide-details="hideMessageResolved"
@@ -24,7 +24,7 @@
     <template #trigger="{ buttonSize, iconSize }">
       <c-icon-button
         :aria-label="t.openClock"
-        :disabled
+        :disabled="disabledResolved"
         :size="buttonSize"
         appearance="text"
         aria-haspopup="dialog"
@@ -323,7 +323,8 @@ interface CTimePickerProps {
   minuteStep?: number;
 
   /**
-   * Input field name
+   * The name the time submits under in a native `<form>`, as its ISO text;
+   * a `range` as one ISO 8601 interval, `start/end`
    *
    * @freeform
    */
@@ -703,6 +704,11 @@ watch(
 
 // ---- the typed field -------------------------------------------------------
 
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(
+  () => props.disabled || typed.formDisabled.value,
+);
+
 const typed = useTypedField({
   accessibleName: () => accessibleName.value,
   codec: {
@@ -712,9 +718,11 @@ const typed = useTypedField({
     parse: (text, p) => parseTime(text, p, periods.value),
   },
   host,
+  isOpen: () => isOpen.value,
   label: () => props.label,
   labelOnTop: labelOnTopResolved,
   mask: timeMask,
+  name: () => props.name,
   names: () => ({ end: t.value.end, start: t.value.start }),
   onOpenRequest: () => openPanel(),
   onTextCommit: (text) => emit('change:text', text),
@@ -722,6 +730,7 @@ const typed = useTypedField({
   placeholder: () => props.placeholder,
   range: rangeOn,
   // An end before the start is an overnight range (ADR-0061).
+  required: () => props.required,
   reversed: 'keep',
   value: () => props.value,
 });
@@ -1219,7 +1228,7 @@ const {
   panelStyle,
 } = useAnchoredPanel({
   anchor: typed.anchor,
-  disabled: () => props.disabled,
+  disabled: () => disabledResolved.value,
   field: typed.field,
   fullscreen: narrow,
   host,

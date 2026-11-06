@@ -2,7 +2,7 @@
   <div
     ref="rootRef"
     v-bind="rootAttrs"
-    :class="[ui.root(), { 'c-checkbox--disabled': disabled }]"
+    :class="[ui.root(), { 'c-checkbox--disabled': disabledResolved }]"
     class="c-checkbox"
     part="root"
   >
@@ -16,7 +16,7 @@
       :aria-describedby="hideMessageResolved ? undefined : `${inputId}-message`"
       :checked="isChecked"
       :class="ui.input()"
-      :disabled
+      :disabled="disabledResolved"
       :indeterminate.prop
       :name="name || undefined"
       :required
@@ -45,7 +45,7 @@
              the sibling-input state rules in the escape-hatch key on. -->
         <selection-indicator
           :checked="isChecked"
-          :disabled
+          :disabled="disabledResolved"
           :error="invalid"
           :indeterminate
           class="c-checkbox__box absolute top-3 left-3"
@@ -131,11 +131,15 @@ import { coerceBoolean } from '../../shared/coerceBoolean';
 import FormLabel from '../../shared/FormLabel.vue';
 import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  useFormAssociation,
+  validityOf,
+} from '../../shared/useFormAssociation';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostStates } from '../../shared/useHostStates';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
-import { emitModelChange } from '../../shared/valueEvents';
+import { emitModelChange, emitModelInput } from '../../shared/valueEvents';
 
 // ARIA attributes on the element name and describe the native control;
 // every other attribute stays on the root, as Vue's fallthrough put it.
@@ -329,8 +333,8 @@ interface CCheckboxProps {
   label?: string;
 
   /**
-   * `name` of the inner checkbox input. The component is not
-   * form-associated, so it does not submit with a `<form>`.
+   * The name the checkbox submits under in a native `<form>` while it is
+   * checked: its `true-value`, or `on` when that is `true`
    *
    * @freeform
    */
@@ -384,13 +388,16 @@ const hideMessageResolved = computed(() =>
 
 const ui = computed(() =>
   checkbox({
-    disabled: props.disabled,
+    disabled: disabledResolved.value,
     error: props.invalid,
     messageError: showError.value,
   }),
 );
 
 const host = useHost();
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
@@ -500,7 +507,7 @@ watch(
 onMounted(syncViews);
 
 const onChange = (_event: Event) => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
   spawnRipple();
   internalChecked.value = !internalChecked.value;
 
@@ -518,6 +525,29 @@ const onChange = (_event: Event) => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences('input');
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// Checked, it submits its `true-value` (`on` for `true`, as a native checkbox
+// does); unchecked, nothing. A required unchecked box stops a validating form.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ checked, value }) => {
+    const on = checked || (value !== null && value === String(props.trueValue));
+
+    emitModelInput(host, on ? props.trueValue : props.falseValue);
+  },
+  validity: () => {
+    void [internalChecked.value, props.required];
+
+    return validityOf(host?.shadowRoot?.querySelector('input'));
+  },
+  value: () => {
+    if (!internalChecked.value) return null;
+
+    return props.trueValue === true ? 'on' : String(props.trueValue);
+  },
+});
 
 /**
  * Focus its checkbox, as `focus()` does on a native control: the element renders

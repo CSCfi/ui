@@ -41,7 +41,8 @@ date outside `min` and `max` — is **bad input**: the text stays as the user
 typed it, the value becomes `null`, and the host exposes the `bad-input` custom
 state and a read-only `badInput` property. The component never shows an error
 of its own; deciding whether bad input is an error, and saying so, is the
-consumer's validation:
+consumer's validation, and only a `<form>` without `novalidate` stops a submit
+on it:
 
 ```vue
 <c-date-picker

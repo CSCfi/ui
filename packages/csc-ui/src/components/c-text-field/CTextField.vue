@@ -3,7 +3,7 @@
     v-bind="rootAttrs"
     :active="isActiveForInput"
     :data-hide-details="String(hideMessageResolved)"
-    :disabled
+    :disabled="disabledResolved"
     :filled="isFilledForInput"
     :input-id
     :invalid
@@ -51,7 +51,7 @@
       :autocomplete="autocomplete || undefined"
       :autocorrect="autocorrectAttr"
       :class="ui.textarea()"
-      :disabled
+      :disabled="disabledResolved"
       :name="name || undefined"
       :placeholder="effectivePlaceholder"
       :readonly
@@ -94,7 +94,7 @@
         :autocomplete="autocomplete || undefined"
         :autocorrect="autocorrectAttr"
         :class="ui.input()"
-        :disabled
+        :disabled="disabledResolved"
         :inputmode="maskInputMode"
         :max="max ?? undefined"
         :min="min ?? undefined"
@@ -109,6 +109,7 @@
         @change="onChange"
         @focus="onFocus"
         @input="onInput"
+        @keydown="submitOnEnter($event, form())"
         @scroll="syncGuideScroll"
       />
     </span>
@@ -126,7 +127,7 @@
           currentType === 'password' ? 'Show password' : 'Hide password'
         "
         :class="ui.toggle()"
-        :disabled
+        :disabled="disabledResolved"
         type="button"
         @click="togglePassword"
       >
@@ -138,7 +139,7 @@
       <button
         v-if="originalType === 'date' && !isFirefox"
         :class="ui.toggle()"
-        :disabled
+        :disabled="disabledResolved"
         aria-label="Open date picker"
         type="button"
         @click="openPicker"
@@ -283,8 +284,7 @@ interface CTextFieldProps {
   min?: null | number;
 
   /**
-   * `name` of the inner input. The component is not form-associated, so it
-   * does not submit with a `<form>`.
+   * The name the text submits under in a native `<form>`
    *
    * @freeform
    */
@@ -382,6 +382,7 @@ import type { CFieldSize } from '../../types';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import FieldMessage from '../../shared/FieldMessage.vue';
+import { submitOnEnter } from '../../shared/implicitSubmission';
 import {
   applyMask,
   compileMask,
@@ -390,6 +391,11 @@ import {
   warnInvalidMask,
 } from '../../shared/inputMask';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  formatMessage,
+  useFormAssociation,
+  validityOf,
+} from '../../shared/useFormAssociation';
 import { useHostStates } from '../../shared/useHostStates';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
@@ -549,6 +555,9 @@ const autocorrectAttr = computed(() => {
 
 const isFocused = ref(false);
 
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
+
 // The type as set; `currentType` is what the input shows, which the password
 // toggle flips. A new `type` resets it.
 const originalType = computed(() => props.type);
@@ -642,7 +651,7 @@ const isFirefox = /firefox|fxios/i.test(
 );
 
 const togglePassword = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
   currentType.value = currentType.value === 'password' ? 'text' : 'password';
 };
 
@@ -780,6 +789,33 @@ const focus = (options?: FocusOptions): void => {
 };
 
 defineExpose({ focus, maskComplete, unmaskedValue });
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The text submits as shown; the inner input's own check (`required`, the
+// type, `min`/`max`/`step`) and an incomplete mask stop a validating form.
+const { form, formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value }) => emitModelInput(host, value ?? ''),
+  validity: () => {
+    // What the inner input's check reads, so a change re-runs it.
+    void [displayValue.value, props.required, props.min, props.max];
+    void [props.step, props.type, props.rows];
+
+    const native = validityOf(inputRef.value);
+
+    if (native) return native;
+
+    if (displayValue.value === '' || maskComplete.value) return null;
+
+    return {
+      anchor: inputRef.value,
+      flags: { patternMismatch: true },
+      message: formatMessage(),
+    };
+  },
+  value: () => displayValue.value,
+});
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => inputRef.value);

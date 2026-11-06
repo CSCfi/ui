@@ -58,7 +58,10 @@ is ignored. The boxes opt out of browser and password-manager autofill.
 
 The `label` prop names the group; for richer label content, put it in the
 default slot instead (the prop wins when both are set). `required` adds the
-required marker to the label; enforcing it is your form logic's job.
+required marker to the label. A native `<form>` without `novalidate` stops a
+submit on an empty required code, and on a partly filled one; elsewhere,
+enforcing it is your form logic's job. The code submits under `name`; see
+**In a form** on `c-button`.
 
 Validation is yours too: set `invalid` and an `error-message` explaining why.
 The boxes take the error colour and the message replaces the `hint`. While

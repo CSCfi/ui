@@ -12,6 +12,9 @@ listen for `update:value`, which fires on every keystroke:
 `change` fires when the text is committed — Enter, or leaving the field after
 an edit — so save or validate there rather than on every keystroke.
 
+In a native `<form>` the text submits under `name`, and Enter submits the
+form; see **In a form** on `c-button`.
+
 `type` maps to the native input type: `password` adds a toggle that reveals
 the text, and `number` honours `min`, `max` and `step`. Setting `rows` above
 `1` renders a textarea.
@@ -88,7 +91,8 @@ Text that leaves some token unfilled is kept as typed. The read-only
 `maskComplete` property tells whether every token is filled, and a field
 holding such partial text exposes the `incomplete` custom state. The field
 shows no error of its own; whether an incomplete value is an error is the
-consumer's validation:
+consumer's validation, and only a `<form>` without `novalidate` stops a
+submit on it:
 
 ```vue
 <c-text-field

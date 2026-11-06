@@ -11,7 +11,7 @@
       :ref="bindField"
       :active="isOpen"
       :data-hide-details="String(hideMessageResolved)"
-      :disabled
+      :disabled="disabledResolved"
       :filled="!!fieldText"
       :input-id
       :invalid
@@ -56,7 +56,7 @@
           :aria-invalid="invalid || undefined"
           :aria-label="accessibleName"
           :class="ui.combo()"
-          :disabled
+          :disabled="disabledResolved"
           :name="name || undefined"
           :value="fieldText"
           aria-haspopup="dialog"
@@ -74,7 +74,7 @@
         <c-icon-button
           v-if="clearable && committedColor"
           :aria-label="t.clearSelection"
-          :disabled
+          :disabled="disabledResolved"
           appearance="text"
           size="x-small"
           variant="primary"
@@ -86,7 +86,7 @@
         <c-icon-button
           v-else
           :aria-label="t.toggleSwatches"
-          :disabled
+          :disabled="disabledResolved"
           appearance="text"
           size="x-small"
           variant="primary"
@@ -105,7 +105,7 @@
     :clear-label="t.clearSelection"
     :clearable
     :control-attrs
-    :disabled
+    :disabled="disabledResolved"
     :error-message
     :field="typed"
     :hide-details="hideMessageResolved"
@@ -125,7 +125,7 @@
     <template #trigger="{ buttonSize }">
       <c-icon-button
         :aria-label="t.openPicker"
-        :disabled
+        :disabled="disabledResolved"
         :size="buttonSize"
         appearance="text"
         aria-haspopup="dialog"
@@ -518,7 +518,8 @@ interface CColorPickerProps {
   labelOnTop?: boolean;
 
   /**
-   * Input field name
+   * The name the colour submits under in a native `<form>`, in the
+   * picker's notation
    *
    * @freeform
    */
@@ -916,6 +917,11 @@ const readPattern = (text: string, p: string): null | string => {
 
 // ---- the typed field --------------------------------------------------------
 
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(
+  () => props.disabled || typed.formDisabled.value,
+);
+
 const typed = useTypedField({
   accessibleName: () => accessibleName.value,
   codec: {
@@ -926,14 +932,17 @@ const typed = useTypedField({
     parse: readPattern,
   },
   host,
+  isOpen: () => isOpen.value,
   label: () => props.label,
   labelOnTop: labelOnTopResolved,
+  name: () => props.name,
   names: () => ({ end: '', start: '' }),
   onOpenRequest: () => openPanel(),
   onTextCommit: (text) => emit('change:text', text as string),
   pattern,
   placeholder: () => props.placeholder || PLACEHOLDERS[notation.value],
   range: computed(() => false),
+  required: () => props.required,
   reversed: 'keep',
   value: () => props.value,
 });
@@ -1484,7 +1493,7 @@ const {
   panelStyle,
 } = useAnchoredPanel({
   anchor: typed.anchor,
-  disabled: () => props.disabled,
+  disabled: () => disabledResolved.value,
   field: typed.field,
   fullscreen: narrow,
   host,
@@ -1559,7 +1568,7 @@ const onColorButtonClick = (event: Event) => {
 // ---- the swatch-only field ----------------------------------------------------
 
 const onFieldClick = () => {
-  if (!props.disabled && !isOpen.value) openPanel();
+  if (!disabledResolved.value && !isOpen.value) openPanel();
 };
 
 const onChevronClick = (event: Event) => {

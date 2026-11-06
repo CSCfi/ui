@@ -5,7 +5,7 @@
     :aria-pressed="asTab ? undefined : ariaPressed"
     :aria-selected="asTab ? String(coerceBoolean(active)) : undefined"
     :class="ui.root()"
-    :disabled="href ? undefined : disabled || undefined"
+    :disabled="href ? undefined : disabledResolved || undefined"
     :href="href || undefined"
     :role="asTab ? 'tab' : undefined"
     :target="href ? target : undefined"
@@ -227,12 +227,13 @@ interface CButtonProps {
  * @csspart description - Wrapper of the `description` slot.
  */
 import { tv } from 'tailwind-variants';
-import { computed, useHost, useTemplateRef } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { resolveAppearance } from '../../shared/buttonAppearance';
 import { dangerAsVariant } from '../../shared/buttonVariant';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { useFormAssociation } from '../../shared/useFormAssociation';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
@@ -575,7 +576,7 @@ const variantResolved = appDefault(
 const ui = computed(() =>
   button({
     active: props.active === undefined ? false : coerceBoolean(props.active),
-    disabled: props.disabled,
+    disabled: disabledResolved.value,
     fit: props.fit,
     ghost: appearance.value === 'ghost',
     inverted: props.inverted,
@@ -606,8 +607,6 @@ const buttonType = computed(() =>
 
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
-const host = useHost();
-
 const hasIcon = useHasSlot(rootRef, 'icon');
 
 const hasDescription = useHasSlot(rootRef, 'description');
@@ -633,26 +632,22 @@ const { ripples, spawn: spawnRipple } = useRipple({
   container: () => rootRef.value,
 });
 
-// The nearest <form> around the element, across shadow roots: the native
-// button sits in this shadow root, where it has no form owner.
-const closestForm = (): HTMLFormElement | null => {
-  let el: Element | null = host;
+// The element is form-associated without a value (ADR-0084): its form owner
+// is the form a native button there would have — the `<form>` around it, or
+// the one its `form` attribute names — and a disabled `<fieldset>` around it
+// disables it, a link excepted, as native links are.
+const { form, formDisabled } = useFormAssociation({
+  name: () => undefined,
+  reset: () => {},
+  value: () => null,
+});
 
-  while (el) {
-    const form = el.closest('form');
-
-    if (form) return form;
-
-    const root = el.getRootNode();
-
-    el = root instanceof ShadowRoot ? root.host : null;
-  }
-
-  return null;
-};
+const disabledResolved = computed(
+  () => props.disabled || (formDisabled.value && !props.href),
+);
 
 const onClick = (event: MouseEvent) => {
-  if (props.disabled || props.loading) {
+  if (disabledResolved.value || props.loading) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -661,19 +656,19 @@ const onClick = (event: MouseEvent) => {
 
   if (!props.noRipple) spawnRipple(event);
 
-  // `type` acts on the form around the element, as on a native button (3.x
-  // did it through a hidden submit button): submit validates and submits it,
-  // reset resets it.
+  // `type` acts on the element's form, as on a native button (3.x did it
+  // through a hidden submit button): submit validates and submits it, reset
+  // resets it.
   if (props.href) return;
 
-  if (buttonType.value === 'submit') closestForm()?.requestSubmit();
-  else if (buttonType.value === 'reset') closestForm()?.reset();
+  if (buttonType.value === 'submit') form()?.requestSubmit();
+  else if (buttonType.value === 'reset') form()?.reset();
 };
 
 const onKeydown = (event: KeyboardEvent) => {
   // Disabled or loading, the keys that would activate it do nothing; every
   // other key goes on its way — Tab held back would trap the focus here.
-  if (props.disabled || props.loading) {
+  if (disabledResolved.value || props.loading) {
     if (event.key === 'Enter' || event.code === 'Space') {
       event.preventDefault();
       event.stopPropagation();

@@ -3,7 +3,7 @@
     v-bind="rootAttrs"
     :active="isFocused"
     :data-hide-details="String(hideMessageResolved)"
-    :disabled
+    :disabled="disabledResolved"
     :filled="text !== ''"
     :input-id
     :invalid
@@ -46,7 +46,7 @@
       :aria-valuenow="current ?? undefined"
       :aria-valuetext="text || undefined"
       :class="ui.input()"
-      :disabled
+      :disabled="disabledResolved"
       :inputmode
       :name="name || undefined"
       :placeholder="effectivePlaceholder"
@@ -219,7 +219,8 @@ interface CNumberFieldProps {
   min?: null | number;
 
   /**
-   * Name of the input
+   * The name the number submits under in a native `<form>`, written as a
+   * plain JS number (`1234.5`)
    *
    * @freeform
    */
@@ -305,8 +306,14 @@ import type { CNumberFieldFormat } from './numbers';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import FieldMessage from '../../shared/FieldMessage.vue';
+import { submitOnEnter } from '../../shared/implicitSubmission';
 import { applyConform } from '../../shared/inputMask';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+  validityOf,
+} from '../../shared/useFormAssociation';
 import { useHostStates } from '../../shared/useHostStates';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
@@ -525,6 +532,44 @@ const outOfRange = computed<boolean>(() => {
 
 watch(outOfRange, (on) => setState('out-of-range', on), { immediate: true });
 
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The number submits as a plain JS number, never the grouped text; a required
+// empty field and an out-of-range number stop a validating form.
+const { form, formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value }) => emitModelInput(host, toNumber(value)),
+  validity: () => {
+    void [text.value, props.required];
+
+    const native = validityOf(inputRef.value);
+
+    if (native) return native;
+
+    const n = current.value;
+
+    if (n === null || !outOfRange.value) return null;
+
+    const below = minNumber.value !== null && n < minNumber.value;
+
+    const bound = String(below ? minNumber.value : maxNumber.value);
+
+    return {
+      anchor: inputRef.value,
+      flags: below ? { rangeUnderflow: true } : { rangeOverflow: true },
+      message: nativeMessage({
+        type: 'number',
+        ...(below ? { min: bound } : { max: bound }),
+        value: String(n),
+      }),
+    };
+  },
+  value: () => (current.value === null ? '' : String(current.value)),
+});
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
+
 // A set `value` re-formats the text — unless the text already reads as that
 // number, which is also what the `emitModelInput` mirror writes back while
 // the user types ("12," stays "12,"). Never emits. A number from outside is
@@ -619,7 +664,7 @@ const stepOptions = computed(() => ({
 
 /** The number `count` steps away, or `null` when a step would not change it. */
 const stepped = (direction: -1 | 1, count = 1): null | number => {
-  if (props.disabled || props.readonly) return null;
+  if (disabledResolved.value || props.readonly) return null;
 
   const next = stepNumber(current.value, direction, stepOptions.value, count);
 
@@ -660,6 +705,7 @@ const STEP_KEYS: Record<string, [-1 | 1, number]> = {
 const onKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && !event.isComposing) {
     commit();
+    submitOnEnter(event, form());
 
     return;
   }
@@ -673,7 +719,7 @@ const onKeydown = (event: KeyboardEvent) => {
     event.ctrlKey ||
     event.metaKey ||
     event.shiftKey ||
-    props.disabled ||
+    disabledResolved.value ||
     props.readonly
   )
     return;
