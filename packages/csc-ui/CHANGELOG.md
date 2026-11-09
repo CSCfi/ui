@@ -1,5 +1,157 @@
 # @cscfi/csc-ui
 
+## 4.0.0-rc.5
+
+### Minor Changes
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`819d222`](https://github.com/CSCfi/ui/commit/819d22289ccf8590a4feb87009386adae14aaf4e) Thanks [@razorfever](https://github.com/razorfever)! - Outlined `c-button` and `c-icon-button` border in their variant's colour, the
+  edge the filled button has, so primary's outline is lighter in light mode.
+  Ghost buttons take a stronger tint (14%), and text, outlined and ghost buttons
+  share one 20% hover; a pressed ghost button no longer darkens further, the
+  ripple marks the press.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`5f66b2e`](https://github.com/CSCfi/ui/commit/5f66b2ec8bdb858c6721419d56986adebd03ae73) Thanks [@razorfever](https://github.com/razorfever)! - A password manager can read a `c-button` submit button: write the `<button>`
+  inside it, `<c-button><button type="submit">Create account</button></c-button>`.
+  The button stays in the page, where a manager that reads a form's submit
+  button finds it — Proton Pass offers no password to generate on a sign-up
+  form otherwise — and the `c-button` paints it with its appearance, variant,
+  size and loading state. The button's own attributes apply, and it submits its
+  form natively. Use it for the submit button of a sign-up, log-in or
+  change-password form.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`8a665d6`](https://github.com/CSCfi/ui/commit/8a665d6302866ce37714c7c368bbf83ffc849545) Thanks [@razorfever](https://github.com/razorfever)! - Error is a cooler red (`#dd042a`), and in dark mode its fills, outlines and
+  indicators use a vivid red (`--c-error`, now step 400) instead of salmon.
+  Error text on a surface uses the new `--c-on-surface-error` token (Tailwind:
+  `text-on-surface-error`), which stays light enough to read in dark mode. Field
+  error messages, required marks and other error text use it; an app that
+  colours its own error text with `--c-error` should switch to it.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`a6a97ba`](https://github.com/CSCfi/ui/commit/a6a97ba767305778b4f7d6f4a3a5799c600ee4ef) Thanks [@razorfever](https://github.com/razorfever)! - The form fields take part in a native `<form>`, as built-in controls do. Each
+  submits its value under its `name` (`new FormData(form)` and a posted form
+  include it), `form.reset()` returns it to the value its markup set, and a
+  disabled `<fieldset>` disables it. A form without `novalidate` now stops its
+  submit on a `required` field left empty, bad input, a number out of range, an
+  incomplete mask or a partly filled code, with the browser's own message; add
+  `novalidate` where your app validates the form itself. Enter in a text, number,
+  code or closed picker field now submits the form, as in a native field: through
+  its first `<c-button type="submit">`, or, with no submit button, when the form
+  has one text field. Handle the form's `submit` (`@submit.prevent`) so it does
+  not reload the page, and cancel the Enter keydown where Enter should not save. `c-switch`,
+  `c-radio-group`, `c-otp-input` and `c-button-group` gain `name`;
+  `c-file-upload` stays out of forms. `c-button` acts on the form its `form`
+  attribute names, and a disabled `<fieldset>` disables `c-button` and
+  `c-icon-button`.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`5aea92d`](https://github.com/CSCfi/ui/commit/5aea92d417058fa5adacda46aec98a11318f9ee2) Thanks [@razorfever](https://github.com/razorfever)! - Password managers can fill a `c-text-field`: write the `<input>` inside it,
+  `<c-text-field label="Password"><input autocomplete="current-password"
+name="password" type="password"></c-text-field>`. The input stays in the
+  page, where Safari's, Firefox's and the extensions' password managers find
+  it, and the field frames it with its label, message and password toggle. The
+  input's own attributes apply, and in a form it submits and validates itself.
+  This replaces 3.x's `c-text-field-open`.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`be48a5c`](https://github.com/CSCfi/ui/commit/be48a5c6a2e000167137aba69b2e2b6896dcbd1d) Thanks [@razorfever](https://github.com/razorfever)! - Warning is yellow (`#ffc400`) instead of orange, so it no longer reads like
+  error. The `warning` family's ramp changed, and a few warning roles moved to
+  darker steps to stay at WCAG AA: `--c-on-warning-subtle` in light mode,
+  `--c-inverse-warning`, and `--c-warning-inverted` in dark mode. The no-results
+  icon in `c-autocomplete` and `c-tree-select` takes the warning tint's ink.
+
+  Yellow is a fill colour: as text or an icon on a light surface it reads 1.6:1.
+  Where an app colours text or icons with `--c-warning` (or `text-warning`),
+  switch to `--c-on-warning-subtle` (`text-on-warning-subtle`), which reads
+  7.2:1 on white and stays legible in dark mode.
+
+### Patch Changes
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`8aae9e1`](https://github.com/CSCfi/ui/commit/8aae9e1274b49c6c0f069197eafe16807ecd5b09) Thanks [@razorfever](https://github.com/razorfever)! - The accent and link tokens meet WCAG AA contrast. In light mode
+  `--c-on-accent` is dark (accent-950) and `--c-on-accent-subtle` is
+  accent-800, so text on the accent fill and tint reads at AA; `--c-link-hover`
+  and `--c-link-subtle-hover` stay in the link family (link-600, link-50)
+  instead of a pale accent. In dark mode the status and accent tints darken on
+  hover (`--c-<role>-subtle-hover`), so their ink stays readable.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`64c0e7d`](https://github.com/CSCfi/ui/commit/64c0e7dc00ce3f3654e2663d7cc13003198769a2) Thanks [@razorfever](https://github.com/razorfever)! - Tab moves past a loading `c-button`, and past a disabled link button, instead
+  of keeping the keyboard focus on it. Enter and Space still do nothing there.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`59d4945`](https://github.com/CSCfi/ui/commit/59d49451e251b475f4cce662b58bb282e8198bb1) Thanks [@razorfever](https://github.com/razorfever)! - Custom states (`:state(checked)`, `:state(bad-input)` …) keep following the
+  component after its element is taken off the page and put back, as KeepAlive
+  or a moved list item does. Until now they stopped updating there.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`3c6dbda`](https://github.com/CSCfi/ui/commit/3c6dbda17c9dc3ff3e002adb0592ca768a4d9bdf) Thanks [@razorfever](https://github.com/razorfever)! - Components no longer declare Tailwind's spacing variable on their hosts, so
+  an app's own Tailwind spacing scale reaches content slotted into them.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`a5336a3`](https://github.com/CSCfi/ui/commit/a5336a339f8f94aacb526375057b3d683093ba60) Thanks [@razorfever](https://github.com/razorfever)! - The Tailwind theme export (`@cscfi/csc-ui/css/tailwind-theme.css`) maps the
+  button variants' inverse tokens, so `text-inverse-secondary`,
+  `text-inverse-success`, `text-inverse-info` and `text-inverse-warning` work in
+  an app's own Tailwind build.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`b974ec7`](https://github.com/CSCfi/ui/commit/b974ec7454c888afbedfe9c1a712e9360b038d28) Thanks [@razorfever](https://github.com/razorfever)! - An inverted filled `c-button` or `c-icon-button` stays light under the pointer.
+  Its hover was see-through, so on the dark backdrop an inverted button sits on,
+  its label nearly vanished; the hovered white now takes a little of the
+  variant's colour instead.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`7873b92`](https://github.com/CSCfi/ui/commit/7873b928ac92be0315082c4e50eb38839893f47e) Thanks [@razorfever](https://github.com/razorfever)! - In light mode, a filled primary, secondary or danger button keeps its white
+  label at WCAG AA contrast while hovered: its hover fill darkens instead of
+  lightening (`--c-primary-hover`, `--c-secondary-hover` and `--c-error-hover`
+  moved to step 600). The label read as low as 2.5:1 on the lighter fill. The
+  pickers' Done buttons, their selected cells and an active `c-tag` hover the
+  same way.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`b47b065`](https://github.com/CSCfi/ui/commit/b47b065ee9ef34e9c0dad296a1e73cd44b805abf) Thanks [@razorfever](https://github.com/razorfever)! - A `danger` `c-menu-item` label meets WCAG AA contrast at rest, hovered and
+  keyboard-highlighted, in both theme modes. It read as low as 3.6:1 before.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`4236ce4`](https://github.com/CSCfi/ui/commit/4236ce46e2349fec36f326abc3187f2285f6c5b2) Thanks [@razorfever](https://github.com/razorfever)! - Ghost, text and outlined buttons and `c-alert` read at WCAG AA on popovers,
+  menus and the page canvas, not only on the page surface. Their tints were
+  see-through, so a dark popover or the light `c-main` canvas showed through
+  under the label (primary's ghost read 4.3:1 on a dark popover, a success
+  alert's heading 4.3:1 on the light canvas). Each tint is now the colour mixed
+  into the page surface, the same on any background, or, inside an alert's
+  message or a `c-data-table` banner or selected row, into that container at half
+  strength so a ghost or hovered button still stands out there. The accordion
+  header, breadcrumb links, file-upload's choose button and `c-table`'s mobile
+  rows follow.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`0978080`](https://github.com/CSCfi/ui/commit/097808097db323ec2b90c384600f81e9a61dc911) Thanks [@razorfever](https://github.com/razorfever)! - Secondary text, ghost and outlined buttons read at WCAG AA in dark mode on
+  popovers and menus. Dark `--c-on-secondary-subtle` is a lighter pink
+  (secondary-100), which read 4.35:1 on `--c-surface-overlay` before and now
+  reads 6.7:1.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`c96277f`](https://github.com/CSCfi/ui/commit/c96277f505eddd6e2ac373eb1616044c4cda0ce9) Thanks [@razorfever](https://github.com/razorfever)! - A long tag in a `multiple` `c-select` or `c-autocomplete` ellipsises inside
+  the field instead of widening it past a narrow screen, also when the page
+  sizes the field from its content (a flex row or a grid column). In
+  `c-select` it no longer pushes the clear button and chevron out of a
+  fixed-width field.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`0ad8434`](https://github.com/CSCfi/ui/commit/0ad8434b23fdc03e3efc35764b03f6d698b4ad20) Thanks [@razorfever](https://github.com/razorfever)! - A hovered `c-side-navigation-item` keeps its white label at WCAG AA contrast in
+  light mode: the hover fill (`--c-nav-surface-hover`) darkens instead of
+  lightening. The label read 4.25:1 before.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`0ec50d7`](https://github.com/CSCfi/ui/commit/0ec50d728a391b509020889eba61c626f96d1fba) Thanks [@razorfever](https://github.com/razorfever)! - Highlighted rows and hovered controls meet WCAG AA contrast in dark mode.
+  Where a component tints its background with primary on hover, focus or
+  selection, its text now takes the tint's ink (`--c-on-primary-subtle`) instead
+  of primary, which read 3.7:1. This covers the active option in `c-select`,
+  `c-autocomplete` and `c-tree-select`, a hovered `c-menu-item`, the pickers'
+  hovered and selected cells, a hovered `c-accordion-item` header, breadcrumb
+  links, a sortable `c-data-table` header, `c-file-upload`'s choose button,
+  `c-card`'s fullscreen button and a hovered `c-link`.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`947fb44`](https://github.com/CSCfi/ui/commit/947fb441b1170cbd8a6bda5517e8ee3268daa69e) Thanks [@razorfever](https://github.com/razorfever)! - `c-tree-select` shows a long value whole where the page has room. In a
+  layout that sizes the field from its content, the field still takes the
+  width of a `c-select` and grows past it only for a value that needs more,
+  never past its container.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`c104548`](https://github.com/CSCfi/ui/commit/c1045484ee23b5e3916e64b2fb14e67529858c17) Thanks [@razorfever](https://github.com/razorfever)! - A long selection in `c-tree-select` ellipsises inside the field instead of
+  widening it past a narrow screen, also when the page sizes the field from its
+  content (a flex row or a grid column).
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`f640461`](https://github.com/CSCfi/ui/commit/f64046161e8b85933e3053acfa893cebce951e8c) Thanks [@razorfever](https://github.com/razorfever)! - `c-tree-select` keeps the width of a `c-select` when the page sizes the field
+  from its content (a flex row, a column aligned to the start), empty or
+  holding any value. It was as narrow as its chevron while empty and changed
+  width with each pick.
+
+- [#320](https://github.com/CSCfi/ui/pull/320) [`b9b6a34`](https://github.com/CSCfi/ui/commit/b9b6a34b60298731e2fb0300b35f51788aa21c70) Thanks [@razorfever](https://github.com/razorfever)! - `c-tree-select` matches the width of a `c-select` in Safari too, where it
+  came out a pixel wider.
+
 ## 4.0.0-rc.4
 
 ### Minor Changes
