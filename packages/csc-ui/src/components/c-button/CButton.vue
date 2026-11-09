@@ -276,6 +276,12 @@ import { ensureButtonStyles } from './injectButtonStyles';
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
 // keeps the map complete against the public union.
+//
+// `--_c-button-pad-x` is the slotted button's padding (ADR-0085): each size's
+// `contentInner` `px-*` written out in rem. Not Tailwind's spacing function:
+// it inlines the value but still declares the spacing theme variable on
+// every host, where it shadows a consumer's own Tailwind theme (ADR-0072).
+// Tailwind reads that variable's bare name, even in a comment, as a use.
 const sizeVariants = {
   default: {
     contentInner: 'h-full px-4',
@@ -284,18 +290,18 @@ const sizeVariants = {
     // button sits level beside a field. `--_c-button-min-height` is an
     // INTERNAL hook (not consumer API): a wrapping c-button-group sets it on
     // its frame so the buttons plus the frame total the control height.
-    root: 'min-h-[var(--_c-button-min-height,var(--_c-control-height))] text-base [--_c-button-pad-x:--spacing(4)]',
+    root: 'min-h-[var(--_c-button-min-height,var(--_c-control-height))] text-base [--_c-button-pad-x:1rem]',
   },
   large: {
     contentInner: 'h-full px-6',
     iconWrap: 'text-2xl',
     // The toolbar height, one step above the control height.
-    root: 'min-h-toolbar text-lg [--_c-button-pad-x:--spacing(6)]',
+    root: 'min-h-toolbar text-lg [--_c-button-pad-x:1.5rem]',
   },
   small: {
     contentInner: 'h-full px-3',
     iconWrap: 'text-xl',
-    root: 'min-h-7 text-sm [--_c-button-pad-x:--spacing(3)]',
+    root: 'min-h-7 text-sm [--_c-button-pad-x:0.75rem]',
   },
 } satisfies Record<CButtonSize, object>;
 
