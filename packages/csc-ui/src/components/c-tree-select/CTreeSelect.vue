@@ -80,12 +80,13 @@
             </span>
           </template>
 
-          <!-- The width sizer: an empty input, as c-select's value is. Its
-               built-in width is the field's preferred width unless the value
-               is wider, so a page sizing the field from its content gives it
-               c-select's width, and more only for a long value; inert and
-               invisible, it is never a control. -->
-          <input :class="ui.sizer()" tabindex="-1" inert />
+          <!-- The width sizer: an empty readonly input, as c-select's value
+               is. Its built-in width is the field's preferred width unless
+               the value is wider, so a page sizing the field from its content
+               gives it c-select's width, and more only for a long value.
+               Readonly, as WebKit widens an editable input by its caret's
+               pixel; inert and invisible, it is never a control. -->
+          <input :class="ui.sizer()" tabindex="-1" inert readonly />
         </div>
       </div>
 
