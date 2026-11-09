@@ -739,6 +739,50 @@ describe('closed field with a selection', () => {
     }
   });
 
+  // A page that sizes the field from its content left it as wide as its
+  // value: 54px empty, growing with each pick. c-select keeps the width of
+  // its empty input there, whatever it holds; the tree select now does too.
+  it("keeps c-select's width in a container that sizes it from its content, empty or holding any value", async () => {
+    const widthIn = async (m: Mounted): Promise<number> => {
+      const container = document.createElement('div');
+
+      container.style.cssText =
+        'display: flex; flex-direction: column; align-items: flex-start; width: 800px';
+      document.body.append(container);
+      container.append(m.stage);
+      await settled();
+
+      const width = slotBox(m).width;
+
+      container.remove();
+
+      return width;
+    };
+
+    const select = await widthIn(
+      await mount('c-select', {
+        html: '<c-option value="a">A</c-option>',
+        props: { label: 'Field of science' },
+      }),
+    );
+
+    for (const value of [null, '1', 'long']) {
+      const m = await mount<TreeHost>('c-tree-select', {
+        props: {
+          items: [...TREE, ...LONG],
+          label: 'Field of science',
+          levelLabels: LEVELS,
+          value,
+        },
+      });
+
+      expect(
+        Math.abs((await widthIn(m)) - select),
+        `the width of c-select (value ${value})`,
+      ).toBeLessThanOrEqual(0.5);
+    }
+  });
+
   it('the field keeps the control height whether empty or holding a two-line value', async () => {
     const empty = await mountTree();
 
@@ -780,9 +824,10 @@ describe('closed field with a selection', () => {
 
     await settled();
 
+    // The value line: the last span, before the zero-height width sizer.
     const value = one
-      .shadow('.c-input__content [aria-hidden]')
-      .lastElementChild!.getBoundingClientRect();
+      .shadow('.c-input__content [aria-hidden] > span:last-of-type')
+      .getBoundingClientRect();
 
     expect(
       Math.abs(centre(value) - centre(slotBox(one))),

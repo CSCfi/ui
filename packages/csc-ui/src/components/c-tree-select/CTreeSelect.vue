@@ -79,6 +79,12 @@
               <span :class="ui.itemLabel()">{{ display.name }}</span>
             </span>
           </template>
+
+          <!-- The width sizer: an empty input, as c-select's value is. Its
+               built-in width is the field's preferred width whatever the
+               value, so a page sizing the field from its content gives it
+               c-select's width; inert and invisible, it is never a control. -->
+          <input :class="ui.sizer()" tabindex="-1" inert />
         </div>
       </div>
 
@@ -752,9 +758,12 @@ const treeSelect = tv({
     crumb:
       'max-w-40 shrink-0 cursor-pointer truncate rounded border-0 bg-transparent px-1 py-0.5 text-sm text-link hover:underline disabled:cursor-default disabled:font-medium disabled:text-on-surface disabled:no-underline',
     crumbSep: 'shrink-0 text-on-surface-muted',
+    // The value lines contain their inline size: the value never sets the
+    // field's preferred width, the sizer does (below).
     fieldMain:
-      'flex min-w-0 items-center gap-2 overflow-hidden text-base leading-5 text-on-surface',
-    fieldPath: 'truncate text-xs leading-4 text-on-surface-muted',
+      'flex min-w-0 items-center gap-2 overflow-hidden text-base leading-5 text-on-surface contain-inline-size',
+    fieldPath:
+      'truncate text-xs leading-4 text-on-surface-muted contain-inline-size',
     // The value block is centred in the 52px field (the shared control
     // height, ADR-0055): `content-center` for a single-line value (no path),
     // and symmetric 8px padding around the two lines (16px path + 20px
@@ -764,10 +773,11 @@ const treeSelect = tv({
     // start 2px into their 16px line box.
     //
     // A one-column `minmax(0, 1fr)` grid, not a flex column: its smallest
-    // width is zero while its preferred width stays the value's. As a flex
-    // column the whole nowrap value was the field's minimum width, so a page
-    // sizing the field from its content (a flex row, a grid `1fr` column)
-    // stretched it past a narrow screen.
+    // width is zero and its preferred width is the sizer's, an empty input's,
+    // as in c-select. As a flex column the whole nowrap value was the field's
+    // minimum width, so a page sizing the field from its content (a flex row,
+    // a grid `1fr` column) stretched it past a narrow screen, and an empty
+    // field shrank to its chevron.
     fieldText:
       'grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] content-center overflow-hidden py-2',
     header:
@@ -800,6 +810,9 @@ const treeSelect = tv({
     searchIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
       'w-full border-0 bg-transparent py-2 text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
+    // c-select's input, invisible and zero-height: its built-in width alone
+    // sizes the value block.
+    sizer: 'invisible h-0 w-full min-w-0 border-0 p-0 text-base',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
