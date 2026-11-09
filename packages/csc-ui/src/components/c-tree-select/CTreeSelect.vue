@@ -756,14 +756,20 @@ const treeSelect = tv({
       'flex min-w-0 items-center gap-2 overflow-hidden text-base leading-5 text-on-surface',
     fieldPath: 'truncate text-xs leading-4 text-on-surface-muted',
     // The value block is centred in the 52px field (the shared control
-    // height, ADR-0055): `justify-center` for a single-line value (no path),
+    // height, ADR-0055): `content-center` for a single-line value (no path),
     // and symmetric 8px padding around the two lines (16px path + 20px
     // main), which fill the box exactly, so the field never grows on
     // selection. The lifted floating label hangs ~9px into the field from
     // the top border and still clears the path line's 12px glyphs, which
     // start 2px into their 16px line box.
+    //
+    // A one-column `minmax(0, 1fr)` grid, not a flex column: its smallest
+    // width is zero while its preferred width stays the value's. As a flex
+    // column the whole nowrap value was the field's minimum width, so a page
+    // sizing the field from its content (a flex row, a grid `1fr` column)
+    // stretched it past a narrow screen.
     fieldText:
-      'flex min-w-0 flex-1 flex-col justify-center overflow-hidden py-2',
+      'grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] content-center overflow-hidden py-2',
     header:
       'flex min-h-8 items-center justify-between gap-2 px-3 pt-2 text-sm text-on-surface-muted',
     headerAction:

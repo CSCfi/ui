@@ -690,6 +690,55 @@ describe('closed field with a selection', () => {
     );
   });
 
+  // A page that sizes the field from its content — a flex row, a grid `1fr`
+  // column, a column aligning its items to the start — took the value's whole
+  // nowrap width as the field's minimum, so a long selection widened the
+  // field past a narrow screen.
+  it('a long selection never widens the field past a container that sizes it from its content', async () => {
+    for (const layout of [
+      'display: flex',
+      'display: grid; grid-template-columns: 1fr',
+      'display: flex; flex-direction: column; align-items: flex-start',
+    ]) {
+      const m = await mount<TreeHost>('c-tree-select', {
+        props: {
+          clearable: true,
+          items: LONG,
+          label: 'Field of science',
+          levelLabels: LEVELS,
+          value: 'long',
+        },
+      });
+
+      const container = document.createElement('div');
+
+      container.style.cssText = `${layout}; width: 240px`;
+      document.body.append(container);
+      container.append(m.stage);
+      await settled();
+
+      const slot = slotBox(m);
+
+      expect(
+        slot.right,
+        `the field stays in the container (${layout})`,
+      ).toBeLessThanOrEqual(container.getBoundingClientRect().right);
+      expect(
+        postButton(m).getBoundingClientRect().right,
+        `the clear button stays in the field (${layout})`,
+      ).toBeLessThanOrEqual(slot.right);
+
+      const label = m.part('code').nextElementSibling!;
+
+      expect(
+        label.scrollWidth,
+        `the label ellipsises (${layout})`,
+      ).toBeGreaterThan(label.clientWidth);
+
+      container.remove();
+    }
+  });
+
   it('the field keeps the control height whether empty or holding a two-line value', async () => {
     const empty = await mountTree();
 
