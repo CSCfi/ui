@@ -741,9 +741,12 @@ describe('closed field with a selection', () => {
 
   // A page that sizes the field from its content left it as wide as its
   // value: 54px empty, growing with each pick. c-select keeps the width of
-  // its empty input there, whatever it holds; the tree select now does too.
-  it("keeps c-select's width in a container that sizes it from its content, empty or holding any value", async () => {
-    const widthIn = async (m: Mounted): Promise<number> => {
+  // its empty input there; the tree select does too, and grows past it only
+  // for a value that needs more, so a long one shows whole where there is
+  // room.
+  it("keeps c-select's width in a container that sizes it from its content, wider only for a long value", async () => {
+    /** Measures the field in an 800px column that aligns it to the start. */
+    const measureIn = async <T>(m: Mounted, measure: () => T): Promise<T> => {
       const container = document.createElement('div');
 
       container.style.cssText =
@@ -752,22 +755,15 @@ describe('closed field with a selection', () => {
       container.append(m.stage);
       await settled();
 
-      const width = slotBox(m).width;
+      const result = measure();
 
       container.remove();
 
-      return width;
+      return result;
     };
 
-    const select = await widthIn(
-      await mount('c-select', {
-        html: '<c-option value="a">A</c-option>',
-        props: { label: 'Field of science' },
-      }),
-    );
-
-    for (const value of [null, '1', 'long']) {
-      const m = await mount<TreeHost>('c-tree-select', {
+    const tree = (value: null | string): Promise<Mounted<TreeHost>> =>
+      mount<TreeHost>('c-tree-select', {
         props: {
           items: [...TREE, ...LONG],
           label: 'Field of science',
@@ -776,11 +772,37 @@ describe('closed field with a selection', () => {
         },
       });
 
+    const select = await mount('c-select', {
+      html: '<c-option value="a">A</c-option>',
+      props: { label: 'Field of science' },
+    });
+
+    const selectWidth = await measureIn(select, () => slotBox(select).width);
+
+    for (const value of [null, '1']) {
+      const m = await tree(value);
+
       expect(
-        Math.abs((await widthIn(m)) - select),
+        Math.abs((await measureIn(m, () => slotBox(m).width)) - selectWidth),
         `the width of c-select (value ${value})`,
       ).toBeLessThanOrEqual(0.5);
     }
+
+    const m = await tree('long');
+
+    const { whole, width } = await measureIn(m, () => {
+      const label = m.part('code').nextElementSibling!;
+
+      return {
+        whole: label.scrollWidth <= label.clientWidth,
+        width: slotBox(m).width,
+      };
+    });
+
+    expect(width, 'a long value widens the field').toBeGreaterThan(
+      selectWidth + 1,
+    );
+    expect(whole, 'the long label shows whole').toBe(true);
   });
 
   it('the field keeps the control height whether empty or holding a two-line value', async () => {
