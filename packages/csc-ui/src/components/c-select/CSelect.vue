@@ -106,7 +106,7 @@
               @close="removeValue(opt.value)"
             >
               <span :class="ui.tagLabel()" aria-hidden="true">
-                {{ opt.label }}
+                <span :class="ui.tagText()">{{ opt.label }}</span>
               </span>
             </c-tag>
 
@@ -477,7 +477,9 @@ const select = tv({
   slots: {
     chevron:
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
-    content: 'flex w-full items-center',
+    // `min-w-0`: a long tag never holds the row wider than the field, where
+    // it pushed the clear button and chevron out past the field's edge.
+    content: 'flex w-full min-w-0 items-center',
     input:
       'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
     inputWrap: 'relative flex w-full min-w-0 justify-items-stretch',
@@ -486,13 +488,18 @@ const select = tv({
     post: '-mr-1.5 inline-flex items-center',
     selection: 'pointer-events-none hidden',
     // A long option label ellipsises inside its tag instead of blowing out
-    // the row.
-    tagLabel: 'min-w-0 truncate',
+    // the row. The label is a one-column `minmax(0, 1fr)` grid around the
+    // text: its smallest width is zero while its preferred width stays the
+    // text's. Truncated text alone kept its whole nowrap width as the
+    // field's minimum, so a page sizing the field from its content (a flex
+    // row, a grid `1fr` column) stretched it past a narrow screen.
+    tagLabel: 'grid min-w-0 grid-cols-[minmax(0,1fr)]',
     // The tag row wraps; `py-2` gives a one-row tag field its own rhythm
     // (default tag 28px + 16px, small tag 20px + 16px — the small box exactly,
     // centred in the 52px default box). Wrapping lives here, not on the
     // content row, so the clear/chevron stay centred.
     tags: 'flex min-w-0 flex-1 flex-wrap items-center gap-1 py-2',
+    tagText: 'truncate',
   },
   variants: {
     chevronActive: { true: { chevron: 'rotate-180' } },

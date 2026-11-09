@@ -86,7 +86,7 @@
             @close="removeValue(opt.value)"
           >
             <span :class="ui.tagLabel()" aria-hidden="true">
-              {{ opt.label }}
+              <span :class="ui.tagText()">{{ opt.label }}</span>
             </span>
           </c-tag>
 
@@ -736,13 +736,18 @@ const autocomplete = tv({
     searchInput:
       'w-full border-0 bg-transparent py-2 text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     // A long option label ellipsises inside its tag instead of blowing out
-    // the row.
-    tagLabel: 'min-w-0 truncate',
+    // the row. The label is a one-column `minmax(0, 1fr)` grid around the
+    // text: its smallest width is zero while its preferred width stays the
+    // text's. Truncated text alone kept its whole nowrap width as the
+    // field's minimum, so a page sizing the field from its content (a flex
+    // row, a grid `1fr` column) stretched it past a narrow screen.
+    tagLabel: 'grid min-w-0 grid-cols-[minmax(0,1fr)]',
     // The tag row wraps; `py-2` gives a one-row tag field its own rhythm
     // (default tag 28px + 16px, small tag 20px + 16px — the small box exactly,
     // centred in the 52px default box). Wrapping lives here, not on the
     // content row, so the clear/chevron stay centred.
     tags: 'flex min-w-0 flex-1 flex-wrap items-center gap-1 py-2',
+    tagText: 'truncate',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },

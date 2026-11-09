@@ -621,6 +621,61 @@ describe('closed field controls', () => {
     await settled();
     await matchScreenshotInBothModes(m.stage, 'field-selected');
   });
+
+  // A long option label in `multiple` mode: the tag's whole nowrap width was
+  // the field's minimum, so a page that sizes the field from its content grew
+  // it past a narrow screen.
+  it('a long tag never widens the field past a container that sizes it from its content', async () => {
+    const LONG = option(
+      'long',
+      'Interdisciplinary computational neuroscience and cognitive modelling',
+    );
+
+    for (const layout of [
+      'display: flex',
+      'display: grid; grid-template-columns: 1fr',
+      'display: flex; flex-direction: column; align-items: flex-start',
+    ]) {
+      const m = await mountAuto(
+        { clearable: true, multiple: true, value: ['long'] },
+        LONG,
+      );
+
+      const container = document.createElement('div');
+
+      container.style.cssText = `${layout}; width: 240px`;
+      document.body.append(container);
+      container.append(m.stage);
+      await settled();
+
+      const slot = m.deep('c-input', '.c-input__slot').getBoundingClientRect();
+
+      const clear = m
+        .shadow('[slot="post"] c-icon-button')
+        .shadowRoot!.querySelector('button')!
+        .getBoundingClientRect();
+
+      // The innermost span of the tag label: the one that ellipsises.
+      const text = m
+        .shadowAll('c-tag[part~="tag"] span')
+        .find((span) => !span.firstElementChild)!;
+
+      expect(
+        slot.right,
+        `the field stays in the container (${layout})`,
+      ).toBeLessThanOrEqual(container.getBoundingClientRect().right);
+      expect(
+        clear.right,
+        `the clear button stays in the field (${layout})`,
+      ).toBeLessThanOrEqual(slot.right);
+      expect(
+        text.scrollWidth,
+        `the tag ellipsises (${layout})`,
+      ).toBeGreaterThan(text.clientWidth);
+
+      container.remove();
+    }
+  });
 });
 
 // The gap between the field and its panel is the same for every dropdown:
