@@ -48,6 +48,16 @@ export const NOT_FORM_CONTROLS: readonly string[] = [
 ];
 
 /**
+ * Value controls that are not form-associated (ADR-0084): the ones that are
+ * not form controls, and c-file-upload, whose upload function carries its
+ * files. Every other value control takes part in a native `<form>`.
+ */
+export const NOT_FORM_FIELDS: readonly string[] = [
+  ...NOT_FORM_CONTROLS,
+  'c-file-upload',
+];
+
+/**
  * Value controls that dispatch value events on mount or on a programmatic
  * `value` change, breaking the "emit only on interaction" contract. The suite
  * asserts the inverse for these so fixing one forces the list to shrink.

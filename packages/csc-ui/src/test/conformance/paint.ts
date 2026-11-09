@@ -31,3 +31,38 @@ export const normalise = (value: string): string => rasterise(value).join(',');
  * opaque — the page still shows through, so inheriting its ink is defensible.
  */
 export const isOpaque = (value: string): boolean => rasterise(value)[3] === 255;
+
+/** A translucent colour composited over an opaque one, as the eye sees it. */
+export const over = (top: string, under: string): string => {
+  const [r, g, b, a] = rasterise(top);
+
+  const below = rasterise(under);
+
+  const t = a! / 255;
+
+  const mix = (c: number, i: number) => Math.round(c * t + below[i]! * (1 - t));
+
+  return `rgb(${mix(r!, 0)} ${mix(g!, 1)} ${mix(b!, 2)})`;
+};
+
+/**
+ * A role mixed into a ground at a share, as the tint utility paints it
+ * (ADR-0082): the page surface unless a tinted container's own colour is
+ * given.
+ */
+export const tintOf = (
+  role: string,
+  share: number,
+  ground = 'var(--c-surface)',
+): number[] => {
+  const box = document.createElement('div');
+
+  box.style.background = `color-mix(in srgb, var(--c-${role}) ${share}%, ${ground})`;
+  document.body.append(box);
+
+  const painted = rasterise(getComputedStyle(box).backgroundColor);
+
+  box.remove();
+
+  return painted;
+};

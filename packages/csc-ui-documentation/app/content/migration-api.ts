@@ -745,7 +745,7 @@ export const V3_API_CHANGES: V3ApiChange[] = [
   },
   {
     change:
-      'Removed: use `c-text-field`. Its input lives in its shadow root, so a native `<form>` does not submit it: send the field’s `value` from your code.',
+      'Removed: use `c-text-field` with a slotted `<input>` — the page’s own input, which every password manager can fill and a native `<form>` submits: `<c-text-field label="Password"><input autocomplete="current-password" name="password" type="password"></c-text-field>`. The input’s own attributes apply.',
     kind: 'tag',
     tag: 'c-text-field-open',
   },

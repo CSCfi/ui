@@ -4,14 +4,17 @@
  * baselines.
  */
 import { describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 
 import { applyDefaults } from '../shared/appDefaults';
-import { rasterise } from './conformance/paint';
+import { over, rasterise, tintOf } from './conformance/paint';
 import {
+  chromiumOnly,
   contrastRatio,
   defineAll,
   matchScreenshotInBothModes,
   mount,
+  parkPointer,
   roleInMode,
   setThemeMode,
   settle,
@@ -43,17 +46,33 @@ const ROLE: Record<Variant, string> = {
 
 const MODES = ['light', 'dark'] as const;
 
-/** A translucent colour composited over an opaque one, as the eye sees it. */
-const over = (top: string, under: string): string => {
-  const [r, g, b, a] = rasterise(top);
+/** The surface rungs a button can sit on. */
+const RUNGS = [
+  'surface',
+  'surface-raised',
+  'surface-overlay',
+  'surface-muted',
+  'surface-sunken',
+] as const;
 
-  const below = rasterise(under);
+/** A colour's opacity, 0–1, as painted. */
+const alpha = (value: string): number => rasterise(value)[3]! / 255;
 
-  const t = a! / 255;
+/**
+ * The outlined ring's colour, rasterised: the inset shadow among the computed
+ * `box-shadow` layers (Tailwind keeps transparent placeholders around it).
+ */
+const ringColour = (boxShadow: string): number[] => {
+  const ring = boxShadow
+    .split(/,(?![^(]*\))/)
+    .find((layer) => layer.includes('inset'));
 
-  const mix = (c: number, i: number) => Math.round(c * t + below[i]! * (1 - t));
-
-  return `rgb(${mix(r!, 0)} ${mix(g!, 1)} ${mix(b!, 2)})`;
+  return rasterise(
+    (ring ?? '')
+      .replace('inset', '')
+      .replaceAll(/-?[\d.]+px/g, '')
+      .trim(),
+  );
 };
 
 export function describeButtonVariants(
@@ -185,6 +204,205 @@ export function describeButtonVariants(
           document.body.replaceChildren();
         }
       }
+    });
+
+    // Hover replaces the inverted look's white, so a see-through hover let the
+    // dark backdrop through under the dark label. Mode-invariant: light only.
+    it('stays light under the pointer, inverted, on a dark backdrop, in every variant', async () => {
+      for (const variant of VARIANTS) {
+        const { part, stage } = await mount(tag, {
+          attrs: { inverted: true, variant },
+          html,
+        });
+
+        stage.style.background = 'black';
+
+        const root = part('root');
+
+        await userEvent.hover(root);
+        await settled();
+
+        const { backgroundColor, color } = getComputedStyle(root);
+
+        expect(alpha(backgroundColor), `${variant} opaque`).toBe(1);
+        expect(
+          contrastRatio(color, backgroundColor),
+          variant,
+        ).toBeGreaterThanOrEqual(4.5);
+
+        await parkPointer();
+        document.body.replaceChildren();
+      }
+    });
+
+    // A filled hover moves away from its label (ADR-0081): darker under a
+    // white label, lighter under a dark one. Light mode had lightened every
+    // fill, so white read 2.5–3.8:1 hovered.
+    it('reads at AA hovered, filled, in every variant and both modes', async () => {
+      for (const mode of MODES) {
+        setThemeMode(mode);
+
+        for (const variant of VARIANTS) {
+          const { part } = await mount(tag, { attrs: { variant }, html });
+
+          const root = part('root');
+
+          await userEvent.hover(root);
+          await settled();
+
+          const { backgroundColor, color } = getComputedStyle(root);
+
+          expect(
+            rasterise(backgroundColor),
+            `${mode} ${variant} hover fill`,
+          ).toEqual(role(mode, `--c-${ROLE[variant]}-hover`));
+          expect(
+            contrastRatio(color, backgroundColor),
+            `${mode} ${variant} hovered`,
+          ).toBeGreaterThanOrEqual(4.5);
+
+          await parkPointer();
+          document.body.replaceChildren();
+        }
+      }
+    });
+
+    // The outlined edge is the filled edge: a border is not text, so it takes
+    // the role, as every other border does (ADR-0080). The label's ink read
+    // near-black in light mode (primary-700).
+    it('borders the outlined look with the variant’s fill, in both modes', async () => {
+      for (const mode of MODES) {
+        setThemeMode(mode);
+
+        for (const variant of VARIANTS) {
+          const { boxShadow } = await paint({
+            appearance: 'outlined',
+            variant,
+          });
+
+          expect(ringColour(boxShadow), `${mode} ${variant}`).toEqual(
+            role(mode, `--c-${ROLE[variant]}`),
+          );
+
+          document.body.replaceChildren();
+        }
+      }
+    });
+
+    // A tint is opaque, the variant mixed into the page surface (ADR-0082),
+    // so it reads the same on a card, a popover or the page canvas. A
+    // see-through wash let a dark popover through: primary's ghost read
+    // 4.29:1 there.
+    it('tints the ghost look with 14% of its variant, opaque, in both modes', async () => {
+      for (const mode of MODES) {
+        setThemeMode(mode);
+
+        for (const variant of VARIANTS) {
+          const { backgroundColor } = await paint({
+            appearance: 'ghost',
+            variant,
+          });
+
+          expect(rasterise(backgroundColor), `${mode} ${variant}`).toEqual(
+            tintOf(ROLE[variant], 14),
+          );
+
+          document.body.replaceChildren();
+        }
+      }
+    });
+
+    // One hover tint for the three lighter appearances, over the ghost's
+    // resting one; dark secondary's label is the lowest on it, 4.6:1. One test
+    // per appearance: each hover waits out the transition.
+    for (const appearance of ['outlined', 'ghost', 'text']) {
+      it(`tints the ${appearance} look with 20% hovered, at AA, in both modes`, async () => {
+        for (const mode of MODES) {
+          setThemeMode(mode);
+
+          for (const variant of VARIANTS) {
+            const { part } = await mount(tag, {
+              attrs: { appearance, variant },
+              html,
+            });
+
+            const root = part('root');
+
+            await userEvent.hover(root);
+            await settled();
+
+            const { backgroundColor, color } = getComputedStyle(root);
+
+            const at = `${mode} ${variant} hovered`;
+
+            expect(rasterise(backgroundColor), at).toEqual(
+              tintOf(ROLE[variant], 20),
+            );
+            expect(
+              contrastRatio(color, backgroundColor),
+              at,
+            ).toBeGreaterThanOrEqual(4.5);
+
+            await parkPointer();
+            document.body.replaceChildren();
+          }
+        }
+      });
+
+      // At rest a text or outlined button is transparent, so its label sits
+      // on whatever surface rung is behind it (a popover is lighter in dark
+      // mode, the page canvas darker in light).
+      it(`reads the ${appearance} look at AA at rest on every surface rung, in both modes`, async () => {
+        for (const mode of MODES) {
+          setThemeMode(mode);
+
+          for (const rung of RUNGS) {
+            const ground = roleInMode(mode, `--c-${rung}`);
+
+            for (const variant of VARIANTS) {
+              const { part, stage } = await mount(tag, {
+                attrs: { appearance, variant },
+                html,
+              });
+
+              stage.style.background = ground;
+
+              const { backgroundColor, color } = getComputedStyle(part('root'));
+
+              expect(
+                contrastRatio(color, over(backgroundColor, ground)),
+                `${mode} ${rung} ${variant}`,
+              ).toBeGreaterThanOrEqual(4.5);
+
+              document.body.replaceChildren();
+            }
+          }
+        }
+      });
+    }
+
+    // No pressed step: a darker pressed wash took dark secondary under AA
+    // (4.5:1 at 22%), and the ripple already marks the press.
+    chromiumOnly(
+      'holds the button :active with a held Space, which Firefox’s WebDriver BiDi input does not, even on a plain <button>',
+    )('keeps a held ghost button’s wash', async () => {
+      const { part } = await mount(tag, {
+        attrs: { appearance: 'ghost', variant: 'primary' },
+        html,
+      });
+
+      const root = part('root');
+
+      root.focus();
+
+      const rest = getComputedStyle(root).backgroundColor;
+
+      await userEvent.keyboard('[Space>]');
+      expect(root.matches(':active'), 'held').toBe(true);
+      expect(rasterise(getComputedStyle(root).backgroundColor)).toEqual(
+        rasterise(rest),
+      );
+      await userEvent.keyboard('[/Space]');
     });
 
     if (pressable) {

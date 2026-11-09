@@ -7,7 +7,55 @@
 import { expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
-import { mount, settle } from '../../test/harness';
+import {
+  contrastRatio,
+  mount,
+  parkPointer,
+  roleInMode,
+  setThemeMode,
+  settle,
+} from '../../test/harness';
+
+// A danger item sits on its menu's overlay surface at rest and on the
+// `error-subtle` tint when hovered or keyboard-active; its label is text, so
+// AA applies in every state. `error` itself read 4.0:1 on the dark overlay and
+// 3.6–3.7:1 on the tint.
+it('reads its danger label at AA at rest, hovered and keyboard-active, in both modes', async () => {
+  for (const mode of ['light', 'dark'] as const) {
+    setThemeMode(mode);
+
+    const m = await mount('c-menu-item', {
+      attrs: { danger: true },
+      html: 'Delete project',
+    });
+
+    const root = m.part('root');
+
+    const label = () => getComputedStyle(root).color;
+
+    expect(
+      contrastRatio(label(), roleInMode(mode, '--c-surface-overlay')),
+      `${mode} at rest`,
+    ).toBeGreaterThanOrEqual(4.5);
+
+    await userEvent.hover(root);
+    await settle();
+    expect(
+      contrastRatio(label(), getComputedStyle(root).backgroundColor),
+      `${mode} hovered`,
+    ).toBeGreaterThanOrEqual(4.5);
+    await parkPointer();
+
+    m.host.setAttribute('data-active', '');
+    await settle();
+    expect(
+      contrastRatio(label(), getComputedStyle(root).backgroundColor),
+      `${mode} keyboard-active`,
+    ).toBeGreaterThanOrEqual(4.5);
+
+    document.body.replaceChildren();
+  }
+});
 
 it('a command is a plain menuitem, with no checked state', async () => {
   const m = await mount('c-menu-item', {

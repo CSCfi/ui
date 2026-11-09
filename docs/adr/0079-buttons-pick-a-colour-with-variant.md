@@ -45,7 +45,8 @@ text read 3.0, 4.3 and 3.2:1 on the success, info and warning fills, and under
 - **The lighter appearances ink with `on-<role>-subtle`**, primary included,
   as c-alert does. The role itself drops under AA on its own tint: dark
   primary read 4.2:1 on the ghost tint and 3.8:1 on any hover tint, and error
-  4.4:1 on its ghost tint.
+  4.4:1 on its ghost tint. The ink is the label and the focus ring; the
+  outlined border takes the variant's fill (amended below).
 - **Inverted shows the variant on the filled look only**, as the label on
   white. New invariant tokens: `inverse-secondary` (secondary-600),
   `inverse-success` (success-700; 600 reads 4.4:1), `inverse-info` (info-600)
@@ -63,3 +64,31 @@ text read 3.0, 4.3 and 3.2:1 on the success, info and warning fills, and under
   orange fill, now at AA.
 - A spec checks every variant × appearance at AA in both modes, through the
   harness's `contrastRatio()`.
+- ADR-0080 made warning yellow and moved `inverse-warning` to warning-800
+  (7.2:1): the yellow warning-600 reads 2.5:1 on white. The badge count's fill
+  is yellow now, under the same dark label.
+- ADR-0081 darkened the light-mode hover of the white-label fills (primary,
+  secondary, danger), which read 2.5–3.8:1 hovered, and the spec now checks
+  every filled variant hovered.
+- Amended 2026-11-04 (`_plan/button-outline-ghost.md`):
+  - **The outlined border is the variant's fill**, the filled button's edge;
+    in light mode the ink had drawn a near-black teal (primary-700). A border
+    is not text, so it takes the role, as ADR-0080's borders do. Light
+    warning's border reads 1.6:1 and success 3.0:1, the same edges their
+    filled buttons have; the label identifies the button.
+  - **The ghost wash is 14% of the fill**, up from 8%, and the three lighter
+    appearances share one 20% hover, up from 15%. The ghost has no pressed
+    step any more: at 22% dark secondary's label read 4.48:1, and the ripple
+    marks the press. On the page surface the lowest label is dark secondary
+    hovered, 4.62:1.
+  - **Known case: dark popovers and menus** (`surface-overlay`, slate-700).
+    The wash is translucent, so it reads against what is behind it. There
+    primary's ghost reads 4.29:1 at rest and 3.95:1 hovered (4.66 and 4.23
+    before), and secondary falls short in every state, already 4.35:1 as a
+    text button with no wash. Only a lighter dark ink can fix that, so it is
+    parked in `_plan/dark-overlay-contrast.md`. The library's own lighter
+    buttons on overlays are icons, held to 3:1. Resolved the same day by
+    ADR-0082: the ghost and hover tints are opaque, mixed into the page
+    surface, and dark secondary's ink is secondary-100.
+  - The spec checks the ring's colour, both washes and every lighter
+    appearance hovered at AA, on the page surface.

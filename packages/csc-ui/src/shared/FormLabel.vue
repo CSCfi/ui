@@ -37,7 +37,7 @@ import { tv } from 'tailwind-variants';
 
 const formLabel = tv({
   slots: {
-    required: 'text-error',
+    required: 'text-on-surface-error',
     root: '',
   },
 });

@@ -21,13 +21,13 @@ import { clampChroma, converter, formatHex } from 'culori';
 // Brand seeds — the single source of truth per family. Each lands on step 500.
 export const DEFAULT_SEEDS = {
   accent: '#00c7b2',
-  error: '#dd0c0c',
+  error: '#dd042a',
   info: '#0082bb',
   link: '#002f5f',
   primary: '#006778',
   secondary: '#830051',
   success: '#51a808',
-  warning: '#ff5800',
+  warning: '#ffc400',
 };
 
 // The chromatic families a consumer may re-seed (order = DEFAULT_SEEDS order).

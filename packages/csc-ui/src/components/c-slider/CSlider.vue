@@ -29,7 +29,7 @@
         :aria-valuenow="shown"
         :aria-valuetext="`${shown}${unit}`"
         :class="ui.input()"
-        :disabled="disabled || undefined"
+        :disabled="disabledResolved || undefined"
         :max
         :min
         :name="name || undefined"
@@ -71,6 +71,7 @@ import {
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import FormLabel from '../../shared/FormLabel.vue';
+import { useFormAssociation } from '../../shared/useFormAssociation';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
 
@@ -206,8 +207,7 @@ interface CSliderProps {
   min?: number;
 
   /**
-   * `name` of the inner range input. The component is not
-   * form-associated, so it does not submit with a `<form>`.
+   * The name the value submits under in a native `<form>`
    *
    * @freeform
    */
@@ -253,18 +253,22 @@ const props = withDefaults(defineProps<CSliderProps>(), {
   tickLabels: undefined,
   ticks: false,
   unit: '',
+  // A literal: the manifest reads the default as written.
   value: 50,
 });
 
 const ui = computed(() =>
   slider({
-    disabled: props.disabled,
+    disabled: disabledResolved.value,
     labels: coerceBoolean(props.tickLabels ?? props.labels),
     ticks: props.ticks,
   }),
 );
 
 const host = useHost();
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
 
 const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
@@ -378,6 +382,20 @@ onMounted(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => inputRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The value submits as shown, clamped into `min`..`max`, as a native range
+// input's does; a form reset returns to the authored value or the built-in
+// `value` (`withDefaults` above).
+const DEFAULT_VALUE = 50;
+
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value }) =>
+    emitModelInput(host, value === null ? DEFAULT_VALUE : Number(value)),
+  value: () => String(shown.value),
+});
 
 /**
  * Focus its slider, as `focus()` does on a native control: the element renders

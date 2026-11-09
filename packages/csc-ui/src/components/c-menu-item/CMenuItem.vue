@@ -165,7 +165,7 @@ const item = tv({
     // Leading icon from the `icon` prop; follows the row colour (hover,
     // keyboard highlight, danger, disabled) via currentColor.
     icon: 'shrink-0 text-current',
-    root: 'flex min-h-10 cursor-pointer items-center justify-between gap-3 rounded-csc-sm px-3 text-sm whitespace-nowrap text-on-surface outline-none select-none hover:bg-primary-subtle hover:text-primary hover:ring-1 hover:ring-primary',
+    root: 'flex min-h-10 cursor-pointer items-center justify-between gap-3 rounded-csc-sm px-3 text-sm whitespace-nowrap text-on-surface outline-none select-none hover:bg-primary-subtle hover:text-on-primary-subtle hover:ring-1 hover:ring-primary',
     // `max-w-[calc(100vw-8px)]`: on a phone the panel may end up spanning
     // the viewport (the below/above fallbacks); it never grows past it.
     submenu:
@@ -175,13 +175,16 @@ const item = tv({
       'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
   },
   variants: {
-    // Destructive action — matches c-button's danger token (error-600). The
-    // keyboard-active (`[data-active]`) red state lives in the escape-hatch
-    // <style> since it must target the host attribute.
+    // Destructive action. The label is text on the menu's overlay surface at
+    // rest and on the `error-subtle` tint when hovered, so it inks with that
+    // tint's paired `on-error-subtle`: `error` itself read 4.0:1 on the dark
+    // overlay and 3.7:1 on the tint. The keyboard-active (`[data-active]`) red
+    // state lives in the escape-hatch <style> since it must target the host
+    // attribute.
     danger: {
       true: {
-        check: 'text-error',
-        root: 'text-error hover:bg-error-subtle hover:text-error hover:ring-error',
+        check: 'text-on-error-subtle',
+        root: 'text-on-error-subtle hover:bg-error-subtle hover:text-on-error-subtle hover:ring-error',
       },
     },
     disabled: {
@@ -438,12 +441,12 @@ onBeforeUnmount(() => {
 :host([data-active]) [part='root'] {
   background-color: var(--c-primary-subtle);
   box-shadow: inset 0 0 0 1px var(--c-primary);
-  color: var(--c-primary);
+  color: var(--c-on-primary-subtle);
 }
 
 :host([data-active][data-danger]) [part='root'] {
   background-color: var(--c-error-subtle);
   box-shadow: inset 0 0 0 1px var(--c-error);
-  color: var(--c-error);
+  color: var(--c-on-error-subtle);
 }
 </style>

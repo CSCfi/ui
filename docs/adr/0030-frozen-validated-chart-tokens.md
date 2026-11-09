@@ -98,3 +98,11 @@ normal-vision margin is smaller than the paired set's 20.1 because separation
 now comes from hue alone). The all-pairs (scatter/map) safe prefix is
 unchanged at slots 1–3. Everything else in this ADR — frozen literals, slot
 order as API, anatomy roles, the escape hatch — stands.
+
+## Amendment — 2026-11-04: warning is yellow
+
+ADR-0080 moved the warning seed to yellow `#ffc400` (hue 86.6°), into slot 3's
+gold band (`#b5901d`, hue 89°). Slot 3 stays: it is darker and duller (OKLCH
+L 0.67, C 0.13, against the warning fill's L 0.85, C 0.17), and moving it
+would re-run the set's validation and recolour every chart's third series.
+The status-band exclusion above now has this one exception.

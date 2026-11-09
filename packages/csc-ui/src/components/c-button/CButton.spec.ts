@@ -3,10 +3,14 @@ import { userEvent } from 'vitest/browser';
 
 import { describeButtonVariants } from '../../test/buttonVariants';
 import {
+  consoleSpy,
   matchScreenshotInBothModes,
   mount,
+  mountInForm,
+  recordEvents,
   roleInMode,
   setThemeMode,
+  settle,
   settled,
 } from '../../test/harness';
 
@@ -152,6 +156,51 @@ describe('c-button in a form', () => {
   });
 });
 
+describe('c-button keys while loading or disabled', () => {
+  // Only the keys that would activate it are held back: Tab moves on, or the
+  // button would trap keyboard focus while its action runs.
+  it('Tab moves past a loading button and a disabled link; Enter and Space do nothing', async () => {
+    for (const attrs of [
+      { loading: true, type: 'submit' },
+      { disabled: true, href: '#c-button-keys' },
+    ] as Record<string, boolean | string>[]) {
+      const label = JSON.stringify(attrs);
+
+      const form = document.createElement('form');
+
+      const before = document.createElement('input');
+
+      const after = document.createElement('input');
+
+      const seen: string[] = [];
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        seen.push('submit');
+      });
+      document.body.append(form);
+
+      const m = await mount('c-button', { attrs, html: 'Go' });
+
+      form.append(before, m.host.parentElement!, after);
+      before.focus();
+      await userEvent.tab();
+
+      expect(m.host.shadowRoot!.activeElement, label).toBe(m.part('root'));
+
+      await userEvent.keyboard('{Enter}');
+      await userEvent.keyboard(' ');
+      await userEvent.tab();
+
+      expect(document.activeElement, label).toBe(after);
+      expect(seen, label).toEqual([]);
+      expect(location.hash, label).not.toBe('#c-button-keys');
+      m.unmount();
+      form.remove();
+    }
+  });
+});
+
 describe('c-button appearance', () => {
   const paint = async (attrs: Record<string, boolean | string>) => {
     const { part } = await mount('c-button', { attrs, html: 'Save' });
@@ -221,5 +270,308 @@ describe('c-button disabled', () => {
         ).toBe(roleInMode(mode, '--c-on-surface-disabled'));
       }
     }
+  });
+});
+
+describe('c-button form association (ADR-0084)', () => {
+  it('a disabled fieldset disables it, and it submits nothing', async () => {
+    const m = await mountInForm('c-button', {
+      attrs: { type: 'submit' },
+      html: 'Go',
+    });
+
+    const submits = recordEvents(m.form, ['submit']);
+
+    m.fieldset.disabled = true;
+    await settle();
+
+    const button = m.shadow<HTMLButtonElement>('button');
+
+    expect(button.disabled).toBe(true);
+    button.click();
+    expect(submits.records).toHaveLength(0);
+    m.unmount();
+  });
+
+  it('`form` names a form elsewhere on the page', async () => {
+    const form = document.createElement('form');
+
+    form.id = 'elsewhere';
+
+    const seen: string[] = [];
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      seen.push('submit');
+    });
+    document.body.append(form);
+
+    const m = await mount('c-button', {
+      attrs: { form: 'elsewhere', type: 'submit' },
+      html: 'Go',
+    });
+
+    await userEvent.click(m.shadow('button'));
+
+    expect(seen).toEqual(['submit']);
+    m.unmount();
+    form.remove();
+  });
+});
+
+describe('slotted button (ADR-0085)', () => {
+  const slottedButton = async (
+    html = '<button type="submit" name="intent" value="signup">Create account</button>',
+    attrs: Record<string, boolean | string> = {},
+  ) => {
+    const m = await mountInForm('c-button', { attrs, html });
+
+    await settled();
+
+    return { ...m, button: m.host.querySelector('button')! };
+  };
+
+  const submitters = (form: HTMLFormElement) => {
+    const seen: (HTMLElement | null)[] = [];
+
+    form.addEventListener('submit', (event) =>
+      seen.push((event as SubmitEvent).submitter),
+    );
+
+    return seen;
+  };
+
+  it('frames the page’s own button, which submits its form natively', async () => {
+    const m = await slottedButton();
+
+    const seen = submitters(m.form);
+
+    expect(m.button.parentElement).toBe(m.host);
+    expect(m.button.form).toBe(m.form);
+    expect(m.button.classList.contains('c-button__slotted')).toBe(true);
+    expect(m.host.shadowRoot!.querySelector('button')).toBeNull();
+    expect(m.part('root').localName).toBe('span');
+    // What a password manager looks for: a submit button in the form.
+    expect([...m.form.querySelectorAll('button[type="submit"]')]).toEqual([
+      m.button,
+    ]);
+
+    await userEvent.click(m.button);
+
+    expect(seen).toEqual([m.button]);
+    m.unmount();
+  });
+
+  it('fills the painted root, so a press anywhere on it is the button’s', async () => {
+    const m = await slottedButton();
+
+    const root = m.part('root').getBoundingClientRect();
+
+    const button = m.button.getBoundingClientRect();
+
+    expect(button.toJSON()).toEqual(root.toJSON());
+    expect(
+      document.elementFromPoint(root.left + 2, root.top + root.height / 2),
+    ).toBe(m.button);
+    m.unmount();
+  });
+
+  it('paints as the element’s own button does, in every appearance and size', async () => {
+    for (const mode of ['light', 'dark'] as const) {
+      setThemeMode(mode);
+
+      for (const attrs of [
+        {},
+        { appearance: 'ghost', size: 'small' },
+        { appearance: 'outlined', variant: 'danger' },
+        { appearance: 'text', size: 'large' },
+        { inverted: true },
+      ] as Record<string, boolean | string>[]) {
+        const own = await mount('c-button', { attrs, html: 'Save' });
+
+        const m = await mount('c-button', {
+          attrs,
+          html: '<button>Save</button>',
+        });
+
+        await settled();
+
+        const label = m.host.querySelector('button')!;
+
+        const look = (root: HTMLElement, text: HTMLElement) => {
+          const box = getComputedStyle(root);
+
+          const ink = getComputedStyle(text);
+
+          return {
+            backgroundColor: box.backgroundColor,
+            boxShadow: box.boxShadow,
+            color: ink.color,
+            fontSize: ink.fontSize,
+            fontWeight: ink.fontWeight,
+            height: box.height,
+            width: box.width,
+          };
+        };
+
+        expect(
+          look(m.part('root'), label),
+          `${mode} ${JSON.stringify(attrs)}`,
+        ).toEqual(look(own.part('root'), own.part('content')));
+        own.unmount();
+        m.unmount();
+      }
+    }
+  });
+
+  it('rings the focused button as the element rings its own, and hovers its root', async () => {
+    const before = document.createElement('input');
+
+    document.body.prepend(before);
+
+    const ring = async (html: string) => {
+      const m = await mount('c-button', {
+        attrs: { appearance: 'ghost' },
+        html,
+      });
+
+      before.focus();
+      await userEvent.tab();
+
+      const focused = m.host.querySelector('button') ?? m.shadow('button');
+
+      const { outlineColor, outlineOffset, outlineStyle, outlineWidth } =
+        getComputedStyle(focused);
+
+      await userEvent.hover(focused);
+
+      const hovered = m.part('root').matches(':hover');
+
+      m.unmount();
+
+      return {
+        hovered,
+        outlineColor,
+        outlineOffset,
+        outlineStyle,
+        outlineWidth,
+      };
+    };
+
+    const own = await ring('Save');
+
+    expect(own.outlineStyle).toBe('solid');
+    expect(await ring('<button>Save</button>')).toEqual(own);
+    before.remove();
+  });
+
+  it('takes the disabled look from the button’s own disabled, a fieldset’s included', async () => {
+    const disabledInk = roleInMode('light', '--c-on-surface-disabled');
+
+    setThemeMode('light');
+
+    const m = await slottedButton();
+
+    const ink = () => getComputedStyle(m.button).color;
+
+    expect(ink()).not.toBe(disabledInk);
+
+    m.button.disabled = true;
+    await settled();
+    expect(ink()).toBe(disabledInk);
+
+    m.button.disabled = false;
+    m.fieldset.disabled = true;
+    await settled();
+    expect(ink()).toBe(disabledInk);
+    m.unmount();
+  });
+
+  it('loading cancels the button’s clicks, the page’s own handler and Enter in a field included', async () => {
+    const m = await slottedButton();
+
+    const field = document.createElement('c-text-field');
+
+    field.setAttribute('label', 'User');
+    field.innerHTML = '<input name="user">';
+    m.fieldset.prepend(field);
+
+    const seen = submitters(m.form);
+
+    const clicks: string[] = [];
+
+    m.button.addEventListener('click', () => clicks.push('click'));
+    (m.host as { loading: boolean } & HTMLElement).loading = true;
+    await settled();
+
+    m.button.click();
+    await userEvent.type(field.querySelector('input')!, 'ada{Enter}');
+    await settle();
+
+    expect(seen).toEqual([]);
+    expect(clicks).toEqual([]);
+
+    (m.host as { loading: boolean } & HTMLElement).loading = false;
+    await settled();
+    await userEvent.type(field.querySelector('input')!, '{Enter}');
+    await settle();
+
+    expect(seen).toEqual([m.button]);
+    m.unmount();
+  });
+
+  it('host props the button replaces are ignored, with a warning', async () => {
+    const m = await slottedButton('<button type="submit">Go</button>', {
+      target: '_blank',
+      type: 'reset',
+    });
+
+    consoleSpy.expect(/target, type ignored beside a slotted <button>/);
+
+    const seen = submitters(m.form);
+
+    await userEvent.click(m.button);
+
+    expect(seen).toEqual([m.button]);
+    m.unmount();
+
+    const icon = await slottedButton(
+      '<span slot="icon">+</span><button>Go</button>',
+    );
+
+    consoleSpy.expect(/icon and description slots are ignored/);
+    icon.unmount();
+  });
+
+  it('the element’s own disabled still disables it, with a warning to set the button’s', async () => {
+    const m = await slottedButton(undefined, { disabled: true });
+
+    consoleSpy.expect(/disabled beside a slotted <button> blocks its clicks/);
+
+    const seen = submitters(m.form);
+
+    m.button.click();
+    m.button.focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(seen).toEqual([]);
+    expect(getComputedStyle(m.button).color).toBe(
+      roleInMode('light', '--c-on-surface-disabled'),
+    );
+    m.unmount();
+  });
+
+  it('renders its own button again when the slotted one leaves', async () => {
+    const m = await slottedButton();
+
+    const button = m.button;
+
+    button.remove();
+    m.host.textContent = 'Save';
+    await settled();
+
+    expect(button.classList.contains('c-button__slotted')).toBe(false);
+    expect(m.part('root').localName).toBe('button');
+    m.unmount();
   });
 });

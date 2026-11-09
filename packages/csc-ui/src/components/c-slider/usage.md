@@ -35,8 +35,8 @@ Setting `value` moves the thumb and fires nothing. Set one: the built-in
 default is `50` whatever `min` and `max` are, held within them, so a slider
 with `max="8"` and no value starts at 8.
 
-`name` is passed to the inner range input, but the component is not
-form-associated, so the value does not submit with a `<form>`.
+In a native `<form>` the value submits under `name`; see **In a form** on
+`c-button`.
 
 ## Value bubble and unit
 

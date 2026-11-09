@@ -3,7 +3,7 @@
     "activityBar.activeBackground": "#c935b5",
     "activityBar.activeBorder": "#f9e64f",
     "activityBar.activeForeground": "#fff",
-    "activityBar.background": "#0f1115",
+    "activityBar.background": "#020203",
     "activityBar.foreground": "#fff",
     "activityBar.inactiveForeground": "#ffffff99",
 
@@ -47,8 +47,8 @@
     "tab.hoverBackground": "#000000",
     "modernEditorTab.activeHoverBackground": "#171A1F",
 
-    "editorGroupHeader.tabsBackground": "#0f1115",
-    "editorGroupHeader.tabsBorder": "#262b35",
+    "editorGroupHeader.tabsBackground": "#020203",
+    "editorGroupHeader.tabsBorder": "#373e4d",
 
     "bar": "#0048ff",
 

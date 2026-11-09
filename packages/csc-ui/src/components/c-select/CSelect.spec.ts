@@ -16,6 +16,7 @@ import {
   defineAll,
   matchScreenshotInBothModes,
   mount,
+  mountInForm,
   recordEvents,
   settle,
   settled,
@@ -685,6 +686,81 @@ describe('closed field controls', () => {
     await settled();
     await matchScreenshotInBothModes(m.stage, 'field-selected');
   });
+
+  // A long option label in `multiple` mode: the tag's whole nowrap width was
+  // the field's minimum. In a fixed-width field the content row could not
+  // shrink below it and pushed the clear button out; in a page that sizes the
+  // field from its content the field grew past a narrow screen.
+  describe('a long tag', () => {
+    const LONG = option(
+      'long',
+      'Interdisciplinary computational neuroscience and cognitive modelling',
+    );
+
+    const mountLong = () =>
+      mountSelect({ clearable: true, multiple: true, value: ['long'] }, LONG);
+
+    const slotBox = (m: Mounted): DOMRect =>
+      m.deep('c-input', '.c-input__slot').getBoundingClientRect();
+
+    const clearBox = (m: Mounted): DOMRect =>
+      m
+        .shadow('[slot="post"] c-icon-button')
+        .shadowRoot!.querySelector('button')!
+        .getBoundingClientRect();
+
+    /** The innermost span of the tag label: the one that ellipsises. */
+    const tagText = (m: Mounted): HTMLElement =>
+      m
+        .shadowAll('c-tag[part~="tag"] span')
+        .find((span) => !span.firstElementChild)!;
+
+    it('keeps the clear button in a fixed-width field', async () => {
+      const m = await mountLong();
+
+      m.stage.style.width = '320px';
+      await settled();
+
+      expect(clearBox(m).right).toBeLessThanOrEqual(slotBox(m).right);
+      expect(tagText(m).scrollWidth, 'the tag ellipsises').toBeGreaterThan(
+        tagText(m).clientWidth,
+      );
+    });
+
+    it('never widens the field past a container that sizes it from its content', async () => {
+      for (const layout of [
+        'display: flex',
+        'display: grid; grid-template-columns: 1fr',
+        'display: flex; flex-direction: column; align-items: flex-start',
+      ]) {
+        const m = await mountLong();
+
+        const container = document.createElement('div');
+
+        container.style.cssText = `${layout}; width: 240px`;
+        document.body.append(container);
+        container.append(m.stage);
+        await settled();
+
+        const slot = slotBox(m);
+
+        expect(
+          slot.right,
+          `the field stays in the container (${layout})`,
+        ).toBeLessThanOrEqual(container.getBoundingClientRect().right);
+        expect(
+          clearBox(m).right,
+          `the clear button stays in the field (${layout})`,
+        ).toBeLessThanOrEqual(slot.right);
+        expect(
+          tagText(m).scrollWidth,
+          `the tag ellipsises (${layout})`,
+        ).toBeGreaterThan(tagText(m).clientWidth);
+
+        container.remove();
+      }
+    });
+  });
 });
 
 // Opened upward (no room below) the list met the field with an 8px gap while
@@ -757,5 +833,32 @@ describe('value attribute', () => {
 
     expect(m.host.value).toBe('se');
     expect(combobox(m).value).toBe('Sweden');
+  });
+});
+
+describe('form association (ADR-0084)', () => {
+  it('multiple submits one entry per pick, in pick order', async () => {
+    const m = await mountInForm<{ value: unknown } & HTMLElement>('c-select', {
+      attrs: { name: 'countries' },
+      html: [
+        '<c-option value="fi">Finland</c-option>',
+        '<c-option value="se">Sweden</c-option>',
+        '<c-option value="no">Norway</c-option>',
+      ].join(''),
+      props: { label: 'Countries', multiple: true },
+    });
+
+    expect(m.entries('countries')).toEqual([]);
+
+    m.host.value = ['se', 'fi'];
+    await settle();
+
+    expect(m.entries('countries')).toEqual(['se', 'fi']);
+
+    m.form.reset();
+    await settle();
+
+    expect(m.entries('countries')).toEqual([]);
+    m.unmount();
   });
 });

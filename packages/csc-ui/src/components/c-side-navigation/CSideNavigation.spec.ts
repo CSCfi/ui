@@ -11,7 +11,14 @@
 import { describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
-import { mount, recordEvents, settle } from '../../test/harness';
+import {
+  contrastRatio,
+  mount,
+  parkPointer,
+  recordEvents,
+  setThemeMode,
+  settle,
+} from '../../test/harness';
 
 const ITEMS = Array.from(
   { length: 40 },
@@ -561,4 +568,34 @@ describe('APG disclosure navigation', () => {
 
     expect(inner.hasAttribute('aria-expanded')).toBe(false);
   });
+});
+
+// A hover moves the fill away from its white label (ADR-0081): the light
+// hover lightened to primary-400, where the label read 4.25:1.
+it('keeps an item’s label at AA while hovered, in both modes', async () => {
+  for (const mode of ['light', 'dark'] as const) {
+    setThemeMode(mode);
+
+    const m = await mount('c-side-navigation', {
+      html: '<c-side-navigation-item value="projects">Projects</c-side-navigation-item>',
+    });
+
+    await settle();
+
+    const root = m.host
+      .querySelector('c-side-navigation-item')!
+      .shadowRoot!.querySelector<HTMLElement>('[part~="root"]')!;
+
+    await userEvent.hover(root);
+    await settle();
+
+    const { backgroundColor, color } = getComputedStyle(root);
+
+    expect(contrastRatio(color, backgroundColor), mode).toBeGreaterThanOrEqual(
+      4.5,
+    );
+
+    await parkPointer();
+    document.body.replaceChildren();
+  }
 });

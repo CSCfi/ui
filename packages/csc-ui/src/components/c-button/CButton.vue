@@ -1,15 +1,17 @@
 <template>
   <component
-    :is="href ? 'a' : 'button'"
+    :is="tag"
     ref="rootRef"
-    :aria-pressed="asTab ? undefined : ariaPressed"
-    :aria-selected="asTab ? String(coerceBoolean(active)) : undefined"
+    :aria-pressed="asTab || slotted ? undefined : ariaPressed"
+    :aria-selected="
+      asTab && !slotted ? String(coerceBoolean(active)) : undefined
+    "
     :class="ui.root()"
-    :disabled="href ? undefined : disabled || undefined"
-    :href="href || undefined"
-    :role="asTab ? 'tab' : undefined"
-    :target="href ? target : undefined"
-    :type="href ? undefined : buttonType"
+    :disabled="tag === 'button' ? disabledResolved || undefined : undefined"
+    :href="tag === 'a' ? href : undefined"
+    :role="asTab && !slotted ? 'tab' : undefined"
+    :target="tag === 'a' ? target : undefined"
+    :type="tag === 'button' ? buttonType : undefined"
     part="root"
     @click="onClick"
     @keydown="onKeydown"
@@ -20,7 +22,9 @@
           <slot name="icon" />
         </span>
 
-        <slot />
+        <!-- A slotted button (CONTEXT.md, ADR-0085): the page's own <button>,
+             which fills the root while the content wrappers step aside. -->
+        <slot :class="ui.label()" />
       </span>
 
       <span
@@ -218,7 +222,10 @@ interface CButtonProps {
 
 <script setup lang="ts">
 /**
- * @slot default - Button label content.
+ * @slot default - Button label content, or a slotted `<button>` (ADR-0085):
+ * the page's own native button, which a password manager reading the form's
+ * submit button finds. Its own `type`, `disabled`, `name`, `value` and
+ * `form` apply; the element paints its look.
  * @slot icon - Leading icon, vertically centered before the label.
  * @slot description - Secondary text rendered below the label.
  *
@@ -227,15 +234,25 @@ interface CButtonProps {
  * @csspart description - Wrapper of the `description` slot.
  */
 import { tv } from 'tailwind-variants';
-import { computed, useHost, useTemplateRef } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowRef,
+  useHost,
+  useTemplateRef,
+} from 'vue';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import { resolveAppearance } from '../../shared/buttonAppearance';
 import { dangerAsVariant } from '../../shared/buttonVariant';
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { useFormAssociation } from '../../shared/useFormAssociation';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
+import { ensureButtonStyles } from './injectButtonStyles';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config: the
@@ -259,6 +276,12 @@ import { useRipple } from '../../shared/useRipple';
  */
 // Hoisted so the runtime guard below can test membership; the `satisfies`
 // keeps the map complete against the public union.
+//
+// `--_c-button-pad-x` is the slotted button's padding (ADR-0085): each size's
+// `contentInner` `px-*` written out in rem. Not Tailwind's spacing function:
+// it inlines the value but still declares the spacing theme variable on
+// every host, where it shadows a consumer's own Tailwind theme (ADR-0072).
+// Tailwind reads that variable's bare name, even in a comment, as a use.
 const sizeVariants = {
   default: {
     contentInner: 'h-full px-4',
@@ -267,30 +290,31 @@ const sizeVariants = {
     // button sits level beside a field. `--_c-button-min-height` is an
     // INTERNAL hook (not consumer API): a wrapping c-button-group sets it on
     // its frame so the buttons plus the frame total the control height.
-    root: 'min-h-[var(--_c-button-min-height,var(--_c-control-height))] text-base',
+    root: 'min-h-[var(--_c-button-min-height,var(--_c-control-height))] text-base [--_c-button-pad-x:1rem]',
   },
   large: {
     contentInner: 'h-full px-6',
     iconWrap: 'text-2xl',
     // The toolbar height, one step above the control height.
-    root: 'min-h-toolbar text-lg',
+    root: 'min-h-toolbar text-lg [--_c-button-pad-x:1.5rem]',
   },
   small: {
     contentInner: 'h-full px-3',
     iconWrap: 'text-xl',
-    root: 'min-h-7 text-sm',
+    root: 'min-h-7 text-sm [--_c-button-pad-x:0.75rem]',
   },
 } satisfies Record<CButtonSize, object>;
 
 // The variant's colours as private custom properties on `root`, which the
 // appearance compounds below paint with — one set of compounds for every
 // colour (ADR-0079). `fill`, `fill-hover` and `on-fill` paint the filled and
-// pressed looks (the fill also rings the filled look's focus) and tint the
-// lighter ones; `ink` is the label, outline and focus ring of the lighter
-// appearances: the role's subtle ink, as c-alert's, since the role itself
-// drops under AA on its own tint (dark primary read 3.8:1 on the hover tint).
-// `inverse` is the label of the inverted filled look. Hoisted, like the
-// sizes, so the runtime guard below can test membership.
+// pressed looks (the fill also rings the filled look's focus), tint the
+// lighter ones and border the outlined one, whose edge is then the filled
+// edge; `ink` is the label and focus ring of the lighter appearances: the
+// role's subtle ink, as c-alert's, since the role itself drops under AA on
+// its own tint (dark primary read 3.8:1 on the hover tint). `inverse` is the
+// label of the inverted filled look. Hoisted, like the sizes, so the runtime
+// guard below can test membership.
 const variantVariants = {
   danger: {
     root: '[--_c-button-fill-hover:var(--c-error-hover)] [--_c-button-fill:var(--c-error)] [--_c-button-ink:var(--c-on-error-subtle)] [--_c-button-inverse:var(--c-inverse-error)] [--_c-button-on-fill:var(--c-on-error)]',
@@ -317,16 +341,19 @@ const button = tv({
     // ---- default (filled) --------------------------------------------------
     {
       class: {
-        root: 'bg-(--_c-button-fill) text-(--_c-button-on-fill) hover:bg-(--_c-button-fill-hover) focus-visible:outline-(--_c-button-fill)',
+        root: 'bg-(--_c-button-fill) text-(--_c-button-on-fill) [--_c-button-ring:var(--_c-button-fill)] hover:bg-(--_c-button-fill-hover)',
       },
       ghost: false,
       inverted: false,
       outlined: false,
       text: false,
     },
+    // Hover replaces the white, so the hovered white takes 15% of the variant
+    // mixed in, opaque: a see-through hover let the dark backdrop through
+    // under the dark label.
     {
       class: {
-        root: 'bg-inverse-surface text-(--_c-button-inverse) hover:bg-(--_c-button-inverse)/15 focus-visible:outline-inverse-on',
+        root: 'bg-inverse-surface text-(--_c-button-inverse) [--_c-button-ring:var(--c-inverse-on)] hover:bg-[color-mix(in_srgb,var(--_c-button-inverse)_15%,var(--c-inverse-surface))]',
       },
       ghost: false,
       inverted: true,
@@ -334,16 +361,21 @@ const button = tv({
       text: false,
     },
     // ---- ghost -----------------------------------------------------------
+    // The lighter appearances share one 20% hover tint over the ghost's 14%,
+    // both opaque, the variant mixed into the page surface (ADR-0082), so they
+    // read the same on a popover or the page canvas. None darkens further
+    // while pressed (the ripple marks the press): dark secondary's label reads
+    // 4.6:1 hovered and fell under AA at 22%.
     {
       class: {
-        root: 'bg-(--_c-button-fill)/8 text-(--_c-button-ink) hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink) active:bg-(--_c-button-fill)/22',
+        root: 'bg-tint-(--_c-button-fill)/14 text-(--_c-button-ink) [--_c-button-ring:var(--_c-button-ink)] hover:bg-tint-(--_c-button-fill)/20',
       },
       ghost: true,
       inverted: false,
     },
     {
       class: {
-        root: 'bg-inverse-on/20 text-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
+        root: 'bg-inverse-on/20 text-inverse-on [--_c-button-ring:var(--c-inverse-on)] hover:bg-inverse-on/30',
       },
       ghost: true,
       inverted: true,
@@ -351,14 +383,14 @@ const button = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-button-ink) hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink)',
+        root: 'bg-transparent text-(--_c-button-ink) [--_c-button-ring:var(--_c-button-ink)] hover:bg-tint-(--_c-button-fill)/20',
       },
       inverted: false,
       text: true,
     },
     {
       class: {
-        root: 'bg-transparent text-inverse-on hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
+        root: 'bg-transparent text-inverse-on [--_c-button-ring:var(--c-inverse-on)] hover:bg-inverse-on/30',
       },
       inverted: true,
       text: true,
@@ -366,14 +398,14 @@ const button = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-button-ink) ring-2 ring-(--_c-button-ink) ring-inset hover:bg-(--_c-button-fill)/15 focus-visible:outline-(--_c-button-ink)',
+        root: 'bg-transparent text-(--_c-button-ink) ring-2 ring-(--_c-button-fill) [--_c-button-ring:var(--_c-button-ink)] ring-inset hover:bg-tint-(--_c-button-fill)/20',
       },
       inverted: false,
       outlined: true,
     },
     {
       class: {
-        root: 'bg-transparent text-inverse-on ring-2 ring-inverse-on ring-inset hover:bg-inverse-on/30 focus-visible:outline-inverse-on',
+        root: 'bg-transparent text-inverse-on ring-2 ring-inverse-on [--_c-button-ring:var(--c-inverse-on)] ring-inset hover:bg-inverse-on/30',
       },
       inverted: true,
       outlined: true,
@@ -472,6 +504,7 @@ const button = tv({
     noRadius: false,
     outlined: false,
     size: 'default',
+    slotted: false,
     text: false,
     variant: 'primary',
   },
@@ -481,6 +514,9 @@ const button = tv({
       'flex items-center justify-center gap-2 whitespace-nowrap transition-opacity duration-200',
     description: 'px-3 pb-3 text-left text-xs font-normal',
     iconWrap: 'inline-flex items-center fill-current',
+    // The default slot: a slotted button inherits the root's corners through
+    // it, as through the wrappers.
+    label: '',
     loader: 'pointer-events-none absolute inset-0 grid place-content-center',
     ripple:
       'pointer-events-none absolute rounded-full bg-current transition-[transform,opacity] duration-[600ms] ease-out',
@@ -494,7 +530,7 @@ const button = tv({
     // The typeface comes from the page through preflight's `font: inherit` on
     // native buttons (ADR-0072). Font *size* is owned by the `size` variant's
     // `text-*` (and consumer overrides), which outranks preflight's layer.
-    root: 'relative m-0 inline-grid min-w-22 transform-gpu cursor-pointer place-items-center rounded-csc-md border-0 p-0 no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
+    root: 'relative m-0 inline-grid min-w-22 transform-gpu cursor-pointer place-items-center rounded-csc-md border-0 p-0 no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--_c-button-ring) focus-visible:outline-solid',
     spinner:
       'inline-block animate-spin rounded-full border-2 border-solid border-current border-r-transparent',
   },
@@ -508,11 +544,24 @@ const button = tv({
     ghost: { true: '' },
     inverted: { true: '' },
     loading: {
-      true: { contentInner: 'opacity-0', root: 'pointer-events-none' },
+      true: {
+        contentInner: 'opacity-0',
+        root: 'pointer-events-none [--_c-button-label-opacity:0]',
+      },
     },
     noRadius: { true: { root: 'rounded-none' } },
     outlined: { true: '' },
     size: sizeVariants,
+    // A slotted button fills the root: the content wrappers step out of the
+    // box tree (`contents`) so it is the root's grid item, and pass the
+    // corners down for its focus ring. The icon and description stay hidden.
+    slotted: {
+      true: {
+        content: 'contents rounded-[inherit] [corner-shape:inherit]',
+        contentInner: 'contents rounded-[inherit] [corner-shape:inherit]',
+        label: 'rounded-[inherit] [corner-shape:inherit]',
+      },
+    },
     text: { true: '' },
     variant: variantVariants,
   },
@@ -566,7 +615,7 @@ const variantResolved = appDefault(
 const ui = computed(() =>
   button({
     active: props.active === undefined ? false : coerceBoolean(props.active),
-    disabled: props.disabled,
+    disabled: disabledResolved.value,
     fit: props.fit,
     ghost: appearance.value === 'ghost',
     inverted: props.inverted,
@@ -574,6 +623,7 @@ const ui = computed(() =>
     noRadius: props.noRadius,
     outlined: appearance.value === 'outlined',
     size: props.size in sizeVariants ? props.size : 'default',
+    slotted: !!slotted.value,
     text: appearance.value === 'text',
     variant:
       variantResolved.value in variantVariants
@@ -624,26 +674,43 @@ const { ripples, spawn: spawnRipple } = useRipple({
   container: () => rootRef.value,
 });
 
-// The nearest <form> around the element, across shadow roots: the native
-// button sits in this shadow root, where it has no form owner.
-const closestForm = (): HTMLFormElement | null => {
-  let el: Element | null = host;
+// The element is form-associated without a value (ADR-0084): its form owner
+// is the form a native button there would have — the `<form>` around it, or
+// the one its `form` attribute names — and a disabled `<fieldset>` around it
+// disables it, a link excepted, as native links are.
+const { form, formDisabled } = useFormAssociation({
+  name: () => undefined,
+  reset: () => {},
+  value: () => null,
+});
 
-  while (el) {
-    const form = el.closest('form');
+// ---- slotted button (ADR-0085): state ---------------------------------------
 
-    if (form) return form;
+/** The page's own `<button>` the element frames, if any. */
+const slotted = shallowRef<HTMLButtonElement | null>(null);
 
-    const root = el.getRootNode();
+/** The slotted button's own `disabled`. */
+const slottedDisabled = ref(false);
 
-    el = root instanceof ShadowRoot ? root.host : null;
-  }
+// The root is the native control, a link, or — framing a slotted button — a
+// box that only paints.
+const tag = computed(() => {
+  if (slotted.value) return 'span';
 
-  return null;
-};
+  return props.href ? 'a' : 'button';
+});
+
+// A disabled fieldset disables a slotted button natively and the element
+// with it. The element's own `disabled` still disables it too: the browser
+// keeps clicks from the content of a disabled form-associated element.
+const disabledResolved = computed(() =>
+  slotted.value
+    ? slottedDisabled.value || props.disabled || formDisabled.value
+    : props.disabled || (formDisabled.value && !props.href),
+);
 
 const onClick = (event: MouseEvent) => {
-  if (props.disabled || props.loading) {
+  if (disabledResolved.value || props.loading) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -652,19 +719,26 @@ const onClick = (event: MouseEvent) => {
 
   if (!props.noRipple) spawnRipple(event);
 
-  // `type` acts on the form around the element, as on a native button (3.x
-  // did it through a hidden submit button): submit validates and submits it,
-  // reset resets it.
-  if (props.href) return;
+  // `type` acts on the element's form, as on a native button (3.x did it
+  // through a hidden submit button): submit validates and submits it, reset
+  // resets it. A slotted button acts on its own.
+  if (props.href || slotted.value) return;
 
-  if (buttonType.value === 'submit') closestForm()?.requestSubmit();
-  else if (buttonType.value === 'reset') closestForm()?.reset();
+  if (buttonType.value === 'submit') form()?.requestSubmit();
+  else if (buttonType.value === 'reset') form()?.reset();
 };
 
 const onKeydown = (event: KeyboardEvent) => {
-  if (props.disabled || props.loading) {
-    event.preventDefault();
-    event.stopPropagation();
+  // A loading slotted button's clicks are cancelled where they start (adopt).
+  if (slotted.value) return;
+
+  // Disabled or loading, the keys that would activate it do nothing; every
+  // other key goes on its way — Tab held back would trap the focus here.
+  if (disabledResolved.value || props.loading) {
+    if (event.key === 'Enter' || event.code === 'Space') {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
     return;
   }
@@ -672,12 +746,119 @@ const onKeydown = (event: KeyboardEvent) => {
   // A link activates natively on Enter, honouring `target`. Space, which a
   // button answers and a link does not, clicks it the same way —
   // `window.open(href, '')` would open a new tab for the empty target.
-  if (props.href && event.code === 'Space') {
+  if (tag.value === 'a' && event.code === 'Space') {
     event.preventDefault();
     rootRef.value?.click();
   }
 };
 
 // The page's id references on the element reach the element carrying its role.
-useIdReferences(() => rootRef.value);
+useIdReferences(() => slotted.value ?? rootRef.value);
+
+// ---- slotted button (ADR-0085): adoption -------------------------------------
+
+/**
+ * Host props a slotted button's own attributes replace: set beside one, they
+ * are ignored.
+ */
+const REPLACED_PROPS = {
+  href: '',
+  target: '',
+  type: 'button',
+  value: undefined,
+} as const;
+
+const warnReplaced = () => {
+  const set = Object.entries(REPLACED_PROPS)
+    .filter(([key, unset]) => {
+      const value = props[key as keyof typeof REPLACED_PROPS];
+
+      return value !== unset && value !== undefined;
+    })
+    .map(([key]) => key);
+
+  if (set.length)
+    console.warn(
+      `c-button: ${set.join(', ')} ignored beside a slotted <button>, whose own attributes apply (ADR-0085)`,
+    );
+
+  if (props.disabled)
+    console.warn(
+      'c-button: disabled beside a slotted <button> blocks its clicks but leaves it enabled to assistive technology; set the button’s own (ADR-0085)',
+    );
+
+  if (
+    host?.querySelector(':scope > [slot="icon"], :scope > [slot="description"]')
+  )
+    console.warn(
+      'c-button: the icon and description slots are ignored beside a slotted <button>; put an icon inside the button (ADR-0085)',
+    );
+};
+
+let release: (() => void) | null = null;
+
+/** Frame `button` as the element's control, or go back to its own. */
+function adopt(button: HTMLButtonElement | null): void {
+  if (button === slotted.value) return;
+
+  release?.();
+  release = null;
+  slotted.value = button;
+
+  if (!button) return;
+
+  ensureButtonStyles();
+  warnReplaced();
+
+  const readDisabled = () => {
+    slottedDisabled.value = button.disabled;
+  };
+
+  readDisabled();
+
+  const attrObserver = new MutationObserver(readDisabled);
+
+  attrObserver.observe(button, { attributeFilter: ['disabled'] });
+
+  // While loading, or disabled through the element, the button stays enabled
+  // and its clicks are cancelled before anything hears them — a press, a
+  // key, Enter in a field — so it neither submits nor runs the page's own
+  // handler.
+  const onClickCapture = (event: MouseEvent) => {
+    if (!props.loading && !props.disabled) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+
+  button.addEventListener('click', onClickCapture, { capture: true });
+  button.classList.add('c-button__slotted');
+
+  release = () => {
+    attrObserver.disconnect();
+    button.removeEventListener('click', onClickCapture, { capture: true });
+    button.classList.remove('c-button__slotted');
+  };
+}
+
+const refreshSlotted = () =>
+  adopt(
+    host?.querySelector<HTMLButtonElement>(':scope > button:not([slot])') ??
+      null,
+  );
+
+let childObserver: MutationObserver | null = null;
+
+onMounted(() => {
+  refreshSlotted();
+
+  if (host && typeof MutationObserver !== 'undefined') {
+    childObserver = new MutationObserver(refreshSlotted);
+    childObserver.observe(host, { childList: true });
+  }
+});
+
+onBeforeUnmount(() => {
+  childObserver?.disconnect();
+  adopt(null);
+});
 </script>

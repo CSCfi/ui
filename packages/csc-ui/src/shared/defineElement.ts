@@ -8,6 +8,7 @@ import {
 } from 'vue';
 
 import tailwindStyles from '../tailwind.css?inline';
+import { formCallbacks } from './useFormAssociation';
 import { ID_REFERENCES } from './useIdReferences';
 
 /**
@@ -353,6 +354,30 @@ const withLiveExposed = (component: Component): Component => {
 };
 
 /**
+ * Make an element class form-associated (ADR-0084): the browser then gives
+ * its elements a form owner and calls these callbacks, which reach the
+ * mounted component's `useFormAssociation`. Lifecycle callbacks are read off
+ * the prototype when the class is defined, so this runs before
+ * `customElements.define`.
+ */
+const associateWithForms = (Element: { prototype: object }): void => {
+  Object.assign(Element, { formAssociated: true });
+  Object.assign(Element.prototype, {
+    formDisabledCallback(this: HTMLElement, disabled: boolean) {
+      formCallbacks.disabled(this, disabled);
+    },
+    formResetCallback(this: HTMLElement) {
+      formCallbacks.reset(this);
+    },
+  });
+};
+
+export interface DefineElementOptions {
+  /** Take part in a native `<form>` (ADR-0084). */
+  formAssociated?: boolean;
+}
+
+/**
  * Register a Vue SFC as a custom element under `tag`, with the shared Tailwind
  * utility stylesheet applied to its shadow root alongside the SFC's own styles.
  *
@@ -370,7 +395,11 @@ const withLiveExposed = (component: Component): Component => {
  * No-op if `tag` is already defined — the docs may have registered the Stencil
  * version first, or this function may be called twice.
  */
-export function defineElement(tag: string, component: Component): void {
+export function defineElement(
+  tag: string,
+  component: Component,
+  { formAssociated = false }: DefineElementOptions = {},
+): void {
   if (customElements.get(tag)) return;
 
   const sfcStyles = (component as { styles?: string[] }).styles || [];
@@ -404,6 +433,7 @@ export function defineElement(tag: string, component: Component): void {
       }
 
       connectedCallback() {
+        if (formAssociated) formCallbacks.captureAuthored(this);
         normalizeBooleanAttributes(this, booleanKeys);
         normalizeNumberProperties(this, numberKeys);
         super.connectedCallback?.();
@@ -411,6 +441,7 @@ export function defineElement(tag: string, component: Component): void {
       }
     }
 
+    if (formAssociated) associateWithForms(Element);
     customElements.define(tag, Element as unknown as CustomElementConstructor);
 
     return;
@@ -428,6 +459,10 @@ export function defineElement(tag: string, component: Component): void {
     }
 
     connectedCallback() {
+      // The authored `value` / `checked`, before Vue writes props back onto
+      // them: a form reset returns to it (ADR-0084).
+      if (formAssociated) formCallbacks.captureAuthored(this);
+
       // Coerce SSR'd "true"/"false" boolean attributes and string values in
       // pre-upgrade Number properties before Vue resolves props (the
       // component mounts inside super.connectedCallback).
@@ -466,5 +501,6 @@ export function defineElement(tag: string, component: Component): void {
     }
   }
 
+  if (formAssociated) associateWithForms(Element);
   customElements.define(tag, Element as unknown as CustomElementConstructor);
 }

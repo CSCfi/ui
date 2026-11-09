@@ -314,3 +314,26 @@
 @utility scrollbar-hidden {
   scrollbar-width: none;
 }
+
+/*
+ * A tint (ADR-0082): a role mixed into the page surface, opaque, so it reads
+ * the same on a card, a popover or the page canvas, where a see-through wash
+ * of the role let the ground decide the label's contrast. The modifier is
+ * the role's share: `bg-tint-primary/15`, `hover:bg-tint-(--_c-button-fill)/20`.
+ * Text on it takes the role's tint ink, `on-<role>-subtle`. It mixes in sRGB,
+ * the space alpha compositing uses, so on the page surface it paints exactly
+ * what the see-through wash it replaced did.
+ *
+ * A tinted container (an alert's message, a data table's banner and selected
+ * rows) sets `--_c-tint-ground` to its own colour and `--_c-tint-scale` to
+ * 0.5 for what sits on it: a tint there mixes into the container at half the
+ * share, so it still stands out from it and its label keeps AA.
+ */
+@utility bg-tint-* {
+  background-color: color-mix(
+    in srgb,
+    --value(--color-*, [color], [*])
+      calc(--modifier(integer) * var(--_c-tint-scale, 1) * 1%),
+    var(--_c-tint-ground, var(--c-surface))
+  );
+}

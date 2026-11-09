@@ -3,14 +3,14 @@
     v-bind="rootAttrs"
     :active="isActiveForInput"
     :data-hide-details="String(hideMessageResolved)"
-    :disabled
+    :disabled="disabledResolved"
     :filled="isFilledForInput"
     :input-id
     :invalid
-    :is-textarea="rows > 1"
+    :is-textarea="!slotted && rows > 1"
     :label
     :label-on-top="labelOnTopResolved"
-    :required
+    :required="requiredResolved"
     :shadow="shadowResolved"
     :size="sizeResolved"
   >
@@ -39,8 +39,12 @@
       <slot name="pre" />
     </span>
 
+    <!-- A slotted input (CONTEXT.md, ADR-0083): the page's own <input>, which
+         every password manager can fill, framed in place of the field's own. -->
+    <slot v-if="slotted" />
+
     <textarea
-      v-if="rows > 1"
+      v-else-if="rows > 1"
       :id="inputId"
       ref="inputRef"
       v-bind="controlAttrs"
@@ -51,7 +55,7 @@
       :autocomplete="autocomplete || undefined"
       :autocorrect="autocorrectAttr"
       :class="ui.textarea()"
-      :disabled
+      :disabled="disabledResolved"
       :name="name || undefined"
       :placeholder="effectivePlaceholder"
       :readonly
@@ -94,7 +98,7 @@
         :autocomplete="autocomplete || undefined"
         :autocorrect="autocorrectAttr"
         :class="ui.input()"
-        :disabled
+        :disabled="disabledResolved"
         :inputmode="maskInputMode"
         :max="max ?? undefined"
         :min="min ?? undefined"
@@ -109,6 +113,7 @@
         @change="onChange"
         @focus="onFocus"
         @input="onInput"
+        @keydown="submitOnEnter($event, form())"
         @scroll="syncGuideScroll"
       />
     </span>
@@ -126,7 +131,7 @@
           currentType === 'password' ? 'Show password' : 'Hide password'
         "
         :class="ui.toggle()"
-        :disabled
+        :disabled="disabledResolved"
         type="button"
         @click="togglePassword"
       >
@@ -138,7 +143,7 @@
       <button
         v-if="originalType === 'date' && !isFirefox"
         :class="ui.toggle()"
-        :disabled
+        :disabled="disabledResolved"
         aria-label="Open date picker"
         type="button"
         @click="openPicker"
@@ -283,8 +288,7 @@ interface CTextFieldProps {
   min?: null | number;
 
   /**
-   * `name` of the inner input. The component is not form-associated, so it
-   * does not submit with a `<form>`.
+   * The name the text submits under in a native `<form>`
    *
    * @freeform
    */
@@ -359,6 +363,7 @@ interface CTextFieldProps {
 
 <script setup lang="ts">
 /**
+ * @slot default - A page's own `<input>`, framed in place of the field's own so that every password manager can fill it; its native attributes are its own
  * @slot pre - Content inside the field, before the input, such as an icon
  * @slot post - Content inside the field, after the input and its password or date button
  * @csspart mask-guide - The faint rest of the input mask, shown behind the typed text
@@ -372,16 +377,22 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  shallowRef,
   useHost,
   useId,
   useTemplateRef,
   watch,
+  watchEffect,
 } from 'vue';
 
 import type { CFieldSize } from '../../types';
 
 import { useAppDefault } from '../../shared/appDefaults';
 import FieldMessage from '../../shared/FieldMessage.vue';
+import {
+  submitOnEnter,
+  submitOnEnterInstead,
+} from '../../shared/implicitSubmission';
 import {
   applyMask,
   compileMask,
@@ -390,9 +401,20 @@ import {
   warnInvalidMask,
 } from '../../shared/inputMask';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  formatMessage,
+  useFormAssociation,
+  validityOf,
+} from '../../shared/useFormAssociation';
 import { useHostStates } from '../../shared/useHostStates';
 import { useIdReferences } from '../../shared/useIdReferences';
-import { emitModelInput, emitModelSettled } from '../../shared/valueEvents';
+import {
+  emitModelInput,
+  emitModelSettled,
+  emitModelUpdate,
+  seedModelValue,
+} from '../../shared/valueEvents';
+import { ensureTextFieldStyles } from './injectTextFieldStyles';
 
 /** Events dispatched by `<c-text-field>`. */
 interface CTextFieldEvents {
@@ -549,18 +571,48 @@ const autocorrectAttr = computed(() => {
 
 const isFocused = ref(false);
 
-// The type as set; `currentType` is what the input shows, which the password
-// toggle flips. A new `type` resets it.
-const originalType = computed(() => props.type);
+// ---- slotted input (ADR-0083): state ----------------------------------------
 
-const currentType = ref(props.type);
+/**
+ * The page's own `<input>`, framed in place of the field's own (CONTEXT.md
+ * "Slotted input"): it stays in the page, where every password manager can
+ * fill it, and in a form it submits and validates itself.
+ */
+const slotted = shallowRef<HTMLInputElement | null>(null);
 
-watch(
-  () => props.type,
-  (type) => {
-    currentType.value = type;
-  },
+/** What the field draws from the slotted input's own attributes. */
+const slottedAttrs = ref({ disabled: false, required: false, type: 'text' });
+
+/** The slotted input's value, as last read. */
+const slottedValue = ref('');
+
+/** A browser's autofill, painted before the page may read the value. */
+const autofilled = ref(false);
+
+// Its own `disabled` — the slotted input's, when there is one — or a
+// disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(
+  () =>
+    (slotted.value ? slottedAttrs.value.disabled : props.disabled) ||
+    formDisabled.value,
 );
+
+const requiredResolved = computed(() =>
+  slotted.value ? slottedAttrs.value.required : props.required,
+);
+
+// The type as set — on the slotted input, its own; `currentType` is what the
+// input shows, which the password toggle flips. A new type resets it.
+const originalType = computed(
+  () =>
+    (slotted.value ? slottedAttrs.value.type : props.type) as CTextFieldType,
+);
+
+const currentType = ref<CTextFieldType>(props.type);
+
+watch(originalType, (type) => {
+  currentType.value = type;
+});
 
 // Date inputs render a permanent "mm/dd/yyyy" format hint inside the
 // field, so the floating label has to stay lifted from the start —
@@ -570,8 +622,10 @@ const isDateType = computed(() => originalType.value === 'date');
 // A field "has a value" when it holds anything but the empty string — `0`
 // (a numeric property binding on a `type="number"` field) counts. A plain
 // truthiness check would leave the label un-floated over a typed zero.
-const hasValue = computed(
-  () => props.value !== '' && props.value !== null && props.value !== undefined,
+const hasValue = computed(() =>
+  slotted.value
+    ? slottedValue.value !== '' || autofilled.value
+    : props.value !== '' && props.value !== null && props.value !== undefined,
 );
 
 // `active` colours the border/label primary and must track focus ONLY — a
@@ -600,6 +654,7 @@ const refreshConsumerSlots = () => {
   if (!host) return;
   hasConsumerPre.value = !!host.querySelector(':scope > [slot="pre"]');
   hasConsumerPost.value = !!host.querySelector(':scope > [slot="post"]');
+  adopt(host.querySelector<HTMLInputElement>(':scope > input:not([slot])'));
 };
 
 let childObserver: MutationObserver | null = null;
@@ -642,7 +697,7 @@ const isFirefox = /firefox|fxios/i.test(
 );
 
 const togglePassword = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
   currentType.value = currentType.value === 'password' ? 'text' : 'password';
 };
 
@@ -658,7 +713,10 @@ const openPicker = () => {
 const MASKABLE_TYPES = new Set<CTextFieldType>(['search', 'tel', 'text']);
 
 const maskSlots = computed(() =>
-  props.mask && props.rows <= 1 && MASKABLE_TYPES.has(originalType.value)
+  !slotted.value &&
+  props.mask &&
+  props.rows <= 1 &&
+  MASKABLE_TYPES.has(originalType.value)
     ? compileMask(props.mask)
     : null,
 );
@@ -776,13 +834,259 @@ const onBlur = (event: Event) => {
  * @param options - Passed on to that element's `focus()`
  */
 const focus = (options?: FocusOptions): void => {
-  inputRef.value?.focus(options);
+  (slotted.value ?? inputRef.value)?.focus(options);
 };
 
 defineExpose({ focus, maskComplete, unmaskedValue });
 
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The text submits as shown; the inner input's own check (`required`, the
+// type, `min`/`max`/`step`) and an incomplete mask stop a validating form. A
+// slotted input submits and checks itself: the element then hands the form
+// nothing, and on a reset reports what the form's reset left in the input.
+const { form, formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value }) => {
+    const input = slotted.value;
+
+    if (input) slottedValue.value = input.value;
+
+    emitModelInput(host, input ? input.value : (value ?? ''));
+  },
+  validity: () => {
+    if (slotted.value) return null;
+
+    // What the inner input's check reads, so a change re-runs it.
+    void [displayValue.value, props.required, props.min, props.max];
+    void [props.step, props.type, props.rows];
+
+    const native = validityOf(inputRef.value);
+
+    if (native) return native;
+
+    if (displayValue.value === '' || maskComplete.value) return null;
+
+    return {
+      anchor: inputRef.value,
+      flags: { patternMismatch: true },
+      message: formatMessage(),
+    };
+  },
+  value: () => (slotted.value ? null : displayValue.value),
+});
+
 // The page's id references on the element reach the element carrying its role.
-useIdReferences(() => inputRef.value);
+useIdReferences(() => slotted.value ?? inputRef.value);
+
+// ---- slotted input (ADR-0083): adoption -------------------------------------
+
+/**
+ * Host props a slotted input's own attributes, or its framing, replace: set
+ * beside one, they are ignored.
+ */
+const REPLACED_PROPS = {
+  autocapitalize: undefined,
+  autocomplete: '',
+  autocorrect: undefined,
+  autofocus: false,
+  disabled: false,
+  mask: '',
+  max: null,
+  min: null,
+  name: '',
+  placeholder: '',
+  readonly: false,
+  required: false,
+  rows: 1,
+  step: null,
+  trimWhitespace: false,
+  type: 'text',
+} as const;
+
+const warnReplacedProps = () => {
+  const set = Object.entries(REPLACED_PROPS)
+    .filter(([key, unset]) => {
+      const value = props[key as keyof typeof REPLACED_PROPS];
+
+      return value !== unset && value !== undefined;
+    })
+    .map(([key]) => key);
+
+  if (set.length)
+    console.warn(
+      `c-text-field: ${set.join(', ')} ignored beside a slotted <input>, whose own attributes apply (ADR-0083)`,
+    );
+};
+
+/**
+ * Hear the input's value set by script — the page's own binding, a password
+ * manager — which fires no event: the setter the input has now (React's
+ * value tracker, else the native one) runs first.
+ */
+const trackValue = (input: HTMLInputElement, onSet: () => void) => {
+  const own = Object.getOwnPropertyDescriptor(input, 'value');
+
+  const base =
+    own ??
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!;
+
+  Object.defineProperty(input, 'value', {
+    configurable: true,
+    get(this: HTMLInputElement) {
+      return base.get!.call(this);
+    },
+    set(this: HTMLInputElement, next: string) {
+      base.set!.call(this, next);
+      onSet();
+    },
+  });
+
+  return () => {
+    if (own) Object.defineProperty(input, 'value', own);
+    else Reflect.deleteProperty(input, 'value');
+  };
+};
+
+let release: (() => void) | null = null;
+
+/** Frame `input` as the field's control, or go back to the field's own. */
+function adopt(input: HTMLInputElement | null): void {
+  if (input === slotted.value) return;
+
+  release?.();
+  release = null;
+  slotted.value = input;
+
+  if (!input || !host) return;
+
+  ensureTextFieldStyles();
+  warnReplacedProps();
+
+  const readAttrs = (first: boolean) => {
+    const type = input.getAttribute('type') ?? 'text';
+
+    slottedAttrs.value = {
+      disabled: input.disabled,
+      required: input.required,
+      // The password toggle's own flip is not a new type.
+      type:
+        first || type !== currentType.value ? type : slottedAttrs.value.type,
+    };
+  };
+
+  readAttrs(true);
+
+  const attrObserver = new MutationObserver(() => readAttrs(false));
+
+  attrObserver.observe(input, {
+    attributeFilter: ['disabled', 'required', 'type'],
+  });
+
+  // A value bound on the element fills the input; else the input's own
+  // becomes the element's, without an event.
+  if (rawValue.value !== '') input.value = rawValue.value;
+  slottedValue.value = input.value;
+  seedModelValue(host, input.value);
+
+  const untrack = trackValue(input, () => {
+    slottedValue.value = input.value;
+    seedModelValue(host, input.value);
+  });
+
+  const onInput = () => {
+    autofilled.value = false;
+    slottedValue.value = input.value;
+    emitModelUpdate(host, input.value);
+  };
+
+  const onFocus = () => {
+    isFocused.value = true;
+  };
+
+  const onBlur = () => {
+    isFocused.value = false;
+  };
+
+  const onAutofill = (event: AnimationEvent) => {
+    if (event.animationName === 'c-text-field-autofill')
+      autofilled.value = true;
+  };
+
+  const onKeydown = (event: KeyboardEvent) =>
+    submitOnEnterInstead(event, form());
+
+  input.addEventListener('animationstart', onAutofill);
+  input.addEventListener('blur', onBlur);
+  input.addEventListener('focus', onFocus);
+  input.addEventListener('input', onInput);
+  input.addEventListener('keydown', onKeydown);
+  isFocused.value = input.matches(':focus');
+
+  // The page's own naming wins over the field's.
+  const owned = new Set(
+    ['aria-description', 'aria-invalid', 'aria-label'].filter((name) =>
+      input.hasAttribute(name),
+    ),
+  );
+
+  const setAria = (name: string, value: string | undefined) => {
+    if (owned.has(name)) return;
+
+    if (value) input.setAttribute(name, value);
+    else input.removeAttribute(name);
+  };
+
+  // A light-DOM input cannot point at the label and message inside the
+  // shadow root (ADR-0078), so they reach it as strings.
+  const stopStamping = watchEffect(() => {
+    input.classList.add('c-text-field__slotted');
+    input.classList.toggle(
+      'c-text-field__slotted--under-label',
+      !!props.label && !labelOnTopResolved.value,
+    );
+    setAria('aria-label', props.label || undefined);
+    setAria(
+      'aria-description',
+      hideMessageResolved.value
+        ? undefined
+        : (props.invalid && props.errorMessage) || props.hint || undefined,
+    );
+    setAria('aria-invalid', props.invalid ? 'true' : undefined);
+  });
+
+  release = () => {
+    stopStamping();
+    attrObserver.disconnect();
+    untrack();
+    input.removeEventListener('animationstart', onAutofill);
+    input.removeEventListener('blur', onBlur);
+    input.removeEventListener('focus', onFocus);
+    input.removeEventListener('input', onInput);
+    input.removeEventListener('keydown', onKeydown);
+    input.classList.remove(
+      'c-text-field__slotted',
+      'c-text-field__slotted--under-label',
+    );
+
+    for (const name of ['aria-description', 'aria-invalid', 'aria-label'])
+      setAria(name, undefined);
+    autofilled.value = false;
+  };
+}
+
+// The element's value set from outside reaches the slotted input; the
+// tracker hears the write and keeps the element's mirror in step.
+watch(rawValue, (next) => {
+  if (slotted.value && slotted.value.value !== next) slotted.value.value = next;
+});
+
+// The password toggle reveals the slotted input's text too.
+watch(currentType, (type) => {
+  if (slotted.value && slotted.value.type !== type) slotted.value.type = type;
+});
+
+onBeforeUnmount(() => adopt(null));
 </script>
 
 <!--

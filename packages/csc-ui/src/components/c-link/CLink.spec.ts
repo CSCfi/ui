@@ -24,7 +24,9 @@ const tokenColor = (token: string): string => {
 
 describe('c-link', () => {
   for (const mode of ['light', 'dark'] as const) {
-    it(`paints the link-subtle tint on hover under the link ink (${mode})`, async () => {
+    // On its tint the text takes the tint's ink, not the link colour
+    // (ADR-0081); in dark mode the two are the same step.
+    it(`paints the link-subtle tint on hover under the tint's ink (${mode})`, async () => {
       setThemeMode(mode);
 
       const { part } = await mount('c-link', {
@@ -38,7 +40,7 @@ describe('c-link', () => {
       const style = getComputedStyle(part('root'));
 
       expect(style.backgroundColor).toBe(tokenColor('--c-link-subtle'));
-      expect(style.color).toBe(tokenColor('--c-link'));
+      expect(style.color).toBe(tokenColor('--c-on-link-subtle'));
 
       setThemeMode('light');
     });

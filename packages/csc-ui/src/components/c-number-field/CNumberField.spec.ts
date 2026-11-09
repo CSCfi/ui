@@ -1,6 +1,7 @@
 /**
  * Behaviour spec for c-number-field (CONTEXT.md "Number field", "Group
- * separator", "Out of range", "Step", "Step buttons"; ADR-0060, ADR-0064).
+ * separator", "Out of range", "Step", "Step buttons"; ADR-0060, ADR-0064) and
+ * its part in a native form (ADR-0084).
  */
 import { afterEach, describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
@@ -12,6 +13,7 @@ import {
   deepActiveElement,
   matchScreenshotInBothModes,
   mount,
+  mountInForm,
   recordEvents,
   settle,
 } from '../../test/harness';
@@ -434,5 +436,64 @@ describe('accessible name', () => {
     await expect
       .element(page.getByRole('spinbutton', { name: 'Cores' }))
       .toBeInTheDocument();
+  });
+});
+
+describe('form association (ADR-0084)', () => {
+  const inForm = (
+    options: {
+      attrs?: Record<string, string>;
+      props?: Record<string, unknown>;
+    } = {},
+  ) =>
+    mountInForm<NumberHost>('c-number-field', {
+      attrs: { lang: 'fi', name: 'amount', ...options.attrs },
+      props: { label: 'Amount', ...options.props },
+    });
+
+  it('submits the number as a plain JS number, never the grouped text', async () => {
+    const m = await inForm({ props: { decimals: 2, value: 1234567.5 } });
+
+    expect(input(m).value).not.toBe('1234567.5');
+    expect(m.entries('amount')).toEqual(['1234567.5']);
+
+    m.host.value = null;
+    await settle();
+
+    expect(m.entries('amount')).toEqual(['']);
+    m.unmount();
+  });
+
+  it('a form reset returns to the authored value', async () => {
+    const m = await inForm({ attrs: { value: '5' } });
+
+    await userEvent.click(m.part('step-up'));
+    await settle();
+    expect(m.host.value).toBe(6);
+
+    m.form.reset();
+    await settle();
+
+    expect(m.host.value).toBe(5);
+    expect(m.entries('amount')).toEqual(['5']);
+    m.unmount();
+  });
+
+  it('a number out of range stops a validating form; a disabled fieldset stops the steps', async () => {
+    const m = await inForm({ props: { max: 10, min: 1, value: 12 } });
+
+    expect(m.form.checkValidity()).toBe(false);
+
+    m.host.value = 3;
+    await settle();
+
+    expect(m.form.checkValidity()).toBe(true);
+
+    m.fieldset.disabled = true;
+    await settle();
+
+    expect(input(m).disabled).toBe(true);
+    expect(m.entries('amount')).toEqual([]);
+    m.unmount();
   });
 });

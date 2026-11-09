@@ -225,7 +225,7 @@ export const CButton = createComponent({
 /** A button group is a segmented control: a compact group of choices rendered as plain `c-button` children, where activating a button takes effect immediately (switching a view, picking a billing period). Selection is exclusive by default; set `multiple` to let several buttons be active at once. Give the group a `label` when it acts as a form field so the choice it represents is named for every user. */
 export const CButtonGroup = createComponent({
   displayName: 'CButtonGroup',
-  elementClass: elementClass<CButtonGroupElement>(['disabled', 'label', 'mandatory', 'multiple', 'required', 'size', 'value']),
+  elementClass: elementClass<CButtonGroupElement>(['disabled', 'label', 'mandatory', 'multiple', 'name', 'required', 'size', 'value']),
   events: {
     onChange: 'change' as EventName<CButtonGroupElementEventMap['change']>,
     onInput: 'input' as EventName<CButtonGroupElementEventMap['input']>,
@@ -555,7 +555,7 @@ export const COptionValue = createComponent({
 /** A one-time-code field: a row of single-digit boxes, filled in order as the user types or pastes a code, under a group label and above a hint or error message. */
 export const COtpInput = createComponent({
   displayName: 'COtpInput',
-  elementClass: elementClass<Omit<COtpInputElement, 'autofocus'> & HTMLElement>(['autofocus', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'label', 'length', 'required', 'value']),
+  elementClass: elementClass<Omit<COtpInputElement, 'autofocus'> & HTMLElement>(['autofocus', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'invalid', 'label', 'length', 'name', 'required', 'value']),
   events: {
     onChange: 'change' as EventName<COtpInputElementEventMap['change']>,
     onCompletion: 'completion' as EventName<COtpInputElementEventMap['completion']>,
@@ -625,7 +625,7 @@ export const CRadio = createComponent({
 /** A radio group is a set of mutually exclusive choices where exactly one can be selected, authored as slotted `c-radio` children. Give the group a `label` so the choice it represents is named for every user, and a `hint` describing how to answer. */
 export const CRadioGroup = createComponent({
   displayName: 'CRadioGroup',
-  elementClass: elementClass<CRadioGroupElement>(['disabled', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'inline', 'invalid', 'label', 'required', 'value']),
+  elementClass: elementClass<CRadioGroupElement>(['disabled', 'errorMessage', 'hideDetails', 'hideMessage', 'hint', 'inline', 'invalid', 'label', 'name', 'required', 'value']),
   events: {
     onChange: 'change' as EventName<CRadioGroupElementEventMap['change']>,
     onInput: 'input' as EventName<CRadioGroupElementEventMap['input']>,
@@ -737,7 +737,7 @@ export const CSubNavigationItem = createComponent({
 /** A toggle for a binary setting that takes effect immediately: a native switch control with a label. */
 export const CSwitch = createComponent({
   displayName: 'CSwitch',
-  elementClass: elementClass<CSwitchElement>(['checked', 'disabled', 'falseValue', 'label', 'loading', 'required', 'trueValue', 'value']),
+  elementClass: elementClass<CSwitchElement>(['checked', 'disabled', 'falseValue', 'label', 'loading', 'name', 'required', 'trueValue', 'value']),
   events: {
     onChange: 'change' as EventName<CSwitchElementEventMap['change']>,
     onInput: 'input' as EventName<CSwitchElementEventMap['input']>,

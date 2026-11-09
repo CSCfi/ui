@@ -20,7 +20,7 @@
       ref="cInputRef"
       :active="dropdownVisible"
       :data-hide-details="String(hideMessageResolved)"
-      :disabled
+      :disabled="disabledResolved"
       :filled="hasSelection"
       :input-id
       :invalid
@@ -64,7 +64,7 @@
             :aria-label="accessibleName"
             :aria-owns="inputId + '-items'"
             :class="ui.input()"
-            :disabled
+            :disabled="disabledResolved"
             :name="name || undefined"
             :value="inputValue"
             aria-autocomplete="list"
@@ -106,7 +106,7 @@
               @close="removeValue(opt.value)"
             >
               <span :class="ui.tagLabel()" aria-hidden="true">
-                {{ opt.label }}
+                <span :class="ui.tagText()">{{ opt.label }}</span>
               </span>
             </c-tag>
 
@@ -138,7 +138,7 @@
         <c-icon-button
           v-else-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :disabled
+          :disabled="disabledResolved"
           appearance="text"
           size="x-small"
           variant="primary"
@@ -151,7 +151,7 @@
         <span v-else :class="ui.chevron()">
           <c-icon-button
             :aria-label="t.toggleOptions"
-            :disabled
+            :disabled="disabledResolved"
             appearance="text"
             size="x-small"
             variant="primary"
@@ -309,7 +309,8 @@ interface CSelectProps {
   multiple?: boolean;
 
   /**
-   * Input field name
+   * The name the picked value submits under in a native `<form>` — one entry
+   * per value with `multiple`
    *
    * @freeform
    */
@@ -415,8 +416,16 @@ import {
   toggleAllValues,
 } from '../../shared/selectAll';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useIdReferences } from '../../shared/useIdReferences';
-import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
+import {
+  emitModelChange,
+  emitModelInput,
+  seedModelValue,
+} from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-select>`. */
 interface CSelectEvents {
@@ -468,7 +477,9 @@ const select = tv({
   slots: {
     chevron:
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
-    content: 'flex w-full items-center',
+    // `min-w-0`: a long tag never holds the row wider than the field, where
+    // it pushed the clear button and chevron out past the field's edge.
+    content: 'flex w-full min-w-0 items-center',
     input:
       'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
     inputWrap: 'relative flex w-full min-w-0 justify-items-stretch',
@@ -477,13 +488,18 @@ const select = tv({
     post: '-mr-1.5 inline-flex items-center',
     selection: 'pointer-events-none hidden',
     // A long option label ellipsises inside its tag instead of blowing out
-    // the row.
-    tagLabel: 'min-w-0 truncate',
+    // the row. The label is a one-column `minmax(0, 1fr)` grid around the
+    // text: its smallest width is zero while its preferred width stays the
+    // text's. Truncated text alone kept its whole nowrap width as the
+    // field's minimum, so a page sizing the field from its content (a flex
+    // row, a grid `1fr` column) stretched it past a narrow screen.
+    tagLabel: 'grid min-w-0 grid-cols-[minmax(0,1fr)]',
     // The tag row wraps; `py-2` gives a one-row tag field its own rhythm
     // (default tag 28px + 16px, small tag 20px + 16px — the small box exactly,
     // centred in the 52px default box). Wrapping lives here, not on the
     // content row, so the clear/chevron stay centred.
     tags: 'flex min-w-0 flex-1 flex-wrap items-center gap-1 py-2',
+    tagText: 'truncate',
   },
   variants: {
     chevronActive: { true: { chevron: 'rotate-180' } },
@@ -547,6 +563,9 @@ const props = withDefaults(defineProps<CSelectProps>(), {
 });
 
 const host = useHost();
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
 
 const { controlAttrs } = useControlAttrs();
 
@@ -1125,7 +1144,7 @@ const onReset = (event: Event) => {
 };
 
 const onInputClick = () => {
-  if (!props.disabled) openDropdown();
+  if (!disabledResolved.value) openDropdown();
 };
 
 const onUpdateInput = () => {
@@ -1159,7 +1178,7 @@ const updateStatusText = () => {
 };
 
 const onInputFocus = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
   updateStatusText();
 };
 
@@ -1209,7 +1228,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
   const items = dropdownItems.value;
 
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
 
   // `multiple`: Backspace on the readonly field input removes the last pick.
   // Only when the input itself is the target (the real target, not the
@@ -1523,6 +1542,31 @@ onBeforeUnmount(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => inputRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The pick submits its value (an item's `value` with `return-object`), `''`
+// while there is none, as a native select's empty option does; `multiple`
+// submits one entry per pick. A required field without a pick stops a
+// validating form.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value: authored }) =>
+    emitModelInput(host, multipleOn.value ? [] : authored),
+  validity: () =>
+    !props.required || hasSelection.value
+      ? null
+      : {
+          anchor: inputRef.value,
+          flags: { valueMissing: true },
+          message: nativeMessage('select'),
+        },
+  value: () => {
+    const picked = dropdownSelected.value.map(String);
+
+    return multipleOn.value ? picked : (picked[0] ?? '');
+  },
+});
 
 /**
  * Focus its combobox, as `focus()` does on a native control: the element renders

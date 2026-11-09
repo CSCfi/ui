@@ -690,6 +690,121 @@ describe('closed field with a selection', () => {
     );
   });
 
+  // A page that sizes the field from its content — a flex row, a grid `1fr`
+  // column, a column aligning its items to the start — took the value's whole
+  // nowrap width as the field's minimum, so a long selection widened the
+  // field past a narrow screen.
+  it('a long selection never widens the field past a container that sizes it from its content', async () => {
+    for (const layout of [
+      'display: flex',
+      'display: grid; grid-template-columns: 1fr',
+      'display: flex; flex-direction: column; align-items: flex-start',
+    ]) {
+      const m = await mount<TreeHost>('c-tree-select', {
+        props: {
+          clearable: true,
+          items: LONG,
+          label: 'Field of science',
+          levelLabels: LEVELS,
+          value: 'long',
+        },
+      });
+
+      const container = document.createElement('div');
+
+      container.style.cssText = `${layout}; width: 240px`;
+      document.body.append(container);
+      container.append(m.stage);
+      await settled();
+
+      const slot = slotBox(m);
+
+      expect(
+        slot.right,
+        `the field stays in the container (${layout})`,
+      ).toBeLessThanOrEqual(container.getBoundingClientRect().right);
+      expect(
+        postButton(m).getBoundingClientRect().right,
+        `the clear button stays in the field (${layout})`,
+      ).toBeLessThanOrEqual(slot.right);
+
+      const label = m.part('code').nextElementSibling!;
+
+      expect(
+        label.scrollWidth,
+        `the label ellipsises (${layout})`,
+      ).toBeGreaterThan(label.clientWidth);
+
+      container.remove();
+    }
+  });
+
+  // A page that sizes the field from its content left it as wide as its
+  // value: 54px empty, growing with each pick. c-select keeps the width of
+  // its empty input there; the tree select does too, and grows past it only
+  // for a value that needs more, so a long one shows whole where there is
+  // room.
+  it("keeps c-select's width in a container that sizes it from its content, wider only for a long value", async () => {
+    /** Measures the field in an 800px column that aligns it to the start. */
+    const measureIn = async <T>(m: Mounted, measure: () => T): Promise<T> => {
+      const container = document.createElement('div');
+
+      container.style.cssText =
+        'display: flex; flex-direction: column; align-items: flex-start; width: 800px';
+      document.body.append(container);
+      container.append(m.stage);
+      await settled();
+
+      const result = measure();
+
+      container.remove();
+
+      return result;
+    };
+
+    const tree = (value: null | string): Promise<Mounted<TreeHost>> =>
+      mount<TreeHost>('c-tree-select', {
+        props: {
+          items: [...TREE, ...LONG],
+          label: 'Field of science',
+          levelLabels: LEVELS,
+          value,
+        },
+      });
+
+    const select = await mount('c-select', {
+      html: '<c-option value="a">A</c-option>',
+      props: { label: 'Field of science' },
+    });
+
+    const selectWidth = await measureIn(select, () => slotBox(select).width);
+
+    for (const value of [null, '1']) {
+      const m = await tree(value);
+
+      expect(
+        Math.abs((await measureIn(m, () => slotBox(m).width)) - selectWidth),
+        `the width of c-select (value ${value})`,
+      ).toBeLessThanOrEqual(0.5);
+    }
+
+    const m = await tree('long');
+
+    const { whole, width } = await measureIn(m, () => {
+      const label = m.part('code').nextElementSibling!;
+
+      return {
+        whole: label.scrollWidth <= label.clientWidth,
+        width: slotBox(m).width,
+      };
+    });
+
+    expect(width, 'a long value widens the field').toBeGreaterThan(
+      selectWidth + 1,
+    );
+    expect(whole, 'the long label shows whole').toBe(true);
+  });
+
   it('the field keeps the control height whether empty or holding a two-line value', async () => {
     const empty = await mountTree();
 
@@ -731,9 +846,10 @@ describe('closed field with a selection', () => {
 
     await settled();
 
+    // The value line: the last span, before the zero-height width sizer.
     const value = one
-      .shadow('.c-input__content [aria-hidden]')
-      .lastElementChild!.getBoundingClientRect();
+      .shadow('.c-input__content [aria-hidden] > span:last-of-type')
+      .getBoundingClientRect();
 
     expect(
       Math.abs(centre(value) - centre(slotBox(one))),

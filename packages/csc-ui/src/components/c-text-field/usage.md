@@ -12,6 +12,9 @@ listen for `update:value`, which fires on every keystroke:
 `change` fires when the text is committed — Enter, or leaving the field after
 an edit — so save or validate there rather than on every keystroke.
 
+In a native `<form>` the text submits under `name`, and Enter submits the
+form; see **In a form** on `c-button`.
+
 `type` maps to the native input type: `password` adds a toggle that reveals
 the text, and `number` honours `min`, `max` and `step`. Setting `rows` above
 `1` renders a textarea.
@@ -88,7 +91,8 @@ Text that leaves some token unfilled is kept as typed. The read-only
 `maskComplete` property tells whether every token is filled, and a field
 holding such partial text exposes the `incomplete` custom state. The field
 shows no error of its own; whether an incomplete value is an error is the
-consumer's validation:
+consumer's validation, and only a `<form>` without `novalidate` stops a
+submit on it:
 
 ```vue
 <c-text-field
@@ -107,3 +111,51 @@ consumer's validation:
 
 A mask applies to a single-line field of type `text`, `tel` or `search`;
 other types (and a textarea) ignore it.
+
+## Password managers
+
+A password manager fills only the inputs it can see, and Safari's and
+Firefox's, like several extensions, do not look inside a component's shadow
+root. For a username, a password or a one-time code, write the `<input>`
+yourself inside the field: it stays in the page, where every password
+manager finds it, and the field frames it with its label, message and
+password toggle.
+
+```vue
+<form action="/login" method="post">
+  <c-text-field label="Username">
+    <input v-model="username" autocomplete="username" name="username" />
+  </c-text-field>
+
+  <c-text-field label="Password">
+    <input
+      v-model="password"
+      autocomplete="current-password"
+      name="password"
+      type="password"
+    />
+  </c-text-field>
+
+  <c-button>
+    <button type="submit">Log in</button>
+  </c-button>
+</form>
+```
+
+The input's own attributes apply — `type`, `name`, `autocomplete`,
+`required`, `disabled`, `placeholder` and the rest — and the field's props of
+those names are ignored, with a console warning. `autocomplete` tells the
+manager what the input holds: `username`, `current-password`, `new-password`
+(where it offers to generate one) or `one-time-code`. In a form the input
+submits and validates itself.
+
+A password manager decides what a form is for — logging in, signing up,
+changing a password — partly from its submit button, which it cannot find
+inside a `c-button`'s shadow root: Proton Pass then offers no password to
+generate on a sign-up form, whatever the page's headings say. Write the
+submit button yourself inside the `c-button`, as above: a **slotted button**,
+which the `c-button` paints (see `c-button`).
+
+The field's `value` and its value events still work, so `v-model` goes on the
+field or on the input. `mask`, `rows` and `trim-whitespace` do not apply to a
+slotted input.

@@ -9,7 +9,7 @@
       ref="cInputRef"
       :active="isOpen"
       :data-hide-details="String(hideMessageResolved)"
-      :disabled
+      :disabled="disabledResolved"
       :filled="hasSelection"
       :input-id
       :invalid
@@ -48,7 +48,7 @@
           :aria-expanded="isOpen"
           :aria-label="accessibleName"
           :class="ui.input()"
-          :disabled
+          :disabled="disabledResolved"
           :name="name || undefined"
           :value="inputValue"
           aria-haspopup="listbox"
@@ -79,6 +79,14 @@
               <span :class="ui.itemLabel()">{{ display.name }}</span>
             </span>
           </template>
+
+          <!-- The width sizer: an empty readonly input, as c-select's value
+               is. Its built-in width is the field's preferred width unless
+               the value is wider, so a page sizing the field from its content
+               gives it c-select's width, and more only for a long value.
+               Readonly, as WebKit widens an editable input by its caret's
+               pixel; inert and invisible, it is never a control. -->
+          <input :class="ui.sizer()" tabindex="-1" inert readonly />
         </div>
       </div>
 
@@ -89,7 +97,7 @@
         <c-icon-button
           v-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :disabled
+          :disabled="disabledResolved"
           appearance="text"
           size="x-small"
           variant="primary"
@@ -102,7 +110,7 @@
         <span v-else :class="ui.chevron()">
           <c-icon-button
             :aria-label="t.toggleOptions"
-            :disabled
+            :disabled="disabledResolved"
             appearance="text"
             size="x-small"
             variant="primary"
@@ -592,7 +600,7 @@ interface CTreeSelectProps {
   levelLabels?: string[];
 
   /**
-   * Input field name
+   * The name the picked value submits under in a native `<form>`
    *
    * @freeform
    */
@@ -685,11 +693,15 @@ import { applyPeekCap } from '../../shared/peekCap';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
-import { emitModelChange } from '../../shared/valueEvents';
+import { emitModelChange, emitModelInput } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-tree-select>`. */
 interface CTreeSelectEvents {
@@ -752,25 +764,34 @@ const treeSelect = tv({
       'flex min-w-0 items-center gap-2 overflow-hidden text-base leading-5 text-on-surface',
     fieldPath: 'truncate text-xs leading-4 text-on-surface-muted',
     // The value block is centred in the 52px field (the shared control
-    // height, ADR-0055): `justify-center` for a single-line value (no path),
+    // height, ADR-0055): `content-center` for a single-line value (no path),
     // and symmetric 8px padding around the two lines (16px path + 20px
     // main), which fill the box exactly, so the field never grows on
     // selection. The lifted floating label hangs ~9px into the field from
     // the top border and still clears the path line's 12px glyphs, which
     // start 2px into their 16px line box.
+    //
+    // A one-column `minmax(0, 1fr)` grid, not a flex column: its smallest
+    // width is zero and its preferred width is the sizer's (an empty input's,
+    // as in c-select) or the value's when that is wider. As a flex column the
+    // whole nowrap value was the field's minimum width, so a page sizing the
+    // field from its content (a flex row, a grid `1fr` column) stretched it
+    // past a narrow screen, and an empty field shrank to its chevron.
     fieldText:
-      'flex min-w-0 flex-1 flex-col justify-center overflow-hidden py-2',
+      'grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] content-center overflow-hidden py-2',
     header:
       'flex min-h-8 items-center justify-between gap-2 px-3 pt-2 text-sm text-on-surface-muted',
     headerAction:
       'shrink-0 cursor-pointer border-0 bg-transparent p-0 text-sm text-link hover:underline',
     info: 'flex min-h-[42px] w-full cursor-default flex-nowrap items-center gap-2 px-[10px] text-sm whitespace-nowrap text-on-surface-muted',
-    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-warning',
+    // The yellow `warning` reads 1.6:1 on the panel; the icon takes the ink
+    // of the warning tint, as c-alert's icon does (ADR-0080).
+    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-warning-subtle',
     // The readonly combobox is visually hidden (clip) but stays focusable and
     // keeps the flattened value for assistive technology.
     input:
       'absolute m-0 h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap outline-none [clip:rect(0_0_0_0)]',
-    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
+    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-on-primary-subtle data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
     itemLabel: 'min-w-0 truncate',
     itemMain: 'flex min-w-0 flex-auto flex-col',
     itemTitle: 'flex min-w-0 items-center gap-2',
@@ -788,6 +809,9 @@ const treeSelect = tv({
     searchIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-surface-muted',
     searchInput:
       'w-full border-0 bg-transparent py-2 text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
+    // c-select's input, invisible and zero-height: its built-in width is the
+    // value block's least preferred width.
+    sizer: 'invisible h-0 w-full min-w-0 border-0 p-0 text-base',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
@@ -856,6 +880,9 @@ const props = withDefaults(defineProps<CTreeSelectProps>(), {
 });
 
 const host = useHost();
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
 
 const { controlAttrs } = useControlAttrs();
 
@@ -1550,7 +1577,7 @@ const {
   panelStyle,
 } = useAnchoredPanel({
   anchor: anchorRef,
-  disabled: () => props.disabled,
+  disabled: () => disabledResolved.value,
   field: cInputRef,
   fullscreen: narrow,
   host,
@@ -1583,7 +1610,7 @@ const {
 // ---- keyboard / interaction ---------------------------------------------
 
 const onFieldClick = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
 
   if (isOpen.value) closePanel(false);
   else openPanel();
@@ -1614,7 +1641,7 @@ const onButtonKeyDown = (src: 'chevron' | 'reset', event: KeyboardEvent) => {
 };
 
 const onFieldKeyDown = (event: KeyboardEvent) => {
-  if (props.disabled || isOpen.value) return;
+  if (disabledResolved.value || isOpen.value) return;
 
   if ([' ', 'ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) {
     event.preventDefault();
@@ -1795,6 +1822,26 @@ watch(activeIndex, (now, before) => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => fieldRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The pick submits its value (an item's `value` with `return-object`), `''`
+// while there is none. A required field without a pick stops a validating
+// form.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value: authored }) => emitModelInput(host, authored),
+  validity: () =>
+    !props.required || hasSelection.value
+      ? null
+      : {
+          anchor: fieldRef.value,
+          flags: { valueMissing: true },
+          message: nativeMessage('select'),
+        },
+  value: () =>
+    committedValue.value == null ? '' : String(committedValue.value),
+});
 
 /**
  * Focus its combobox, as `focus()` does on a native control: the element renders

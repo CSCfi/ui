@@ -51,7 +51,9 @@ label.
 ## Validation
 
 Validation is your job: set `invalid` and supply an `error-message`
-explaining why. While invalid without an `error-message`,
+explaining why. In a native `<form>` the picked value submits under `name`,
+and a form without `novalidate` stops a submit while a `required` group has
+no pick; see **In a form** on `c-button`. While invalid without an `error-message`,
 the `hint` keeps rendering as a hint. The message area reserves its height
 (unless `hide-message`), so an error appearing at runtime doesn't shift the
 layout.

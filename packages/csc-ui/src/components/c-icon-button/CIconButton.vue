@@ -3,7 +3,7 @@
     :aria-busy="loading ? 'true' : undefined"
     :aria-disabled="loading ? 'true' : undefined"
     :class="ui.root()"
-    :disabled
+    :disabled="disabledResolved"
     part="root"
     @click="onClick"
   >
@@ -169,6 +169,7 @@ import { computed, useTemplateRef } from 'vue';
 import { useAppDefault } from '../../shared/appDefaults';
 import { resolveAppearance } from '../../shared/buttonAppearance';
 import { dangerAsVariant } from '../../shared/buttonVariant';
+import { useFormAssociation } from '../../shared/useFormAssociation';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useRipple } from '../../shared/useRipple';
 
@@ -205,10 +206,10 @@ const sizeVariants = {
 
 // The variant's colours as private custom properties on `root`, which the
 // appearance compounds below paint with — c-button's scheme (ADR-0079):
-// `fill`, `fill-hover` and `on-fill` paint the filled look and tint the
-// lighter ones; `ink` is the icon and outline of the lighter appearances
-// (the role's subtle ink); `inverse` is the icon of the inverted filled look. Hoisted so
-// the runtime guard below can test membership.
+// `fill`, `fill-hover` and `on-fill` paint the filled look, tint the lighter
+// ones and border the outlined one; `ink` is the icon of the lighter
+// appearances (the role's subtle ink); `inverse` is the icon of the inverted
+// filled look. Hoisted so the runtime guard below can test membership.
 const variantVariants = {
   danger: {
     root: '[--_c-icon-button-fill-hover:var(--c-error-hover)] [--_c-icon-button-fill:var(--c-error)] [--_c-icon-button-ink:var(--c-on-error-subtle)] [--_c-icon-button-inverse:var(--c-inverse-error)] [--_c-icon-button-on-fill:var(--c-on-error)]',
@@ -242,9 +243,12 @@ const iconButton = tv({
       outlined: false,
       text: false,
     },
+    // Hover replaces the white, so the hovered white takes 15% of the variant
+    // mixed in, opaque: a see-through hover let the dark backdrop through
+    // under the dark label.
     {
       class: {
-        root: 'bg-inverse-surface text-(--_c-icon-button-inverse) hover:bg-(--_c-icon-button-inverse)/15 focus-visible:outline-inverse-on',
+        root: 'bg-inverse-surface text-(--_c-icon-button-inverse) hover:bg-[color-mix(in_srgb,var(--_c-icon-button-inverse)_15%,var(--c-inverse-surface))] focus-visible:outline-inverse-on',
       },
       ghost: false,
       inverted: true,
@@ -254,7 +258,7 @@ const iconButton = tv({
     // ---- ghost -----------------------------------------------------------
     {
       class: {
-        root: 'bg-(--_c-icon-button-fill)/8 text-(--_c-icon-button-ink) hover:bg-(--_c-icon-button-fill)/15 focus-visible:outline-(--_c-icon-button-ink) active:bg-(--_c-icon-button-fill)/22',
+        root: 'bg-tint-(--_c-icon-button-fill)/14 text-(--_c-icon-button-ink) hover:bg-tint-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
       },
       ghost: true,
       inverted: false,
@@ -269,7 +273,7 @@ const iconButton = tv({
     // ---- text ------------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-icon-button-ink) hover:bg-(--_c-icon-button-fill)/15 focus-visible:outline-(--_c-icon-button-ink)',
+        root: 'bg-transparent text-(--_c-icon-button-ink) hover:bg-tint-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
       },
       inverted: false,
       text: true,
@@ -284,7 +288,7 @@ const iconButton = tv({
     // ---- outlined --------------------------------------------------------
     {
       class: {
-        root: 'bg-transparent text-(--_c-icon-button-ink) ring-2 ring-(--_c-icon-button-ink) ring-inset hover:bg-(--_c-icon-button-fill)/15 focus-visible:outline-(--_c-icon-button-ink)',
+        root: 'bg-transparent text-(--_c-icon-button-ink) ring-2 ring-(--_c-icon-button-fill) ring-inset hover:bg-tint-(--_c-icon-button-fill)/20 focus-visible:outline-(--_c-icon-button-ink)',
       },
       inverted: false,
       outlined: true,
@@ -419,6 +423,16 @@ const props = withDefaults(defineProps<CIconButtonProps>(), {
   variant: undefined,
 });
 
+// The element is form-associated without a value (ADR-0084): a disabled
+// `<fieldset>` around it disables it, as it would a native button.
+const { formDisabled } = useFormAssociation({
+  name: () => undefined,
+  reset: () => {},
+  value: () => null,
+});
+
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
+
 const appearance = computed(() => resolveAppearance(props));
 
 // Defaultable props resolve host attribute → own property → app default →
@@ -437,7 +451,7 @@ const variantResolved = appDefault(
 // the defaults.
 const ui = computed(() =>
   iconButton({
-    disabled: props.disabled,
+    disabled: disabledResolved.value,
     ghost: appearance.value === 'ghost',
     inverted: props.inverted,
     loading: props.loading,
@@ -468,7 +482,7 @@ const { ripples, spawn: spawnRipple } = useRipple({
 });
 
 const onClick = (event: MouseEvent) => {
-  if (props.disabled || props.loading) {
+  if (disabledResolved.value || props.loading) {
     event.preventDefault();
     event.stopPropagation();
 

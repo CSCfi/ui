@@ -184,6 +184,7 @@ export const lintComponent = (
     emitModelChange: ['change', 'update:value', 'input'],
     emitModelInput: ['update:value', 'input'],
     emitModelSettled: ['change'],
+    emitModelUpdate: ['update:value'],
   };
 
   const eventNames = component.events.map((e) => e.name);

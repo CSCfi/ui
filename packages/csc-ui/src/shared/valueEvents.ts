@@ -55,6 +55,21 @@ export const emitModelInput = (
   host.dispatchEvent(new Event('input', { bubbles: true }));
 };
 
+/**
+ * A change a page's own input inside the control reports itself
+ * (c-text-field's slotted input, ADR-0083): its native `input` and `change`
+ * already bubble through the host, so only `update:value` joins them.
+ */
+export const emitModelUpdate = (
+  host: HTMLElement | null,
+  value: unknown,
+): void => {
+  if (!host) return;
+
+  mirror(host, value);
+  host.dispatchEvent(new CustomEvent('update:value', { detail: value }));
+};
+
 /** The `change` that commits what `emitModelInput` reported. */
 export const emitModelSettled = (
   host: HTMLElement | null,

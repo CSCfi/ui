@@ -14,11 +14,14 @@ import { peekCap } from '../../shared/peekCap';
 import { fakeVisualViewport } from '../../test/fakeVisualViewport';
 import {
   consoleSpy,
+  contrastRatio,
   deepActiveElement,
   defineAll,
   matchScreenshotInBothModes,
   mount,
   recordEvents,
+  roleInMode,
+  setThemeMode,
   settle,
   settled,
   wrap,
@@ -172,6 +175,32 @@ describe('match marking', () => {
     ).toEqual(['JavaScript']);
 
     await matchScreenshotInBothModes(m.part('panel'), 'open-marked');
+  });
+
+  // The no-results icon sits on the panel's overlay surface; a yellow
+  // warning cannot reach 3:1 there, so it inks with the warning tint's ink.
+  it('draws its no-results icon at 3:1 on the panel in both modes', async () => {
+    for (const mode of ['light', 'dark'] as const) {
+      setThemeMode(mode);
+
+      const m = await mountAuto();
+
+      await open(m);
+      await userEvent.fill(search(m), 'zz');
+      await settle();
+
+      const icon = m.shadow('li[part~="info"] svg');
+
+      expect(
+        contrastRatio(
+          getComputedStyle(icon).color,
+          roleInMode(mode, '--c-surface-overlay'),
+        ),
+        mode,
+      ).toBeGreaterThanOrEqual(3);
+
+      document.body.replaceChildren();
+    }
   });
 
   it('treats regex metacharacters in the query literally', async () => {
@@ -591,6 +620,61 @@ describe('closed field controls', () => {
 
     await settled();
     await matchScreenshotInBothModes(m.stage, 'field-selected');
+  });
+
+  // A long option label in `multiple` mode: the tag's whole nowrap width was
+  // the field's minimum, so a page that sizes the field from its content grew
+  // it past a narrow screen.
+  it('a long tag never widens the field past a container that sizes it from its content', async () => {
+    const LONG = option(
+      'long',
+      'Interdisciplinary computational neuroscience and cognitive modelling',
+    );
+
+    for (const layout of [
+      'display: flex',
+      'display: grid; grid-template-columns: 1fr',
+      'display: flex; flex-direction: column; align-items: flex-start',
+    ]) {
+      const m = await mountAuto(
+        { clearable: true, multiple: true, value: ['long'] },
+        LONG,
+      );
+
+      const container = document.createElement('div');
+
+      container.style.cssText = `${layout}; width: 240px`;
+      document.body.append(container);
+      container.append(m.stage);
+      await settled();
+
+      const slot = m.deep('c-input', '.c-input__slot').getBoundingClientRect();
+
+      const clear = m
+        .shadow('[slot="post"] c-icon-button')
+        .shadowRoot!.querySelector('button')!
+        .getBoundingClientRect();
+
+      // The innermost span of the tag label: the one that ellipsises.
+      const text = m
+        .shadowAll('c-tag[part~="tag"] span')
+        .find((span) => !span.firstElementChild)!;
+
+      expect(
+        slot.right,
+        `the field stays in the container (${layout})`,
+      ).toBeLessThanOrEqual(container.getBoundingClientRect().right);
+      expect(
+        clear.right,
+        `the clear button stays in the field (${layout})`,
+      ).toBeLessThanOrEqual(slot.right);
+      expect(
+        text.scrollWidth,
+        `the tag ellipsises (${layout})`,
+      ).toBeGreaterThan(text.clientWidth);
+
+      container.remove();
+    }
   });
 });
 

@@ -179,6 +179,17 @@ const paddingBox = (element: Element): DOMRect => {
   );
 };
 
+export interface MountedInForm<
+  T extends HTMLElement = HTMLElement,
+> extends Mounted<T> {
+  /** What `new FormData(form)` holds under `name`. */
+  entries(name: string): FormDataEntryValue[];
+
+  /** Between the form and the element: set `disabled` to disable it from outside. */
+  fieldset: HTMLFieldSetElement;
+  form: HTMLFormElement;
+}
+
 /**
  * The clips `ink` (a box painted by `start`, in viewport px) pokes out of,
  * named `tag [part=…]`. Walks the flat tree up from `start` through slots and
@@ -280,6 +291,40 @@ export async function mount<T extends HTMLElement = HTMLElement>(
   await settle();
 
   return wrap(host, stage);
+}
+
+/**
+ * `mount()` inside a native `<form>`, behind a `<fieldset>` (ADR-0084). The
+ * form's own submissions are cancelled, so a passing submit stays on the page;
+ * `unmount()` removes the form too.
+ */
+export async function mountInForm<T extends HTMLElement = HTMLElement>(
+  tag: string,
+  options: MountOptions = {},
+): Promise<MountedInForm<T>> {
+  const form = document.createElement('form');
+
+  const fieldset = document.createElement('fieldset');
+
+  form.addEventListener('submit', (event) => event.preventDefault());
+  form.append(fieldset);
+  document.body.append(form);
+
+  const m = await mount<T>(tag, options);
+
+  fieldset.append(m.stage);
+  await settle();
+
+  return {
+    ...m,
+    entries: (name) => new FormData(form).getAll(name),
+    fieldset,
+    form,
+    unmount: () => {
+      m.unmount();
+      form.remove();
+    },
+  };
 }
 
 /** Record host events. Attach `input` recorders to `document.body`: it bubbles. */

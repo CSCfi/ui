@@ -570,6 +570,19 @@ start migrating on the first alpha that carries D2–D4.
      c-icon-button in every appearance, app-defaultable; `danger` deprecated the same way. It brought the light-mode
      dark labels on the success/info/warning fills (the audit's white-label pairs, d95be1d4) and the lighter
      appearances' `on-<role>-subtle` ink. Plan: `_plan/csc-ui-button-variants.md`.
+   - **Same exception: the status colours** (user decision 2026-11-04, ADR-0080). Warning is yellow and error a
+     cooler red with vivid dark fills; error text takes the new `on-surface-error` token. Also fixed c-menu-item's
+     danger label contrast. Plan: `_plan/csc-ui-status-colours.md`.
+   - **Same exception: hover and tint contrast** (user decision 2026-11-04, ADR-0081). Light white-label fills darken
+     on hover, accent takes dark labels, link's hovers stay in the family, text on a role's tint takes its ink (new
+     `lint:tint` guard, 22 places). Plan: `_plan/light-hover-contrast.md`.
+   - **Same exception: the outlined border and the ghost wash** (user decision 2026-11-04, ADR-0079 amended). The
+     outlined border takes the variant's fill, a stronger ghost wash (14%), one 20% hover for the lighter
+     appearances and no pressed step. Plan: `_plan/button-outline-ghost.md`.
+   - **Same exception: opaque tints** (user decision 2026-11-04, ADR-0082). Every role wash under text is the role
+     mixed into the page surface, so lighter buttons and alerts read on dark popovers and the light canvas; dark
+     secondary's tint ink is secondary-100; `lint:tint` fails a see-through role background; the inverted filled
+     hover no longer goes dark. Plan: `_plan/dark-overlay-contrast.md`.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
 5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
    `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both

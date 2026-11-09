@@ -213,7 +213,7 @@ const input = tv({
       'c-input__legend float-none -ml-px w-0 p-0 text-left leading-[11px] [transition:width_0.3s_var(--_c-ease-standard)]',
     post: 'c-input__post inline-flex items-center empty:hidden',
     pre: 'c-input__pre inline-flex items-center empty:hidden',
-    required: 'text-error',
+    required: 'text-on-surface-error',
     // `c-input` is the DOM hook the escape-hatch <style> still uses for the
     // legend-notch width + the floating-label transform. The base inactive
     // colour lives here too (the slotted input + labels inherit it); the
@@ -244,7 +244,7 @@ const input = tv({
     error: {
       true: {
         fieldset: 'border-error',
-        root: 'text-error',
+        root: 'text-on-surface-error',
       },
     },
     labelOnTop: {

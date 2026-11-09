@@ -1,4 +1,4 @@
-import { useHost } from 'vue';
+import { useElementInternals } from './useElementInternals';
 
 /**
  * Host custom-state exposure — the single path for publishing a component's
@@ -19,21 +19,14 @@ import { useHost } from 'vue';
  * Each exposed state name is public API — curated like parts, documented with
  * a `@cssstate` docblock tag so it lands in the manifest.
  *
- * `attachInternals()` may be called only once per element; this composable
- * owns that call. Everything degrades to a silent no-op where internals or
- * `states` are unavailable (SSR, tests, an ancient browser) — the component
- * still renders and behaves, only the `:state()` selector surface is absent.
+ * The internals come from `useElementInternals`, which owns the element's one
+ * `attachInternals()` call. Everything degrades to a silent no-op where
+ * internals or `states` are unavailable (SSR, an ancient browser) — the
+ * component still renders and behaves, only the `:state()` selector surface
+ * is absent.
  */
 export const useHostStates = (): ((name: string, on: boolean) => void) => {
-  const host = useHost();
-
-  let states: CustomStateSet | null = null;
-
-  try {
-    states = host?.attachInternals().states ?? null;
-  } catch {
-    states = null;
-  }
+  const states = useElementInternals()?.states ?? null;
 
   return (name, on) => {
     if (on) states?.add(name);

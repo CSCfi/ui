@@ -61,9 +61,13 @@ import {
 import { coerceBoolean } from '../../shared/coerceBoolean';
 import FieldMessage from '../../shared/FieldMessage.vue';
 import FormLabel from '../../shared/FormLabel.vue';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useIdReferences } from '../../shared/useIdReferences';
-import { emitModelChange } from '../../shared/valueEvents';
+import { emitModelChange, emitModelInput } from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-radio-group>`. */
 interface CRadioGroupEvents {
@@ -102,7 +106,7 @@ const radioGroup = tv({
   compoundVariants: [
     {
       class: {
-        items: 'text-error [--_c-radio-color:var(--c-error)]',
+        items: 'text-on-surface-error [--_c-radio-color:var(--c-error)]',
       },
       disabled: false,
       error: true,
@@ -191,6 +195,14 @@ interface CRadioGroupProps {
   label?: string;
 
   /**
+   * The name the picked radio's value submits under in a native `<form>`;
+   * nothing submits while no radio is picked
+   *
+   * @freeform
+   */
+  name?: string;
+
+  /**
    * Set as required
    */
   required?: boolean;
@@ -211,13 +223,17 @@ const props = withDefaults(defineProps<CRadioGroupProps>(), {
   inline: false,
   invalid: false,
   label: '',
+  name: '',
   required: false,
   value: null,
 });
 
 // Boolean attribute presence can reach a declared Boolean prop as the raw
 // string "" (falsy) — coerce before any conditional logic or tv lookup.
-const isGroupDisabled = computed(() => coerceBoolean(props.disabled));
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const isGroupDisabled = computed(
+  () => coerceBoolean(props.disabled) || formDisabled.value,
+);
 
 const isRequired = computed(() => coerceBoolean(props.required));
 
@@ -293,6 +309,27 @@ const isSelected = (r: CRadioEl): boolean =>
 
 const isEnabled = (r: CRadioEl): boolean =>
   !isGroupDisabled.value && !coerceBoolean(r.disabled);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The pick submits its value, nothing without one; a required group without a
+// pick stops a validating form, the bubble at its first enabled radio.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value }) => emitModelInput(host, value),
+  validity: () => {
+    if (!isRequired.value || internalValue.value !== null) return null;
+
+    const first = radios().find(isEnabled);
+
+    return {
+      anchor: (first && inputOf(first)) || rootRef.value,
+      flags: { valueMissing: true },
+      message: nativeMessage({ name: 'group', required: true, type: 'radio' }),
+    };
+  },
+  value: () => internalValue.value,
+});
 
 // Drive the slotted radios: exclusivity (checked), combined group/per-radio
 // disabling, and the WAI-ARIA roving tabindex — the checked radio is the
@@ -382,10 +419,7 @@ watch(
   },
 );
 
-watch(
-  () => props.disabled,
-  () => syncRadios(),
-);
+watch(isGroupDisabled, () => syncRadios());
 
 let observer: MutationObserver | null = null;
 onMounted(() => {

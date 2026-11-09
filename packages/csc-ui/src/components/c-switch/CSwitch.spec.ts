@@ -3,12 +3,12 @@
  * state and `checked` its boolean view. Setting either updates the other
  * without a value event; a `checked` attribute seeds the switch only when no
  * `value` is bound; and the `''` a plain Vue `v-model` writes for a `null`
- * model reads as unchecked.
+ * model reads as unchecked. In a native form it submits while on (ADR-0084).
  */
 import { describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
-import { mount, recordEvents, settle } from '../../test/harness';
+import { mount, mountInForm, recordEvents, settle } from '../../test/harness';
 
 type Host = { checked: boolean; value: unknown } & HTMLElement;
 
@@ -140,5 +140,80 @@ describe('c-switch loading', () => {
     expect(input.checked).toBe(true);
     expect(events.names()).toEqual(['change']);
     expect(input.hasAttribute('aria-busy')).toBe(false);
+  });
+});
+
+describe('form association (ADR-0084)', () => {
+  type Host = { checked: boolean; value: unknown } & HTMLElement;
+
+  it('submits `on` while on and nothing while off', async () => {
+    const m = await mountInForm<Host>('c-switch', {
+      attrs: { name: 'news' },
+      props: { label: 'News' },
+    });
+
+    expect(m.entries('news')).toEqual([]);
+
+    await userEvent.click(m.part('root'));
+    await settle();
+
+    expect(m.entries('news')).toEqual(['on']);
+    m.unmount();
+  });
+
+  it('submits its true-value as text', async () => {
+    const m = await mountInForm<Host>('c-switch', {
+      attrs: { name: 'plan' },
+      props: {
+        falseValue: 'basic',
+        label: 'Pro',
+        trueValue: 'pro',
+        value: 'pro',
+      },
+    });
+
+    expect(m.entries('plan')).toEqual(['pro']);
+    m.unmount();
+  });
+
+  it('a form reset returns to the authored checked attribute', async () => {
+    const m = await mountInForm<Host>('c-switch', {
+      attrs: { checked: true, name: 'news' },
+      props: { label: 'News' },
+    });
+
+    await userEvent.click(m.part('root'));
+    await settle();
+    expect(m.host.checked).toBe(false);
+
+    const events = recordEvents(m.host, ['change', 'update:value']);
+
+    m.form.reset();
+    await settle();
+
+    expect(m.host.checked).toBe(true);
+    expect(events.names()).toEqual(['update:value']);
+    m.unmount();
+  });
+
+  it('required and off stops a validating form; a disabled fieldset disables it', async () => {
+    const m = await mountInForm<Host>('c-switch', {
+      attrs: { name: 'terms' },
+      props: { label: 'Terms', required: true },
+    });
+
+    expect(m.form.checkValidity()).toBe(false);
+
+    await userEvent.click(m.part('root'));
+    await settle();
+
+    expect(m.form.checkValidity()).toBe(true);
+
+    m.fieldset.disabled = true;
+    await settle();
+
+    expect(m.shadow<HTMLInputElement>('input').disabled).toBe(true);
+    expect(m.entries('terms')).toEqual([]);
+    m.unmount();
   });
 });

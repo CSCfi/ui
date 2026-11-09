@@ -66,7 +66,7 @@ interface CAlertProps {
  * @slot heading - Rich heading content; overrides the `heading` prop
  * @slot default - The message
  *
- * @csspart root - The tinted box carrying the type's wash, hairline border and accent edge
+ * @csspart root - The box carrying the type's tint, hairline border and accent edge
  * @csspart icon - The status icon, rendered only when a `type` is set
  * @csspart content - The wrapper around the heading and message content
  * @csspart heading - The heading paragraph rendered from the `heading` prop
@@ -87,7 +87,8 @@ import { useHostEmit } from '../../shared/useHostEmit';
 
 /**
  * Styling lives entirely in this `tailwind-variants` config, per the MyCSC
- * alert spec: a wash of the type's role colour (10%) as the box tint with a
+ * alert spec: a tint of the type's role colour (10%, mixed into the page
+ * surface so it reads the same on the page canvas, ADR-0082) as the box, with a
  * 40% hairline border and a solid 4px accent edge on the left; the icon and
  * the heading wear the role's `on-*-subtle` ink while body copy stays
  * high-contrast `on-surface`, so severity is carried by icon + label + edge,
@@ -125,28 +126,38 @@ const alert = tv({
   variants: {
     type: {
       error: {
-        close: 'hover:bg-error/10 hover:text-on-error-subtle',
+        close: 'hover:bg-tint-error/20 hover:text-on-error-subtle',
+        content:
+          '[--_c-tint-ground:color-mix(in_srgb,var(--c-error)_10%,var(--c-surface))] [--_c-tint-scale:0.5]',
         icon: 'text-on-error-subtle',
-        root: 'border-error/40 border-l-error bg-error/10 [--_c-alert-ink:var(--c-on-error-subtle)]',
+        root: 'border-error/40 border-l-error bg-tint-error/10 [--_c-alert-ink:var(--c-on-error-subtle)]',
       },
       info: {
-        close: 'hover:bg-info/10 hover:text-on-info-subtle',
+        close: 'hover:bg-tint-info/20 hover:text-on-info-subtle',
+        content:
+          '[--_c-tint-ground:color-mix(in_srgb,var(--c-info)_10%,var(--c-surface))] [--_c-tint-scale:0.5]',
         icon: 'text-on-info-subtle',
-        root: 'border-info/40 border-l-info bg-info/10 [--_c-alert-ink:var(--c-on-info-subtle)]',
+        root: 'border-info/40 border-l-info bg-tint-info/10 [--_c-alert-ink:var(--c-on-info-subtle)]',
       },
       neutral: {
-        close: 'hover:bg-primary/10 hover:text-on-primary-subtle',
-        root: 'border-primary/40 border-l-primary bg-primary/10 [--_c-alert-ink:var(--c-on-primary-subtle)]',
+        close: 'hover:bg-tint-primary/20 hover:text-on-primary-subtle',
+        content:
+          '[--_c-tint-ground:color-mix(in_srgb,var(--c-primary)_10%,var(--c-surface))] [--_c-tint-scale:0.5]',
+        root: 'border-primary/40 border-l-primary bg-tint-primary/10 [--_c-alert-ink:var(--c-on-primary-subtle)]',
       },
       success: {
-        close: 'hover:bg-success/10 hover:text-on-success-subtle',
+        close: 'hover:bg-tint-success/20 hover:text-on-success-subtle',
+        content:
+          '[--_c-tint-ground:color-mix(in_srgb,var(--c-success)_10%,var(--c-surface))] [--_c-tint-scale:0.5]',
         icon: 'text-on-success-subtle',
-        root: 'border-success/40 border-l-success bg-success/10 [--_c-alert-ink:var(--c-on-success-subtle)]',
+        root: 'border-success/40 border-l-success bg-tint-success/10 [--_c-alert-ink:var(--c-on-success-subtle)]',
       },
       warning: {
-        close: 'hover:bg-warning/10 hover:text-on-warning-subtle',
+        close: 'hover:bg-tint-warning/20 hover:text-on-warning-subtle',
+        content:
+          '[--_c-tint-ground:color-mix(in_srgb,var(--c-warning)_10%,var(--c-surface))] [--_c-tint-scale:0.5]',
         icon: 'text-on-warning-subtle',
-        root: 'border-warning/40 border-l-warning bg-warning/10 [--_c-alert-ink:var(--c-on-warning-subtle)]',
+        root: 'border-warning/40 border-l-warning bg-tint-warning/10 [--_c-alert-ink:var(--c-on-warning-subtle)]',
       },
     } satisfies Record<AlertLook, object>,
   },

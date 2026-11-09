@@ -5,6 +5,7 @@
     "false-value": "boolean | number | string = false",
     "label": "string = ''",
     "loading": "boolean = false",
+    "name": "string = ''",
     "required": "boolean = false",
     "true-value": "boolean | number | string = true",
     "value": "string | number | boolean"
@@ -31,6 +32,7 @@
     "falseValue": "boolean | number | string = false",
     "label": "string = ''",
     "loading": "boolean = false",
+    "name": "string = ''",
     "required": "boolean = false",
     "trueValue": "boolean | number | string = true",
     "value": "string | number | boolean"

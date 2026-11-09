@@ -136,11 +136,31 @@ for (const bg of [
   add('on-surface-muted', bg, TEXT, `on-surface-muted / ${bg}`);
 }
 
-// solid role + its on-color
+// solid role + its on-color, at rest and hovered: a hover fill keeps the label
+// (ADR-0081)
 for (const r of ROLES) {
   add(`on-${r}`, r, TEXT, `on-${r} / ${r}`);
+  add(`on-${r}`, `${r}-hover`, TEXT, `on-${r} / ${r}-hover`);
   add(`on-${r}-subtle`, `${r}-subtle`, TEXT, `on-${r}-subtle / ${r}-subtle`);
 }
+
+// A status tint's ink also draws straight on the surface: an outlined, ghost
+// or text button's label (ADR-0079), and an icon beside text, such as the
+// no-results row's warning icon on the overlay panel (ADR-0080).
+for (const r of ['success', 'info', 'warning', 'error']) {
+  for (const bg of ['surface', 'surface-overlay']) {
+    add(`on-${r}-subtle`, bg, TEXT, `on-${r}-subtle / ${bg}`);
+  }
+}
+
+// Error text on the surfaces it sits on, apart from the error fill, which is
+// a vivid red in dark mode that only clears the non-text 3:1 (ADR-0080). The
+// dark overlay pair reads 4.0:1, as `text-error` did before.
+for (const bg of ['surface', 'surface-raised', 'surface-overlay']) {
+  add('on-surface-error', bg, TEXT, `on-surface-error / ${bg}`);
+}
+
+add('error', 'surface', UI, 'error / surface (outline, indicator)');
 
 // nav chrome
 add('on-nav', 'nav-surface', TEXT, 'on-nav / nav-surface');

@@ -5,7 +5,7 @@
     :class="[
       ui.root(),
       {
-        'c-switch--disabled': disabled,
+        'c-switch--disabled': disabledResolved,
       },
     ]"
     :for="inputId"
@@ -22,7 +22,7 @@
         :aria-required="required || undefined"
         :checked="internalChecked || undefined"
         :class="ui.input()"
-        :disabled
+        :disabled="disabledResolved"
         role="switch"
         type="checkbox"
         @change="toggle"
@@ -33,7 +33,7 @@
         :class="[
           ui.slider(),
           {
-            'c-switch__slider--disabled': disabled,
+            'c-switch__slider--disabled': disabledResolved,
             'c-switch__slider--loading': loading,
           },
         ]"
@@ -86,10 +86,14 @@ import {
 
 import FormLabel from '../../shared/FormLabel.vue';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useHasSlot } from '../../shared/useHasSlot';
 import { useHostStates } from '../../shared/useHostStates';
 import { useIdReferences } from '../../shared/useIdReferences';
-import { emitModelChange } from '../../shared/valueEvents';
+import { emitModelChange, emitModelInput } from '../../shared/valueEvents';
 
 // ARIA attributes on the element name and describe the native control;
 // every other attribute stays on the root, as Vue's fallthrough put it.
@@ -213,6 +217,14 @@ interface CSwitchProps {
   loading?: boolean;
 
   /**
+   * The name the switch submits under in a native `<form>` while it is on:
+   * its `true-value`, or `on` when that is `true`
+   *
+   * @freeform
+   */
+  name?: string;
+
+  /**
    * Set as required — shows the required marker on the label
    */
   required?: boolean;
@@ -240,6 +252,7 @@ const props = withDefaults(defineProps<CSwitchProps>(), {
   falseValue: false,
   label: '',
   loading: false,
+  name: '',
   required: false,
   trueValue: true,
   value: undefined,
@@ -247,13 +260,16 @@ const props = withDefaults(defineProps<CSwitchProps>(), {
 
 const host = useHost();
 
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
+
 const rootRef = useTemplateRef<HTMLElement>('rootRef');
 
 const hasSlotContent = useHasSlot(rootRef, '');
 
 const ui = computed(() =>
   cSwitch({
-    disabled: props.disabled,
+    disabled: disabledResolved.value,
     hasLabel: Boolean(props.label) || hasSlotContent.value,
   }),
 );
@@ -339,7 +355,7 @@ const onClick = (event: MouseEvent) => {
 };
 
 const toggle = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
   internalChecked.value = !internalChecked.value;
 
   const next = internalChecked.value ? props.trueValue : props.falseValue;
@@ -350,6 +366,33 @@ const toggle = () => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences('input');
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// On, it submits its `true-value` (`on` for `true`, as a native checkbox
+// does); off, nothing. A required switch that is off stops a validating form.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ checked, value }) => {
+    const on = checked || (value !== null && value === String(props.trueValue));
+
+    emitModelInput(host, on ? props.trueValue : props.falseValue);
+  },
+  validity: () => {
+    if (!props.required || internalChecked.value) return null;
+
+    return {
+      anchor: host?.shadowRoot?.querySelector('input'),
+      flags: { valueMissing: true },
+      message: nativeMessage({ required: true, type: 'checkbox' }),
+    };
+  },
+  value: () => {
+    if (!internalChecked.value) return null;
+
+    return props.trueValue === true ? 'on' : String(props.trueValue);
+  },
+});
 
 /**
  * Focus its switch, as `focus()` does on a native control: the element renders

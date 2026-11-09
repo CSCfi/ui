@@ -158,7 +158,7 @@ const popover = tv({
   slots: {
     heading: 'm-0 mb-2 font-semibold text-on-surface',
     panel:
-      'fixed [inset:auto] m-0 box-border w-max max-w-sm overflow-visible rounded-csc-md border-0 bg-surface-overlay p-4 text-on-surface shadow-[2px_4px_10px_#00000029]',
+      'fixed [inset:auto] m-0 box-border w-max max-w-sm overflow-visible rounded-csc-md border-0 bg-surface-overlay p-4 text-on-surface shadow-[2px_4px_10px_#00000029] [--_c-tint-ground:var(--c-surface)] [--_c-tint-scale:1]',
     proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },

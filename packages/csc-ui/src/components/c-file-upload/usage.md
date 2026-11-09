@@ -91,9 +91,9 @@ does nothing.
 Without `manual`, there is no waiting: an upload function assigned later
 queues every `local` entry at once, and so every file added after it.
 
-Or leave `upload` unset and send the files with the rest of the form. The
-field takes no part in a native `<form>` submission; build the `FormData`
-from the value:
+Or leave `upload` unset and send the files with the rest of the form. Unlike
+the other fields, a file upload takes no part in a native `<form>`
+submission; build the `FormData` from the value:
 
 ```js
 const body = new FormData();

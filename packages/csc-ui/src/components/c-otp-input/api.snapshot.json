@@ -8,6 +8,7 @@
     "invalid": "boolean = false",
     "label": "string = ''",
     "length": "number = 6",
+    "name": "string = ''",
     "required": "boolean = false",
     "value": "string = ''"
   },
@@ -42,6 +43,7 @@
     "invalid": "boolean = false",
     "label": "string = ''",
     "length": "number = 6",
+    "name": "string = ''",
     "required": "boolean = false",
     "value": "string = ''"
   },

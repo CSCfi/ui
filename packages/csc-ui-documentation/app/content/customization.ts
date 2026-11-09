@@ -569,6 +569,13 @@ export const TOKEN_GROUPS: TokenGroup[] = [
         purpose: 'Text on the sunken surface.',
         token: 'on-surface-sunken',
       },
+      {
+        dark: 'error-300',
+        light: 'error-500',
+        purpose:
+          'Error text on a surface: messages and required marks. Lighter than the error fill in dark mode.',
+        token: 'on-surface-error',
+      },
     ],
   },
   {
@@ -623,6 +630,30 @@ export const TOKEN_GROUPS: TokenGroup[] = [
         light: 'error-600',
         purpose: 'Error role inside inverted variants.',
         token: 'inverse-error',
+      },
+      {
+        dark: 'secondary-600',
+        light: 'secondary-600',
+        purpose: 'Secondary label on an inverted filled button.',
+        token: 'inverse-secondary',
+      },
+      {
+        dark: 'success-700',
+        light: 'success-700',
+        purpose: 'Success label on an inverted filled button.',
+        token: 'inverse-success',
+      },
+      {
+        dark: 'info-600',
+        light: 'info-600',
+        purpose: 'Info label on an inverted filled button.',
+        token: 'inverse-info',
+      },
+      {
+        dark: 'warning-800',
+        light: 'warning-800',
+        purpose: 'Warning label on an inverted filled button.',
+        token: 'inverse-warning',
       },
       {
         dark: 'black',

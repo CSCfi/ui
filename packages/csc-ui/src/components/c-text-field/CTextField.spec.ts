@@ -2,18 +2,25 @@
  * Behaviour spec for c-text-field's value events (CONTEXT.md "Value events",
  * "Commit"; ADR-0075), its input mask (CONTEXT.md "Input mask", "Complete";
  * ADR-0059) and `invalid`, which markup can set — `valid`, defaulting to true,
- * could never be turned off from an attribute (ADR-0076).
+ * could never be turned off from an attribute (ADR-0076), its part in a
+ * native form (ADR-0084) and its slotted input (ADR-0083).
  */
 import { describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
 
+import { rasterise } from '../../test/conformance/paint';
 import {
   consoleSpy,
+  contrastRatio,
   matchScreenshotInBothModes,
   mount,
+  type MountedInForm,
+  mountInForm,
   recordEvents,
+  roleInMode,
+  setThemeMode,
   settle,
 } from '../../test/harness';
 
@@ -117,6 +124,46 @@ describe('invalid (ADR-0076)', () => {
 
     expect(message.textContent).toContain('With the country code');
     expect(input(m).getAttribute('aria-invalid')).toBe('false');
+  });
+
+  // Error text and the error outline are separate tokens (ADR-0080): in dark
+  // mode the outline is a vivid red that text cannot be (3.7:1).
+  it('inks its error message with on-surface-error and outlines with error, in both modes', async () => {
+    for (const mode of ['light', 'dark'] as const) {
+      setThemeMode(mode);
+
+      const m = await mount('c-text-field', {
+        attrs: {
+          'error-message': 'Enter a phone number',
+          invalid: true,
+          label: 'Phone',
+        },
+      });
+      await settle(400);
+
+      const message = getComputedStyle(m.shadow('[part="message"]')).color;
+
+      const outline = getComputedStyle(
+        m.deep('c-input', 'fieldset'),
+      ).borderTopColor;
+
+      expect(rasterise(message), mode).toEqual(
+        rasterise(roleInMode(mode, '--c-on-surface-error')),
+      );
+      expect(rasterise(outline), mode).toEqual(
+        rasterise(roleInMode(mode, '--c-error')),
+      );
+      expect(
+        contrastRatio(message, roleInMode(mode, '--c-surface')),
+        mode,
+      ).toBeGreaterThanOrEqual(4.5);
+
+      document.body.replaceChildren();
+    }
+
+    expect(roleInMode('dark', '--c-on-surface-error')).not.toBe(
+      roleInMode('dark', '--c-error'),
+    );
   });
 });
 
@@ -476,5 +523,291 @@ describe('type', () => {
 
     expect(input(m).type).toBe('password');
     expect(m.shadow('button[aria-label="Show password"]')).not.toBeNull();
+  });
+});
+
+describe('form association (ADR-0084)', () => {
+  const inForm = (
+    options: {
+      attrs?: Record<string, string>;
+      props?: Record<string, unknown>;
+    } = {},
+  ) =>
+    mountInForm<FieldHost>('c-text-field', {
+      attrs: { name: 'phone', ...options.attrs },
+      props: { label: 'Phone', ...options.props },
+    });
+
+  it('submits the text under its name, as typed', async () => {
+    const m = await inForm({ props: { value: 'Ada' } });
+
+    expect(m.entries('phone')).toEqual(['Ada']);
+
+    await userEvent.type(input(m), ' L');
+    await settle();
+
+    expect(m.entries('phone')).toEqual(['Ada L']);
+    m.unmount();
+  });
+
+  it('submits an empty field as an empty string, and nothing without a name', async () => {
+    const m = await inForm();
+
+    expect(m.entries('phone')).toEqual(['']);
+
+    m.host.removeAttribute('name');
+    await settle();
+
+    expect([...new FormData(m.form).keys()]).toEqual([]);
+    m.unmount();
+  });
+
+  it('a form reset returns to the authored value and emits input, not change', async () => {
+    const m = await inForm({ attrs: { value: 'Ada' } });
+
+    await userEvent.type(input(m), 'x');
+    await settle();
+
+    const events = recordEvents(m.host, ['change', 'update:value']);
+
+    m.form.reset();
+    await settle();
+
+    expect(m.host.value).toBe('Ada');
+    expect(input(m).value).toBe('Ada');
+    expect(events.names()).toEqual(['update:value']);
+    m.unmount();
+  });
+
+  it('a value bound as a property resets to empty', async () => {
+    const m = await inForm({ props: { value: 'Bob' } });
+
+    m.form.reset();
+    await settle();
+
+    expect(m.host.value).toBe('');
+    m.unmount();
+  });
+
+  it('a disabled fieldset disables it, and it submits nothing', async () => {
+    const m = await inForm({ props: { value: 'Ada' } });
+
+    m.fieldset.disabled = true;
+    await settle();
+
+    expect(input(m).disabled).toBe(true);
+    expect(m.entries('phone')).toEqual([]);
+
+    m.fieldset.disabled = false;
+    await settle();
+
+    expect(input(m).disabled).toBe(false);
+    m.unmount();
+  });
+
+  it('a required empty field stops a validating form, and novalidate lets it through', async () => {
+    const m = await inForm({ props: { required: true } });
+
+    const submits = recordEvents(m.form, ['submit']);
+
+    m.form.requestSubmit();
+    expect(m.form.checkValidity()).toBe(false);
+    expect(submits.records).toHaveLength(0);
+
+    m.form.noValidate = true;
+    m.form.requestSubmit();
+    expect(submits.records).toHaveLength(1);
+    m.unmount();
+  });
+
+  it('checks the type and an incomplete mask, never the invalid prop', async () => {
+    const email = await inForm({ props: { type: 'email', value: 'ada' } });
+
+    expect(email.form.checkValidity()).toBe(false);
+    email.unmount();
+
+    const masked = await inForm({ props: { mask: '###', value: '12' } });
+
+    expect(masked.form.checkValidity()).toBe(false);
+
+    masked.host.value = '123';
+    await settle();
+
+    expect(masked.form.checkValidity()).toBe(true);
+    masked.unmount();
+
+    const marked = await inForm({ props: { invalid: true, value: 'ada' } });
+
+    expect(marked.form.checkValidity()).toBe(true);
+    marked.unmount();
+  });
+});
+
+describe('slotted input (ADR-0083)', () => {
+  type Slotted = { input: HTMLInputElement } & MountedInForm<FieldHost>;
+
+  const slottedField = async (
+    html = '<input name="user" autocomplete="username">',
+    props: Record<string, unknown> = {},
+  ): Promise<Slotted> => {
+    const m = await mountInForm<FieldHost>('c-text-field', {
+      attrs: { style: 'width: 320px' },
+      html,
+      props: { label: 'User', ...props },
+    });
+
+    await settle();
+
+    return { ...m, input: m.host.querySelector('input')! };
+  };
+
+  it('frames the page’s own input, which the form owns and submits itself', async () => {
+    const m = await slottedField();
+
+    expect(m.input.parentElement).toBe(m.host);
+    expect(m.input.form).toBe(m.form);
+    expect(m.input.getAttribute('autocomplete')).toBe('username');
+    expect(m.host.shadowRoot!.querySelector('input')).toBeNull();
+
+    await userEvent.type(m.input, 'ada');
+    await settle();
+
+    expect(m.entries('user')).toEqual(['ada']);
+    expect([...new FormData(m.form).keys()]).toEqual(['user']);
+    m.unmount();
+  });
+
+  it('bridges the value both ways, one input event per keystroke', async () => {
+    const m = await slottedField();
+
+    const events = recordEvents(m.host, ['change', 'input', 'update:value']);
+
+    await userEvent.type(m.input, 'a');
+    await settle();
+
+    expect(events.names()).toEqual(['update:value', 'input']);
+    expect(m.host.value).toBe('a');
+
+    events.clear();
+    m.host.value = 'bob';
+    await settle();
+
+    expect(m.input.value).toBe('bob');
+
+    m.input.value = 'carol';
+    await settle();
+
+    expect(m.host.value).toBe('carol');
+    expect(events.names()).toEqual([]);
+    m.unmount();
+  });
+
+  it('names and describes the input with strings, keeping the page’s own', async () => {
+    const m = await slottedField('<input name="user">', {
+      errorMessage: 'Unknown user',
+      hint: 'Your CSC username',
+    });
+
+    expect(m.input.getAttribute('aria-label')).toBe('User');
+    expect(m.input.getAttribute('aria-description')).toBe('Your CSC username');
+
+    (m.host as { invalid: boolean } & FieldHost).invalid = true;
+    await settle();
+
+    expect(m.input.getAttribute('aria-description')).toBe('Unknown user');
+    expect(m.input.getAttribute('aria-invalid')).toBe('true');
+    m.unmount();
+
+    const own = await slottedField('<input aria-label="Login" name="user">');
+
+    expect(own.input.getAttribute('aria-label')).toBe('Login');
+    own.unmount();
+  });
+
+  it('the password toggle reveals the slotted input', async () => {
+    const m = await slottedField(
+      '<input name="password" type="password" autocomplete="current-password">',
+      { label: 'Password' },
+    );
+
+    await userEvent.click(m.shadow('button[aria-label="Show password"]'));
+    await settle();
+
+    expect(m.input.type).toBe('text');
+
+    await userEvent.click(m.shadow('button[aria-label="Hide password"]'));
+    await settle();
+
+    expect(m.input.type).toBe('password');
+    m.unmount();
+  });
+
+  it('Enter submits through a c-button submit button, once', async () => {
+    const m = await slottedField('<input name="user">');
+
+    const password = document.createElement('c-text-field');
+
+    password.innerHTML = '<input name="password" type="password">';
+    password.setAttribute('label', 'Password');
+
+    const button = document.createElement('c-button');
+
+    button.setAttribute('type', 'submit');
+    button.textContent = 'Log in';
+    m.fieldset.append(password, button);
+    await settle();
+
+    const submits = recordEvents(m.form, ['submit']);
+
+    await userEvent.type(password.querySelector('input')!, 'secret{Enter}');
+    await settle();
+
+    expect(submits.records).toHaveLength(1);
+
+    // With one text input left, the browser alone would submit on Enter: its
+    // rule cannot see the loading c-button.
+    password.remove();
+    (button as { loading: boolean } & HTMLElement).loading = true;
+    await settle();
+    await userEvent.type(m.input, '{Enter}');
+    await settle();
+
+    expect(submits.records).toHaveLength(1);
+    m.unmount();
+  });
+
+  it('renders as the field’s own input does', async () => {
+    const own = await mountField({ label: 'User', value: 'ada' });
+
+    const m = await slottedField('<input name="user" value="ada">');
+
+    const keys = [
+      'color',
+      'font-family',
+      'font-size',
+      'height',
+      'line-height',
+      'padding-bottom',
+      'padding-left',
+      'padding-top',
+      'width',
+    ];
+
+    const styleOf = (el: Element) =>
+      Object.fromEntries(
+        keys.map((key) => [key, getComputedStyle(el).getPropertyValue(key)]),
+      );
+
+    expect(styleOf(m.input)).toEqual(styleOf(input(own)));
+    own.unmount();
+    m.unmount();
+  });
+
+  it('host props the input replaces are ignored, with a warning', async () => {
+    const m = await slottedField('<input name="user">', { name: 'login' });
+
+    consoleSpy.expect(/name ignored beside a slotted <input>/);
+    expect(m.entries('login')).toEqual([]);
+    m.unmount();
   });
 });

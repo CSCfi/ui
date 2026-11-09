@@ -72,7 +72,7 @@ import { useIdReferences } from '../../shared/useIdReferences';
 const card = tv({
   slots: {
     fullscreenToggle:
-      'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-padding-inline)-8px)] z-[1] flex size-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-primary transition-colors duration-300 ease-standard hover:bg-primary-subtle-hover focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
+      'absolute top-[calc(var(--_c-card-gap)-8px)] right-[calc(var(--_c-card-padding-inline)-8px)] z-[1] flex size-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-primary transition-colors duration-300 ease-standard hover:bg-primary-subtle-hover hover:text-on-primary-subtle focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:outline-solid',
     root: 'relative flex max-w-full flex-1 flex-col gap-[var(--_c-card-gap)] rounded-csc-xl border border-solid border-border bg-surface-raised py-[var(--_c-card-gap)] text-on-surface',
   },
   variants: {

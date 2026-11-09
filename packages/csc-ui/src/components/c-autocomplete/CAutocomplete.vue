@@ -9,7 +9,7 @@
       ref="cInputRef"
       :active="isOpen"
       :data-hide-details="String(hideMessageResolved)"
-      :disabled
+      :disabled="disabledResolved"
       :filled="hasSelection"
       :input-id
       :invalid
@@ -52,7 +52,7 @@
           :aria-expanded="isOpen"
           :aria-label="accessibleName"
           :class="ui.input()"
-          :disabled
+          :disabled="disabledResolved"
           :name="name || undefined"
           :value="inputValue"
           aria-haspopup="listbox"
@@ -86,7 +86,7 @@
             @close="removeValue(opt.value)"
           >
             <span :class="ui.tagLabel()" aria-hidden="true">
-              {{ opt.label }}
+              <span :class="ui.tagText()">{{ opt.label }}</span>
             </span>
           </c-tag>
 
@@ -117,7 +117,7 @@
         <c-icon-button
           v-else-if="hasSelection && clearable"
           :aria-label="t.clearSelection"
-          :disabled
+          :disabled="disabledResolved"
           appearance="text"
           size="x-small"
           variant="primary"
@@ -130,7 +130,7 @@
         <span v-else :class="ui.chevron()">
           <c-icon-button
             :aria-label="t.toggleOptions"
-            :disabled
+            :disabled="disabledResolved"
             appearance="text"
             size="x-small"
             variant="primary"
@@ -523,7 +523,8 @@ interface CAutocompleteProps {
   multiple?: boolean;
 
   /**
-   * Input field name
+   * The name the picked value submits under in a native `<form>` — one entry
+   * per value with `multiple`
    *
    * @freeform
    */
@@ -637,11 +638,19 @@ import SelectionIndicator from '../../shared/SelectionIndicator.vue';
 import { type MatchSegment, splitMatches } from '../../shared/splitMatches';
 import { useAnchoredPanel } from '../../shared/useAnchoredPanel';
 import { useControlAttrs } from '../../shared/useControlAttrs';
+import {
+  nativeMessage,
+  useFormAssociation,
+} from '../../shared/useFormAssociation';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useIdReferences } from '../../shared/useIdReferences';
 import { useNarrowViewport } from '../../shared/useNarrowViewport';
 import { useStatusAnnouncer } from '../../shared/useStatusAnnouncer';
-import { emitModelChange, seedModelValue } from '../../shared/valueEvents';
+import {
+  emitModelChange,
+  emitModelInput,
+  seedModelValue,
+} from '../../shared/valueEvents';
 
 /** Events dispatched by `<c-autocomplete>`. */
 interface CAutocompleteEvents {
@@ -708,10 +717,12 @@ const autocomplete = tv({
       'inline-flex rotate-0 transition-transform duration-300 ease-in-out',
     content: 'relative flex w-full min-w-0 items-center',
     info: 'flex min-h-[42px] w-full cursor-default flex-nowrap items-center gap-2 px-[10px] text-sm whitespace-nowrap text-on-surface-muted',
-    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-warning',
+    // The yellow `warning` reads 1.6:1 on the panel; the icon takes the ink
+    // of the warning tint, as c-alert's icon does (ADR-0080).
+    infoIcon: 'h-[18px] w-[18px] shrink-0 fill-current text-on-warning-subtle',
     input:
       'max-h-8 w-full max-w-full min-w-0 flex-[1_1_auto] cursor-pointer border-0 bg-transparent py-2 text-base leading-5 text-on-surface outline-none placeholder:text-on-surface-muted placeholder:opacity-100 focus:outline-none active:outline-none',
-    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-primary data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
+    item: 'flex min-h-[42px] w-full cursor-pointer flex-nowrap items-center gap-3 rounded px-[10px] py-2 text-sm whitespace-nowrap text-on-surface outline-none select-none data-[active]:bg-primary-subtle data-[active]:text-on-primary-subtle data-[active]:ring-1 data-[active]:ring-primary data-[active]:ring-inset',
     itemLabel: 'flex-auto overflow-hidden text-ellipsis whitespace-nowrap',
     list: 'm-0 mt-1 w-full scrollbar-hidden list-none overflow-y-auto overscroll-none p-1 outline-none',
     panel:
@@ -725,13 +736,18 @@ const autocomplete = tv({
     searchInput:
       'w-full border-0 bg-transparent py-2 text-base leading-5 text-on-surface [caret-color:var(--c-primary)] outline-none placeholder:text-on-surface-muted placeholder:opacity-100',
     // A long option label ellipsises inside its tag instead of blowing out
-    // the row.
-    tagLabel: 'min-w-0 truncate',
+    // the row. The label is a one-column `minmax(0, 1fr)` grid around the
+    // text: its smallest width is zero while its preferred width stays the
+    // text's. Truncated text alone kept its whole nowrap width as the
+    // field's minimum, so a page sizing the field from its content (a flex
+    // row, a grid `1fr` column) stretched it past a narrow screen.
+    tagLabel: 'grid min-w-0 grid-cols-[minmax(0,1fr)]',
     // The tag row wraps; `py-2` gives a one-row tag field its own rhythm
     // (default tag 28px + 16px, small tag 20px + 16px — the small box exactly,
     // centred in the 52px default box). Wrapping lives here, not on the
     // content row, so the clear/chevron stay centred.
     tags: 'flex min-w-0 flex-1 flex-wrap items-center gap-1 py-2',
+    tagText: 'truncate',
     visuallyHidden:
       'absolute h-px w-px overflow-hidden border-0 p-0 [clip:rect(1px,1px,1px,1px)]',
   },
@@ -818,6 +834,9 @@ const props = withDefaults(defineProps<CAutocompleteProps>(), {
 });
 
 const host = useHost();
+
+// Its own `disabled`, or a disabled `<fieldset>` around it (ADR-0084).
+const disabledResolved = computed(() => props.disabled || formDisabled.value);
 
 const { controlAttrs } = useControlAttrs();
 
@@ -1412,7 +1431,7 @@ const {
   panelStyle,
 } = useAnchoredPanel({
   anchor: anchorRef,
-  disabled: () => props.disabled,
+  disabled: () => disabledResolved.value,
   field: cInputRef,
   fullscreen: narrow,
   host,
@@ -1458,7 +1477,7 @@ const seedActiveIndex = () => {
 // ---- keyboard / interaction ---------------------------------------------
 
 const onFieldClick = () => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
 
   if (isOpen.value) closePanel(false);
   else openPanel();
@@ -1489,7 +1508,7 @@ const onButtonKeyDown = (src: 'chevron' | 'reset', event: KeyboardEvent) => {
 };
 
 const onFieldKeyDown = (event: KeyboardEvent) => {
-  if (props.disabled) return;
+  if (disabledResolved.value) return;
 
   // `multiple`: Backspace on the (closed) readonly field removes the last
   // pick. The search input has its own handler, where Backspace edits the
@@ -1805,6 +1824,31 @@ onBeforeUnmount(() => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences(() => fieldRef.value);
+
+// ---- form association (ADR-0084) ---------------------------------------------
+
+// The pick submits its value (an item's `value` with `return-object`), `''`
+// while there is none; `multiple` submits one entry per pick. The query is
+// never submitted. A required field without a pick stops a validating form.
+const { formDisabled } = useFormAssociation({
+  name: () => props.name,
+  reset: ({ value: authored }) =>
+    emitModelInput(host, multipleOn.value ? [] : authored),
+  validity: () =>
+    !props.required || hasSelection.value
+      ? null
+      : {
+          anchor: fieldRef.value,
+          flags: { valueMissing: true },
+          message: nativeMessage('select'),
+        },
+  value: () =>
+    multipleOn.value
+      ? selectedValues.value.map(String)
+      : selectedValue.value == null
+        ? ''
+        : String(selectedValue.value),
+});
 
 /**
  * Focus its combobox, as `focus()` does on a native control: the element renders
