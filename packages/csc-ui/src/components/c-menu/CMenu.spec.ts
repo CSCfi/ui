@@ -453,3 +453,58 @@ describe('focus return', () => {
     }
   });
 });
+
+// `open` is two-way: it follows the panel whoever opened or closed it, so a
+// menu the user closed opens again when the page sets it once more.
+describe('open property', () => {
+  type MenuHost = { open: boolean } & HTMLElement;
+
+  const panelOpen = (m: Mounted): boolean =>
+    m.part('panel').matches(':popover-open');
+
+  it('follows the panel, and a menu the user closed reopens on open = true', async () => {
+    const m = await mountMenu(items(2));
+
+    const host = m.host as MenuHost;
+
+    await open(m);
+    await expect.poll(() => panelOpen(m)).toBe(true);
+    expect(host.open).toBe(true);
+    await expect
+      .poll(() => document.activeElement?.localName)
+      .toBe('c-menu-item');
+
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => panelOpen(m)).toBe(false);
+    expect(host.open).toBe(false);
+
+    host.open = true;
+    await expect.poll(() => panelOpen(m)).toBe(true);
+    await expect
+      .poll(() => document.activeElement?.localName)
+      .toBe('c-menu-item');
+
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => host.open).toBe(false);
+
+    host.open = true;
+    await expect.poll(() => panelOpen(m)).toBe(true);
+    m.unmount();
+  });
+
+  it('ArrowUp on the trigger still opens on the last item', async () => {
+    const m = await mountMenu(items(3));
+
+    m.host
+      .querySelector('c-button')!
+      .shadowRoot!.querySelector('button')!
+      .focus();
+    await userEvent.keyboard('{ArrowUp}');
+
+    await expect
+      .poll(() => document.activeElement)
+      .toBe(m.host.querySelectorAll('c-menu-item')[2]);
+    expect((m.host as MenuHost).open).toBe(true);
+    m.unmount();
+  });
+});

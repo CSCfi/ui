@@ -65,3 +65,38 @@ describe('focus return', () => {
     },
   );
 });
+
+// `open` is two-way: it follows the panel whoever opened or closed it, so a
+// popover the user closed opens again when the page sets it once more.
+describe('open property', () => {
+  it('follows the panel, and a popover the user closed reopens on open = true', async () => {
+    const m = await mount('c-popover', {
+      html: '<c-button slot="trigger">Settings</c-button><p>Body</p>',
+      props: { heading: 'Settings' },
+    });
+
+    const host = m.host as { open: boolean } & HTMLElement;
+
+    const panelOpen = (): boolean => m.part('panel').matches(':popover-open');
+
+    await userEvent.click(
+      m.host.querySelector('c-button')!.shadowRoot!.querySelector('button')!,
+    );
+    await expect.poll(panelOpen).toBe(true);
+    expect(host.open).toBe(true);
+
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(panelOpen).toBe(false);
+    expect(host.open).toBe(false);
+
+    host.open = true;
+    await expect.poll(panelOpen).toBe(true);
+
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => host.open).toBe(false);
+
+    host.open = true;
+    await expect.poll(panelOpen).toBe(true);
+    m.unmount();
+  });
+});
