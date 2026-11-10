@@ -3,7 +3,8 @@
  * Seeded from 8ef62d16: menus showed scrollbars, ended mid-boundary, and
  * measured their rows with a hard-coded height.
  */
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { mdiDotsVertical } from '@mdi/js';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 
 import type { Mounted } from '../../test/harness';
@@ -11,6 +12,7 @@ import type { Mounted } from '../../test/harness';
 import {
   matchScreenshotInBothModes,
   mount,
+  recordEvents,
   roleInMode,
   setThemeMode,
   settle,
@@ -326,5 +328,183 @@ describe('ink', () => {
       roleInMode('light'),
     );
     expect(getComputedStyle(note).color).not.toBe(roleInMode('dark'));
+  });
+});
+
+// The menu-button pattern: closing the menu with a pick or Escape puts focus
+// back on the trigger, ringed after a key. A csc-ui button's host renders no
+// box of its own, so its button must take it, or focus falls to the page.
+describe('focus return', () => {
+  const TRIGGERS: Record<string, string> = {
+    '<button>': '<button slot="trigger">Menu</button>',
+    'c-button': '<c-button slot="trigger">Menu</c-button>',
+    'c-icon-button': `<c-icon-button slot="trigger" aria-label="Menu" path="${mdiDotsVertical}"></c-icon-button>`,
+  };
+
+  const ITEMS =
+    '<c-menu-item value="a">A</c-menu-item><c-menu-item value="b">B</c-menu-item>';
+
+  /** What takes a trigger's focus: a native button, or a csc-ui host's own button. */
+  const controlOf = (trigger: HTMLElement): HTMLElement =>
+    trigger.shadowRoot?.querySelector<HTMLElement>('[part~="root"]') ?? trigger;
+
+  const firstItem = (m: Mounted): HTMLElement =>
+    m.host.querySelector('c-menu-item')!;
+
+  const openFromKeyboard = async (
+    m: Mounted,
+    control: HTMLElement,
+  ): Promise<void> => {
+    control.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect.poll(() => document.activeElement).toBe(firstItem(m));
+  };
+
+  const openFromPointer = async (
+    m: Mounted,
+    control: HTMLElement,
+  ): Promise<void> => {
+    await userEvent.click(control);
+    await expect.poll(() => document.activeElement).toBe(firstItem(m));
+  };
+
+  /** Each way to close: the name, the gesture, and whether it is a key. */
+  const CLOSES: [string, (m: Mounted) => Promise<void>, boolean][] = [
+    ['an Enter pick', () => userEvent.keyboard('{Enter}'), true],
+    ['a Space pick', () => userEvent.keyboard(' '), true],
+    ['a click pick', (m) => userEvent.click(firstItem(m)), false],
+    ['Escape', () => userEvent.keyboard('{Escape}'), true],
+  ];
+
+  /** Close the open menu, then where focus went and how it was asked. */
+  const closeAndRead = async (
+    m: Mounted,
+    close: () => Promise<void>,
+  ): Promise<{ options: FocusOptions | undefined }> => {
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+
+    try {
+      await close();
+      await expect
+        .poll(() => m.part('panel').matches(':popover-open'))
+        .toBe(false);
+      await settle();
+
+      return { options: focus.mock.lastCall?.[0] };
+    } finally {
+      focus.mockRestore();
+    }
+  };
+
+  describe.each(Object.entries(TRIGGERS))('%s trigger', (_, html) => {
+    it.each(CLOSES)('%s returns focus to it', async (way, close, key) => {
+      const m = await mount('c-menu', { html: `${html}${ITEMS}` });
+
+      const trigger = m.host.querySelector<HTMLElement>('[slot="trigger"]')!;
+
+      const control = controlOf(trigger);
+
+      const events = recordEvents(m.host, ['select']);
+
+      await (key ? openFromKeyboard : openFromPointer)(m, control);
+
+      const { options } = await closeAndRead(m, () => close(m));
+
+      expect(document.activeElement).toBe(trigger);
+      expect(trigger.shadowRoot?.activeElement ?? trigger).toBe(control);
+      expect(events.names()).toEqual(way === 'Escape' ? [] : ['select']);
+
+      // A key asks for the ring (Firefox and Safari keep a mouse focus
+      // through a script focus); a pointer pick leaves it to the browser.
+      expect(options?.focusVisible).toBe(key ? true : undefined);
+      expect(control.matches(':focus-visible')).toBe(key);
+      m.unmount();
+    });
+  });
+
+  it('Escape returns focus to a designated c-icon-button', async () => {
+    const trigger = document.createElement('c-icon-button');
+
+    trigger.id = 'menu-trigger';
+    trigger.setAttribute('aria-label', 'Menu');
+    trigger.setAttribute('path', mdiDotsVertical);
+    document.body.append(trigger);
+
+    const m = await mount('c-menu', {
+      html: ITEMS,
+      props: { trigger: 'menu-trigger' },
+    });
+
+    try {
+      const control = controlOf(trigger);
+
+      await openFromKeyboard(m, control);
+
+      const { options } = await closeAndRead(m, () =>
+        userEvent.keyboard('{Escape}'),
+      );
+
+      expect(document.activeElement).toBe(trigger);
+      expect(trigger.shadowRoot!.activeElement).toBe(control);
+      expect(options?.focusVisible).toBe(true);
+    } finally {
+      m.unmount();
+      trigger.remove();
+    }
+  });
+});
+
+// `open` is two-way: it follows the panel whoever opened or closed it, so a
+// menu the user closed opens again when the page sets it once more.
+describe('open property', () => {
+  type MenuHost = { open: boolean } & HTMLElement;
+
+  const panelOpen = (m: Mounted): boolean =>
+    m.part('panel').matches(':popover-open');
+
+  it('follows the panel, and a menu the user closed reopens on open = true', async () => {
+    const m = await mountMenu(items(2));
+
+    const host = m.host as MenuHost;
+
+    await open(m);
+    await expect.poll(() => panelOpen(m)).toBe(true);
+    expect(host.open).toBe(true);
+    await expect
+      .poll(() => document.activeElement?.localName)
+      .toBe('c-menu-item');
+
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => panelOpen(m)).toBe(false);
+    expect(host.open).toBe(false);
+
+    host.open = true;
+    await expect.poll(() => panelOpen(m)).toBe(true);
+    await expect
+      .poll(() => document.activeElement?.localName)
+      .toBe('c-menu-item');
+
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => host.open).toBe(false);
+
+    host.open = true;
+    await expect.poll(() => panelOpen(m)).toBe(true);
+    m.unmount();
+  });
+
+  it('ArrowUp on the trigger still opens on the last item', async () => {
+    const m = await mountMenu(items(3));
+
+    m.host
+      .querySelector('c-button')!
+      .shadowRoot!.querySelector('button')!
+      .focus();
+    await userEvent.keyboard('{ArrowUp}');
+
+    await expect
+      .poll(() => document.activeElement)
+      .toBe(m.host.querySelectorAll('c-menu-item')[2]);
+    expect((m.host as MenuHost).open).toBe(true);
+    m.unmount();
   });
 });

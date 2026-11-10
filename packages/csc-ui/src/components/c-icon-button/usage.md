@@ -74,6 +74,7 @@ element ids (`aria-controls`, `aria-describedby`, …) give the button the
 elements the ids name in your page. Without an `aria-label` the button is named only by
 the text in its content, which is usually nothing or the badge count; visually
 hidden slotted text also names it, and keeps naming it while `loading`.
+The element's `focus()` focuses the inner button, as on a native button.
 
 To show the name to sighted users too, put the button in a `c-tooltip`'s
 `trigger` slot. The tooltip text is announced as a description, so the

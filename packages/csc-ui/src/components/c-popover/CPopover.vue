@@ -129,6 +129,7 @@ import {
 } from '../../shared/useFallbackPosition';
 import { useHostEmit } from '../../shared/useHostEmit';
 import { useIdReferences } from '../../shared/useIdReferences';
+import { useKeyboardModality } from '../../shared/useKeyboardModality';
 
 /** Events dispatched by `<c-popover>`. */
 interface CPopoverEvents {
@@ -178,6 +179,10 @@ const props = withDefaults(defineProps<CPopoverProps>(), {
 defineOptions({ inheritAttrs: false });
 
 const host = useHost();
+
+// Escape rings the trigger focus returns to; Firefox and Safari would carry a
+// mouse focus through the script focus.
+const focusOptions = useKeyboardModality(host);
 
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
@@ -343,6 +348,13 @@ const onToggle = (event: Event) => {
 
   isOpen.value = nowOpen;
   getTriggerEl()?.setAttribute('aria-expanded', String(nowOpen));
+
+  // `open` follows the panel, as on c-side-navigation, so a later write of
+  // the same value is not a no-op.
+  const el = host as ({ open?: unknown } & HTMLElement) | null;
+
+  if (el && coerceBoolean(el.open) !== nowOpen) el.open = nowOpen;
+
   emit('change:open', nowOpen);
 
   if (nowOpen) {
@@ -364,7 +376,7 @@ const onToggle = (event: Event) => {
     designated.stopTracking();
     fallback.stop();
 
-    if (pendingReturnFocus) getTriggerEl()?.focus?.();
+    if (pendingReturnFocus) getTriggerEl()?.focus(focusOptions());
 
     pendingReturnFocus = false;
   }
@@ -397,9 +409,16 @@ const onSlotChange = () => {
   setTriggerWiring(el, isOpen.value);
 };
 
+// Only a value the panel does not already show acts: `open` written back
+// from the toggle handler must not run the open sequence again.
 watch(
   () => coerceBoolean(props.open),
-  (value) => (value ? openPopover() : closePopover(false)),
+  (value) => {
+    if (value === panelRef.value?.matches(':popover-open')) return;
+
+    if (value) openPopover();
+    else closePopover(false);
+  },
 );
 
 onMounted(() => {

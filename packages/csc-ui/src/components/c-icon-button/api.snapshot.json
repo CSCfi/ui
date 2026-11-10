@@ -24,7 +24,9 @@
     "text"
   ],
   "events": {},
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "badge",
     "content",

@@ -119,6 +119,7 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  useHost,
   useTemplateRef,
   watch,
 } from 'vue';
@@ -181,6 +182,8 @@ const props = withDefaults(defineProps<CTooltipProps>(), {
 
 // Anchor wrapper + panel are two root nodes; opt out of attr fallthrough.
 defineOptions({ inheritAttrs: false });
+
+const host = useHost();
 
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
@@ -327,6 +330,13 @@ const onToggle = (event: Event) => {
   const nowOpen = (event as ToggleEvent).newState === 'open';
 
   isOpen.value = nowOpen;
+
+  // `open` follows the panel, as on c-side-navigation, so a later write of
+  // the same value is not a no-op.
+  const el = host as ({ open?: unknown } & HTMLElement) | null;
+
+  if (el && coerceBoolean(el.open) !== nowOpen) el.open = nowOpen;
+
   emit('change:open', nowOpen);
 
   if (nowOpen) {
@@ -421,9 +431,16 @@ watch(() => props.text, syncTriggerDescription);
 
 // ---- lifecycle -------------------------------------------------------------
 
+// Only a value the panel does not already show acts: `open` written back
+// from the toggle handler must not run the open sequence again.
 watch(
   () => coerceBoolean(props.open),
-  (value) => (value ? show() : hide()),
+  (value) => {
+    if (value === panelRef.value?.matches(':popover-open')) return;
+
+    if (value) show();
+    else hide();
+  },
 );
 
 onMounted(() => {

@@ -406,6 +406,12 @@ export interface CButtonElement extends Omit<HTMLElement, 'active' | 'appearance
    * for a destructive action.
    */
   variant?: 'danger' | 'info' | 'primary' | 'secondary' | 'success' | 'warning';
+  /**
+   * Focus its button — its link under `href`, or the slotted button — as
+   * `focus()` does on a native button: the element renders no box of its own to
+   * take it.
+   */
+  focus(options?: FocusOptions): void;
 }
 
 /** Events dispatched by `<c-button-group>`. */
@@ -1233,6 +1239,11 @@ export interface CIconButtonElement extends Omit<HTMLElement, 'appearance' | 'ba
    * for a destructive action.
    */
   variant?: 'danger' | 'info' | 'primary' | 'secondary' | 'success' | 'warning';
+  /**
+   * Focus its button, as `focus()` does on a native button: the element renders
+   * no box of its own to take it.
+   */
+  focus(options?: FocusOptions): void;
 }
 
 /** A text link to another page or resource: a native `<a>` in the link colour, with an optional underline. */

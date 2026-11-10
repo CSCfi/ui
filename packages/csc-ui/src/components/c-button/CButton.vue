@@ -861,4 +861,17 @@ onBeforeUnmount(() => {
   childObserver?.disconnect();
   adopt(null);
 });
+
+/**
+ * Focus its button — its link under `href`, or the slotted button — as
+ * `focus()` does on a native button: the element renders no box of its own to
+ * take it.
+ *
+ * @param options - Passed on to that element's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  (slotted.value ?? rootRef.value)?.focus(options);
+};
+
+defineExpose({ focus });
 </script>

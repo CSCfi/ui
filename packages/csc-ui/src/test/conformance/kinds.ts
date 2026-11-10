@@ -76,10 +76,7 @@ export const KNOWN_DOUBLE_EMITTERS: readonly string[] = [];
  * `trigger.focus()` on a `display: contents` host, which is not focusable.
  * The suite asserts the inverse so fixing one forces the list to shrink.
  */
-export const KNOWN_FOCUS_LOSS_ON_CLOSE: readonly string[] = [
-  // CMenu.vue: `getTriggerEl()?.focus?.()` after Escape.
-  'c-menu',
-];
+export const KNOWN_FOCUS_LOSS_ON_CLOSE: readonly string[] = [];
 
 /**
  * Components whose `<slot>` sits on an opaque surface that declares no ink, so
