@@ -1,26 +1,22 @@
 <template>
   <div :class="ui.root()" part="root">
-    <label
-      :class="[
-        ui.bar({ singleLine }),
-        { 'c-progress--indeterminate': indeterminate },
-      ]"
-      :style="{ '--_c-progress-bar-value': `${safeValue}%` }"
-      class="c-progress"
-      part="bar"
+    <div
+      :aria-label="label || (controlAttrs['aria-label'] as string) || undefined"
+      :aria-valuenow="indeterminate ? undefined : String(safeValue)"
+      :class="ui.track({ singleLine })"
+      aria-valuemax="100"
+      aria-valuemin="0"
+      part="track"
+      role="progressbar"
     >
-      <progress
-        :aria-label="
-          label || (controlAttrs['aria-label'] as string) || undefined
-        "
-        :aria-valuenow="indeterminate ? undefined : String(safeValue)"
-        :value="indeterminate ? undefined : safeValue"
-        max="100"
-        role="progressbar"
-      >
-        {{ indeterminate ? '' : `${safeValue}%` }}
-      </progress>
-    </label>
+      <span :class="ui.clip()">
+        <span
+          :class="ui.bar({ indeterminate })"
+          :style="indeterminate ? undefined : { width: `${safeValue}%` }"
+          part="bar"
+        />
+      </span>
+    </div>
 
     <div
       v-if="!indeterminate && !hideDetails"
@@ -34,8 +30,9 @@
 
 <script setup lang="ts">
 /**
- * @csspart root - The outer flex wrapper around the bar and the details line
- * @csspart bar - The visible track of the progress bar, wrapping the native `<progress>` element
+ * @csspart root - The outer flex wrapper around the progress track and the details line
+ * @csspart track - The progress track: the ground the bar grows along, carrying the progressbar role. Its padding is the frame around the bar
+ * @csspart bar - The bar showing the value: the fill, or the looping sweep while indeterminate
  * @csspart details - The percentage and label text line
  */
 import { tv } from 'tailwind-variants';
@@ -48,45 +45,52 @@ import { useIdReferences } from '../../shared/useIdReferences';
 // attrs on the host element instead of tripping the "renders fragment" warning.
 defineOptions({ inheritAttrs: false });
 
-// ARIA attributes on the element reach the native control.
+// ARIA attributes on the element reach the progress track.
 const { controlAttrs } = useControlAttrs();
 
 /**
- * Styling lives in this `tailwind-variants` config: the `root`
- * flex wrapper, the `bar` (label) box, and the `details` percentage line, with
- * the `singleLine` / `negative` states as variants. The old per-component
- * `--c-progress-bar-*` indirection vars are dropped; values are authored
- * directly against semantic tokens (the muted surface track, the primary fill
- * and the error role for a negative value) and the literal 16px
- * height / 4px border the defaults resolved to.
+ * The progress track and the bar are plain elements, so `::part(track)` and
+ * `::part(bar)` reach every colour and size (ADR-0086). The track owns the
+ * geometry: 16px tall, its 4px padding the frame, and the bar fills its
+ * content box. `clip` (internal) rounds that content box, so the indeterminate
+ * sweep stays inside the frame. Both paint opaque tints at the 75% the 3.x
+ * see-through bar showed (ADR-0082), so a consumer colour paints as written.
+ * The track pins the tint scale to 1: a tinted container halves a tint's
+ * share for the labels on it, and the bar carries none, so there too it mixes
+ * into the container what its see-through look showed.
  *
- * The native `<progress>` element (with its `::-webkit-*` / `::-moz-*`
- * pseudo-elements) and the indeterminate `::before` + `@keyframes` are not
- * expressible as utilities, so they remain in the escape-hatch <style> below.
- * The `c-progress` / `c-progress--indeterminate` marker classes are
- * the hooks those rules target; `--_c-progress-bar-value` carries the dynamic
- * percentage into the Firefox/indeterminate rules. Customization is via the
- * stamped parts.
+ * In a forced-colors mode a background is forced to `Canvas`, so the bar
+ * paints `Highlight` (over a consumer colour too) and the track outlines in
+ * `CanvasText`.
  */
 const progress = tv({
   defaultVariants: {
+    indeterminate: false,
     negative: false,
     singleLine: false,
   },
   slots: {
-    bar: 'relative m-1 h-2 w-[calc(100%-8px)] basis-full transform-gpu overflow-hidden rounded-2xl bg-surface-muted opacity-75 shadow-[0_0_0_4px_var(--c-surface-muted)] focus-within:outline-2 focus-within:outline-offset-6 focus-within:outline-primary focus-within:outline-solid',
+    bar: 'block h-full rounded-[inherit] bg-tint-primary/75 transition-[width] duration-300 ease-in-out forced-colors:bg-[Highlight]! forced-colors:forced-color-adjust-none',
+    clip: 'relative block h-full transform-gpu overflow-hidden rounded-[inherit]',
     details: 'mt-0.5 basis-full pl-4 text-end text-sm whitespace-nowrap',
-    // 16px design height minus 2×4px border = 8px (h-2); 100% minus 2×4px (w-...).
     root: 'flex flex-wrap items-center',
+    track:
+      'h-4 w-full basis-full rounded-full bg-tint-surface-muted/75 p-1 [--_c-tint-scale:1] forced-colors:outline forced-colors:outline-[CanvasText]',
   },
   variants: {
+    // The sweep: half the track wide, starting a track's width to the left.
+    indeterminate: {
+      true: {
+        bar: 'absolute top-0 -left-full w-1/2 origin-left animate-[c-progress-indeterminate_2s_linear_infinite]',
+      },
+    },
     negative: {
       true: { details: 'text-on-surface-error' },
     },
     singleLine: {
       true: {
-        bar: 'flex-1',
         details: 'flex-none',
+        track: 'flex-1',
       },
     },
   },
@@ -97,12 +101,12 @@ const ui = computed(() => progress());
 interface CProgressBarProps {
   /**
    * Hides the details line (the percentage and `label`); `label` still
-   * names the bar.
+   * names the progress bar.
    */
   hideDetails?: boolean;
 
   /**
-   * Replaces the fill with a looping sweep for work of unknown duration,
+   * Turns the bar into a looping sweep for work of unknown duration,
    * hiding the details line and exposing no value.
    */
   indeterminate?: boolean;
@@ -116,12 +120,12 @@ interface CProgressBarProps {
   label?: string;
 
   /**
-   * Places the details line beside the bar instead of below it.
+   * Places the details line beside the progress track instead of below it.
    */
   singleLine?: boolean;
 
   /**
-   * Completion percentage, 0 to 100. The fill clamps a value outside that
+   * Completion percentage, 0 to 100. The bar clamps a value outside that
    * range; the details line shows it as given, a negative one in the error
    * colour.
    */
@@ -163,71 +167,11 @@ useIdReferences('[role="progressbar"]');
 </script>
 
 <!--
-  Escape-hatch CSS: only constructs Tailwind utilities cannot
-  express. The box layout, colours and the singleLine/negative states live in
-  the `tv` config above. Remaining here:
-   - the native <progress> element and its `::-webkit-progress-*` /
-     `::-moz-progress-bar` pseudo-elements (form-control internals);
-   - the indeterminate `::before` and its bespoke `@keyframes`.
-  Tokens only; the dynamic `--_c-progress-bar-value` is bound inline in the
-  template. The `c-progress` / `c-progress--indeterminate` marker classes are
-  the hooks these rules target.
+  Escape-hatch CSS: the indeterminate sweep's keyframes, which Tailwind
+  utilities cannot declare. The sweep keeps moving under reduced motion: the
+  motion is the information (ADR-0057).
 -->
 <style>
-.c-progress progress {
-  background-color: var(--c-surface-muted);
-  border-radius: 16px;
-  width: 100%;
-  overflow: hidden;
-  height: 8px;
-  position: absolute;
-  border: none;
-  appearance: none;
-}
-
-.c-progress progress:focus {
-  outline: none;
-}
-
-.c-progress progress::-webkit-progress-bar {
-  background-color: transparent;
-}
-
-.c-progress progress::-webkit-progress-value {
-  transition: width 0.3s ease-in-out;
-  background-color: var(--c-primary);
-  border-radius: 16px;
-}
-
-.c-progress progress::-moz-progress-bar {
-  transition: padding-bottom 1s;
-  padding-left: 60px;
-  padding-bottom: var(--_c-progress-bar-value);
-  background-color: var(--c-primary);
-  height: 0;
-  transform-origin: 0 0;
-  transform: rotate(-90deg) translateX(-60px);
-}
-
-.c-progress progress:indeterminate::-moz-progress-bar {
-  width: 0;
-}
-
-.c-progress--indeterminate::before {
-  content: '';
-  z-index: 1;
-  position: absolute;
-  background-color: var(--c-primary);
-  border-radius: 16px;
-  left: -100%;
-  height: 100%;
-  transform: translateX(var(--_c-progress-bar-value, 0%));
-  transition: transform 0.3s ease-in-out;
-  animation: c-progress-indeterminate 2s infinite linear;
-  width: 50%;
-  transform-origin: 0% 50%;
-}
-
 @keyframes c-progress-indeterminate {
   0% {
     transform: translateX(100%) scaleX(1);

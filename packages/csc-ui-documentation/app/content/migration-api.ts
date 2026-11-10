@@ -38,6 +38,33 @@ export type V3ApiKind =
 
 export const V3_API_CHANGES: V3ApiChange[] = [
   {
+    change: 'Gone: recolour the bar with `::part(bar) { background-color }`.',
+    kind: 'cssProperty',
+    name: '--c-progress-bar-color',
+    tag: 'c-progress-bar',
+  },
+  {
+    change:
+      'Gone: recolour the progress track with `::part(track) { background-color }`.',
+    kind: 'cssProperty',
+    name: '--c-progress-bar-background-color',
+    tag: 'c-progress-bar',
+  },
+  {
+    change:
+      'Gone: size the progress track with `::part(track) { height }`; the bar fills it inside its frame.',
+    kind: 'cssProperty',
+    name: '--c-progress-bar-height',
+    tag: 'c-progress-bar',
+  },
+  {
+    change:
+      'Gone: the frame around the bar is the progress track’s padding, `::part(track) { padding }`.',
+    kind: 'cssProperty',
+    name: '--c-progress-bar-border-width',
+    tag: 'c-progress-bar',
+  },
+  {
     change:
       'Per-component CSS custom properties are gone. Restyle the component’s parts with `::part()`; see Styling & customization.',
     kind: 'cssProperty',

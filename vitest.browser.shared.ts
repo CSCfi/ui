@@ -112,6 +112,18 @@ export const browserProject = (
 ): BrowserConfigOptions => ({
   commands: {
     /**
+     * Switch the page's `forced-colors` for a spec that asserts how a
+     * component draws in a forced-colors mode (Windows High Contrast). Restore
+     * `none` after.
+     */
+    emulateForcedColors: async (
+      ctx: BrowserCommandContext,
+      value: 'active' | 'none',
+    ) => {
+      await ctx.page.emulateMedia({ forcedColors: value });
+    },
+
+    /**
      * Switch the page's `prefers-reduced-motion` for a spec that asserts the
      * motion itself. The context default (`browserContext`) is `reduce`;
      * restore it after.
