@@ -125,6 +125,9 @@ platform; with a slotted button, the page's own `<button>` is the control and
 `root` only paints. When only an icon is slotted, provide an accessible name on the
 host, e.g. `aria-label="Close"`.
 
+The element's `focus()` focuses that control, as on a native button, so a
+page can move focus to it and a menu or popover returns focus to it.
+
 ## Customization
 
 Restyle via CSS parts from your own stylesheet:

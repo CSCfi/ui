@@ -575,3 +575,57 @@ describe('slotted button (ADR-0085)', () => {
     m.unmount();
   });
 });
+
+// A menu or popover returns focus to its trigger with focus(); the element
+// renders no box of its own, so the control it renders or frames takes it.
+describe('c-button focus()', () => {
+  it('focuses its link under href, and a slotted button', async () => {
+    const link = await mount('c-button', {
+      attrs: { href: '#docs' },
+      html: 'Docs',
+    });
+
+    link.host.focus();
+
+    expect(link.part('root').localName).toBe('a');
+    expect(link.host.shadowRoot!.activeElement).toBe(link.part('root'));
+    link.unmount();
+
+    const framed = await mount('c-button', { html: '<button>Save</button>' });
+
+    await settled();
+    framed.host.focus();
+
+    expect(document.activeElement).toBe(framed.host.querySelector('button'));
+    framed.unmount();
+  });
+
+  it('leaves a disabled button unfocused, as a native one', async () => {
+    const m = await mount('c-button', {
+      attrs: { disabled: true },
+      html: 'Save',
+    });
+
+    m.host.focus();
+
+    expect(document.activeElement).not.toBe(m.host);
+    m.unmount();
+  });
+
+  it('passes its options on to the button', async () => {
+    const m = await mount('c-button', { html: 'Save' });
+
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+
+    try {
+      m.host.focus({ focusVisible: true });
+
+      expect(focus.mock.contexts.at(-1)).toBe(m.part('root'));
+      expect(focus.mock.lastCall?.[0]).toEqual({ focusVisible: true });
+      expect(m.part('root').matches(':focus-visible')).toBe(true);
+    } finally {
+      focus.mockRestore();
+      m.unmount();
+    }
+  });
+});

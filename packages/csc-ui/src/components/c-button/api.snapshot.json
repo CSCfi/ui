@@ -29,7 +29,9 @@
     "text"
   ],
   "events": {},
-  "methods": {},
+  "methods": {
+    "focus": "(options?: FocusOptions): void"
+  },
   "parts": [
     "content",
     "description",

@@ -1,5 +1,6 @@
 <template>
   <button
+    ref="rootRef"
     :aria-busy="loading ? 'true' : undefined"
     :aria-disabled="loading ? 'true' : undefined"
     :class="ui.root()"
@@ -465,6 +466,8 @@ const ui = computed(() =>
   }),
 );
 
+const rootRef = useTemplateRef<HTMLButtonElement>('rootRef');
+
 const containerRef = useTemplateRef<HTMLElement>('containerRef');
 
 const spinnerSize = computed(() => {
@@ -494,6 +497,18 @@ const onClick = (event: MouseEvent) => {
 
 // The page's id references on the element reach the element carrying its role.
 useIdReferences('[part~="root"]');
+
+/**
+ * Focus its button, as `focus()` does on a native button: the element renders
+ * no box of its own to take it.
+ *
+ * @param options - Passed on to the button's `focus()`
+ */
+const focus = (options?: FocusOptions): void => {
+  rootRef.value?.focus(options);
+};
+
+defineExpose({ focus });
 </script>
 
 <!--
