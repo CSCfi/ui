@@ -1,5 +1,27 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-rc.6
+
+### Patch Changes
+
+- [#322](https://github.com/CSCfi/ui/pull/322) [`f4cd793`](https://github.com/CSCfi/ui/commit/f4cd7937e95071d20f59d3e3046d7a1a35abaa49) Thanks [@razorfever](https://github.com/razorfever)! - `focus()` on a `c-button` or `c-icon-button` now focuses its button (its
+  link, or the slotted button), as on a native button. It did nothing, so a
+  `c-menu` closed from one of them left focus on the page instead of on the
+  trigger.
+
+- [#322](https://github.com/CSCfi/ui/pull/322) [`04df6ad`](https://github.com/CSCfi/ui/commit/04df6ad5fbe308805f898c51be5ee450215a80a9) Thanks [@razorfever](https://github.com/razorfever)! - Picking a `c-menu` item or pressing Escape returns focus to the menu's
+  trigger with its focus ring when a key closed the menu, in Firefox and Safari
+  too; a mouse pick leaves no ring. Escape from inside a `c-popover` returns
+  focus to its trigger the same way, a `c-button` or `c-icon-button` trigger
+  included.
+
+- [#322](https://github.com/CSCfi/ui/pull/322) [`fe59b03`](https://github.com/CSCfi/ui/commit/fe59b03ab64ab12f5619dc25a5419d279bc3d9b7) Thanks [@razorfever](https://github.com/razorfever)! - The `open` property of `c-menu`, `c-popover` and `c-tooltip` follows the
+  panel: it reads `true` while the user has the panel open and `false` once they
+  close it, and setting it to `true` again reopens a panel the user closed. It
+  used to keep the page's last value, so that second write did nothing.
+- Updated dependencies [[`f4cd793`](https://github.com/CSCfi/ui/commit/f4cd7937e95071d20f59d3e3046d7a1a35abaa49), [`04df6ad`](https://github.com/CSCfi/ui/commit/04df6ad5fbe308805f898c51be5ee450215a80a9), [`fe59b03`](https://github.com/CSCfi/ui/commit/fe59b03ab64ab12f5619dc25a5419d279bc3d9b7)]:
+  - @cscfi/csc-ui@4.0.0-rc.6
+
 ## 4.0.0-rc.5
 
 ### Minor Changes
