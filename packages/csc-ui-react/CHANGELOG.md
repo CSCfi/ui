@@ -1,5 +1,29 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-rc.7
+
+### Minor Changes
+
+- [#324](https://github.com/CSCfi/ui/pull/324) [`a8217a9`](https://github.com/CSCfi/ui/commit/a8217a9d8d1a92a080ad60c29a322398d49085e4) Thanks [@razorfever](https://github.com/razorfever)! - `c-file-upload` has a `progress-bar` part: the bar inside an uploading row's
+  `progress` track, the indeterminate sweep included, so `::part(progress-bar)`
+  can recolour it.
+
+- [#324](https://github.com/CSCfi/ui/pull/324) [`6761e14`](https://github.com/CSCfi/ui/commit/6761e14156c8c565e9b4c402abd905d3676e0d00) Thanks [@razorfever](https://github.com/razorfever)! - `c-progress-bar`'s colours can be restyled with `::part()`. The new
+  `::part(track)` is the progress track the bar grows along: its
+  `background-color`, its `height`, and its `padding`, the frame around the bar.
+  `::part(bar)` is the bar showing the value, the indeterminate sweep included.
+  **`::part(bar)` used to name the track: move such a rule to `::part(track)`.**
+
+  The bar draws with plain elements instead of a native `<progress>`, so it
+  looks the same in every browser and, on the page or inside an alert or a data
+  table row, as before. In a forced-colors mode (Windows High Contrast) the bar
+  paints the system highlight colour.
+
+### Patch Changes
+
+- Updated dependencies [[`a8217a9`](https://github.com/CSCfi/ui/commit/a8217a9d8d1a92a080ad60c29a322398d49085e4), [`6761e14`](https://github.com/CSCfi/ui/commit/6761e14156c8c565e9b4c402abd905d3676e0d00)]:
+  - @cscfi/csc-ui@4.0.0-rc.7
+
 ## 4.0.0-rc.6
 
 ### Patch Changes
