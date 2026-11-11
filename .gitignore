@@ -16,3 +16,5 @@ temp/
 
 # Vitest attachments (screenshot diffs)
 .vitest/
+
+**/core

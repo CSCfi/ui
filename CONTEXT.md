@@ -401,6 +401,18 @@ _Avoid_: Dismissible (the alert's former prop), removable, closable (one spellin
 
 ### Progress & loading
 
+**Progress bar** (`c-progress-bar`):
+The linear progress indicator: a **bar** along a **progress track**, with an optional details line. **Determinate**, or **indeterminate** with a looping sweep for work of unknown duration.
+_Avoid_: Linear progress, progress line, bar (that is its value-showing part)
+
+**Progress track**:
+The ground a progress indicator's **bar** grows along: the recessed `surface-muted` pill of a **progress bar** or ring of a **progress circle**, with no edge of its own. Stamped as the `track` part; a `c-file-upload` row's is its `progress` part. Not a **track**: it holds no choices and carries no hairline.
+_Avoid_: Track (unqualified — that is the button group's well), rail, background, well
+
+**Bar** (progress):
+The element of a progress indicator that shows the value — the fill along a **progress track**, the arc of a **progress circle**, and while indeterminate the looping sweep. Stamped as the `bar` part; a `c-file-upload` row's is its `progress-bar` part.
+_Avoid_: Fill (a role's painted background — the bar paints the `primary` one), indicator (selection controls, and the tabs' **sliding indicator**), value (the number), progress (the whole component)
+
 **Progress circle** (`c-progress-circle`):
 The circular counterpart of `c-progress-bar`, for **determinate** progress only — it always renders a known value and has no indeterminate mode. Unknown-duration waiting is the **spinner**'s job; the boundary is the axis (known value vs pure activity), not the shape.
 _Avoid_: Progress circular (Vuetify vocabulary), progress ring, spinner (that is the indeterminate indicator), donut (dataviz vocabulary)
@@ -482,7 +494,7 @@ A role-named custom property whose value **resolves to a different palette token
 _Avoid_: Role token, alias token, palette token (a semantic token points *at* a palette token; it is not itself a ramp value)
 
 **Surface ladder**:
-The mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals), and the **inverted surface** (`surface-inverted`, maximum-emphasis transient layers — toasts, tooltips). In light mode the first three are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. The inverted tier flips instead of climbing — see **Inverted surface**. Below `surface` sit two recessed rungs — `surface-muted` (subdued in-component fills: disabled controls, progress tracks) and, lowest, `surface-sunken` (the page canvas `c-main` paints, and the **track** fill). Each rung pairs with an **`on-` token** for its foreground.
+The mode-aware neutral background roles ordered by elevation: `surface` (page background), `surface-raised` (cards/panels), `surface-overlay` (floating layers — popovers, menus, modals), and the **inverted surface** (`surface-inverted`, maximum-emphasis transient layers — toasts, tooltips). In light mode the first three are all near-white and depth reads from shadow; in dark mode each step is progressively lighter so elevation reads **without** relying on shadows. The inverted tier flips instead of climbing — see **Inverted surface**. Below `surface` sit two recessed rungs — `surface-muted` (subdued in-component fills: disabled controls, **progress tracks**) and, lowest, `surface-sunken` (the page canvas `c-main` paints, and the **track** fill). Each rung pairs with an **`on-` token** for its foreground.
 _Avoid_: Layer, z-level, elevation token (the ladder *is* the elevation model; don't introduce a parallel term)
 
 **Paired ink**:
@@ -589,7 +601,7 @@ _Avoid_: Pill (informal), active fill (that is a button's own selected look, not
 
 **Track** (`c-button-group`, `c-tab-buttons`):
 The recessed ground a control's choices sit on — the framed well the buttons of a **button group** or **tab buttons** sit in, stamped as that component's `root` part. It paints an opaque fill, so the labels on it keep one ground wherever the control is placed, and a **load-bearing hairline**, so its boundary reads on every **surface ladder** rung. In a tab strip the **sliding indicator** glides inside it.
-_Avoid_: Well, rail, background, box ("segmented-control box" describes its shape; the track is the concept)
+_Avoid_: Well, rail, background, box ("segmented-control box" describes its shape; the track is the concept), progress track (a progress indicator's ground)
 
 **Appearance** (`c-button`, `c-icon-button`):
 How strongly a button reads, set by `appearance`: `filled` (the default) for the main action of a view, then `outlined`, `ghost` and `text`, each lighter than the last. The **variant** and `inverted` are separate axes that combine with it. Until 5.0 the 3.x `outlined` / `ghost` / `text` booleans still choose one while `appearance` is unset (**deprecated**).
@@ -826,6 +838,8 @@ _Avoid_: custom lint rule (a guard is not an oxlint or ESLint rule), check (unqu
 - **"Ring"** is overloaded: (a) the radio indicator's shape, (b) Tailwind `ring-*` box-shadow utilities, (c) the keyboard **focus ring**. Say **"radio indicator"**, **"`ring-*` utility"** and **"focus ring"** respectively. (A `ring` semantic token existed until 4.0.0; nothing painted it, and it was removed.)
 - **"Tag"** is overloaded: (a) a component's *tag name* (`<c-button>` — the canonical identifier, see **Component**), (b) the **Tag** component `c-tag`, including the tags a **multiple** field renders for its selections (the `tag` part), (c) a docblock tag (`@csspart`). Say **"tag name"** for (a), plain **"tag"** only for (b) — the `max-tags` prop counts these — and **"docblock tag"** for (c).
 - **"Themeable"** (docs copy: "themable") means *re-seedable* — one of the eight **families** a consumer may re-brand (ADR-0011). Restyling one component's colours from consumer CSS is **"recolour via `::part()`"**, never "theming".
+- **"Track"** is overloaded: (a) the **track** a **button group**'s or **tab buttons**' choices sit in, (b) the **progress track** a **bar** grows along. Say **"track"** only for (a) and **"progress track"** for (b), though the part keeps the name `track`.
+- **"Bar"** is overloaded: (a) the **progress bar** component, (b) a progress indicator's **bar** part. Say **"progress bar"** for (a) and plain **"bar"** for (b).
 - **"Path"** is overloaded: (a) an SVG path datum (`c-icon`'s `path` prop), (b) a tree-select item's ancestor chain (see **Path**), (c) a URL or file path. Say **"icon path"** for (a), plain **"path"** only in the tree-select sense, and **"URL"** / **"file path"** for (c).
 - **"Default"** is overloaded: (a) a **built-in default** (the library's value for an unset prop), (b) an **app default** (a consumer's per-tag value via `applyDefaults`), (c) the `'default'` member of a size union (`size="default"`), (d) a tailwind-variants `defaultVariants` entry. Say **"built-in default"** and **"app default"** for (a) and (b), **"the `default` size"** for (c), and **"tv variant default"** for (d).
 - **"Variant"** is overloaded: (a) a button's colour **variant** (`variant`), (b) the docs' **example variant** (a per-flavor sibling of a canon), (c) a tailwind-variants `variants` entry. Say **"variant"** only for (a), **"example variant"** for (b), and **"tv variant"** for (c).

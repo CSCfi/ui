@@ -171,6 +171,7 @@
             :style="
               row.progress === null ? undefined : { width: `${row.progress}%` }
             "
+            part="progress-bar"
           />
         </span>
       </li>
@@ -493,7 +494,8 @@ interface CFileUploadProps {
  * @csspart list - The list of file entries and rejected files
  * @csspart entry - One file entry's row
  * @csspart rejected - One rejected file's row
- * @csspart progress - The progress bar along an uploading row's bottom edge
+ * @csspart progress - The progress track along an uploading row's bottom edge
+ * @csspart progress-bar - The bar inside it showing the row's upload progress, or its looping sweep while indeterminate
  * @cssstate drag-over - Present while files are dragged over the field
  */
 import {

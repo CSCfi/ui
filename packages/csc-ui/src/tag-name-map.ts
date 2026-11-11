@@ -1927,11 +1927,11 @@ export interface CPopoverElement extends Omit<HTMLElement, 'distance' | 'heading
 export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | 'indeterminate' | 'label' | 'singleLine' | 'value'> {
   /**
    * Hides the details line (the percentage and `label`); `label` still
-   * names the bar.
+   * names the progress bar.
    */
   hideDetails?: boolean;
   /**
-   * Replaces the fill with a looping sweep for work of unknown duration,
+   * Turns the bar into a looping sweep for work of unknown duration,
    * hiding the details line and exposing no value.
    */
   indeterminate?: boolean;
@@ -1940,10 +1940,10 @@ export interface CProgressBarElement extends Omit<HTMLElement, 'hideDetails' | '
    * accessible name.
    */
   label?: string;
-  /** Places the details line beside the bar instead of below it. */
+  /** Places the details line beside the progress track instead of below it. */
   singleLine?: boolean;
   /**
-   * Completion percentage, 0 to 100. The fill clamps a value outside that
+   * Completion percentage, 0 to 100. The bar clamps a value outside that
    * range; the details line shows it as given, a negative one in the error
    * colour.
    */

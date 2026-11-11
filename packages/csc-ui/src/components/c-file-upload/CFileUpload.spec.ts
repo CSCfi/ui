@@ -482,6 +482,36 @@ describe('uploading', () => {
     expect(events.of('change')).toHaveLength(1);
   });
 
+  // ADR-0086: a row's progress track is `progress`, its bar `progress-bar`.
+  it('::part(progress-bar) recolours an uploading row’s bar', async () => {
+    const sheet = document.createElement('style');
+
+    sheet.textContent =
+      'c-file-upload.recolour::part(progress-bar) { background-color: rgb(200, 100, 50); }';
+    document.head.append(sheet);
+
+    try {
+      const { calls, upload } = controlledUpload();
+
+      const m = await mountField({ upload }, { class: 'recolour' });
+
+      await pick(m, [fileOf('data.csv')]);
+      calls[0].context.onProgress(0.5);
+      await settle();
+
+      const bar = m.part('progress-bar');
+
+      expect(m.part('progress').contains(bar)).toBe(true);
+      expect(getComputedStyle(bar).backgroundColor).toBe('rgb(200, 100, 50)');
+      expect(bar.getBoundingClientRect().width).toBeCloseTo(
+        m.part('progress').getBoundingClientRect().width / 2,
+        0,
+      );
+    } finally {
+      sheet.remove();
+    }
+  });
+
   it("shows a thrown Error's message, else the fallback", async () => {
     const { calls, upload } = controlledUpload();
 

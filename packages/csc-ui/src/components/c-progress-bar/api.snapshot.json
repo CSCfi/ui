@@ -13,7 +13,8 @@
   "parts": [
     "bar",
     "details",
-    "root"
+    "root",
+    "track"
   ],
   "propertyOnly": [],
   "props": {
