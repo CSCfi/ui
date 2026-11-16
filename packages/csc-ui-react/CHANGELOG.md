@@ -1,5 +1,44 @@
 # @cscfi/csc-ui-react
 
+## 4.0.0-rc.8
+
+### Minor Changes
+
+- [#326](https://github.com/CSCfi/ui/pull/326) [`4b372a7`](https://github.com/CSCfi/ui/commit/4b372a76ce507fdf36c3196ed5b0c58fab8f2ef7) Thanks [@razorfever](https://github.com/razorfever)! - `c-button`, `c-icon-button`, `c-menu-item`, `c-accordion-item` and
+  `c-breadcrumb-item` now size a slotted icon that has no `size` of its own to
+  match the component: 20px in a small button and 24px in other buttons, 18, 22
+  or 24px in an icon button, 18px in a menu item, 24px in an accordion header,
+  and 20px in a breadcrumb crumb (18px when folded). A `c-icon` with its own
+  `size` keeps it, and a plain `<svg>` or `<img>` is sized the same way.
+
+  An unsized `c-icon` still draws at 24px elsewhere, but its `size` property
+  now reads `undefined` and it no longer carries a `size="24"` attribute.
+
+- [#326](https://github.com/CSCfi/ui/pull/326) [`ea3f948`](https://github.com/CSCfi/ui/commit/ea3f948a805321658e60ecd6f587e526eff812a0) Thanks [@razorfever](https://github.com/razorfever)! - `c-status` has a softer look and three new options. `appearance="outlined"`
+  keeps the ground behind the pill, with a grey edge and plain text.
+  `marker="icon"` puts the status icon on a tinted halo before the text, and
+  `marker="dot"` a dot in the status colour. `size` adds `small` (20px) and
+  `large` (32px) to the 24px default. All three take an app default
+  (`applyDefaults({ 'c-status': { marker: 'dot' } })`), and `marker="none"`
+  takes the marker off a single pill. An icon in the new `icon` slot replaces
+  the marker and is sized to match the pill.
+
+  The pill is now as wide as its text and no longer at least 88px wide. To keep
+  pills in a column the same width, set
+  `c-status::part(root) { min-width: 88px; }`.
+
+### Patch Changes
+
+- [#326](https://github.com/CSCfi/ui/pull/326) [`cb0e10e`](https://github.com/CSCfi/ui/commit/cb0e10eac044b50197b5f84156a65b0e4e294244) Thanks [@razorfever](https://github.com/razorfever)! - `c-file-upload` sends a file with the media type it accepted it by. When the
+  browser reports none, as Chrome on Windows does for a `.pptx` without Office,
+  the entry's `type`, its `file` and the file the upload function receives now
+  carry the type the extension implies, so the upload no longer goes out as
+  `application/octet-stream`. Untyped `.py`, `.r`, `.ipynb` and `.sh` files
+  likewise go out as `text/x-python`, `text/x-r`, `application/x-ipynb+json`
+  and `application/x-sh`.
+- Updated dependencies [[`cb0e10e`](https://github.com/CSCfi/ui/commit/cb0e10eac044b50197b5f84156a65b0e4e294244), [`4b372a7`](https://github.com/CSCfi/ui/commit/4b372a76ce507fdf36c3196ed5b0c58fab8f2ef7), [`ea3f948`](https://github.com/CSCfi/ui/commit/ea3f948a805321658e60ecd6f587e526eff812a0)]:
+  - @cscfi/csc-ui@4.0.0-rc.8
+
 ## 4.0.0-rc.7
 
 ### Minor Changes
