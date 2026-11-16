@@ -1,8 +1,9 @@
 /**
- * The pure half of `c-file-upload` (ADR-0071): `accept` matching, the decimal
- * byte formatter, the file-type icon category, the name split that keeps an
- * extension visible, the upload-error wording rule and the screening of one
- * add into accepted and rejected files. No DOM — `files.node.spec.ts`.
+ * The pure half of `c-file-upload` (ADR-0071): `accept` matching, the media
+ * type an added file carries, the decimal byte formatter, the file-type icon
+ * category, the name split that keeps an extension visible, the upload-error
+ * wording rule and the screening of one add into accepted and rejected files.
+ * No DOM — `files.node.spec.ts`.
  */
 
 /** The icon family a file belongs to (decision 19 of `_plan/c-file-upload.md`). */
@@ -100,6 +101,20 @@ const extensionOf = (name: string): string => {
 /** The file's media type, else the one its extension suggests, else `''`; lowercase. */
 export const mediaType = (file: Pick<FileFacts, 'name' | 'type'>): string =>
   (file.type || EXTENSION_TYPES[extensionOf(file.name)] || '').toLowerCase();
+
+/**
+ * The file typed by `mediaType`: the same `File` when the browser reported a
+ * type or the extension implies none, else a new `File` over the same bytes —
+ * so a `.pptx` Chrome on Windows reports untyped is sent as one, not as
+ * `application/octet-stream`.
+ */
+export const withMediaType = (file: File): File => {
+  const type = mediaType(file);
+
+  return type === file.type
+    ? file
+    : new File([file], file.name, { lastModified: file.lastModified, type });
+};
 
 /**
  * Whether a file passes an `accept` list in the native syntax — `.pdf`,

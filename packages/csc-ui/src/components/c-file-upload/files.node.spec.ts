@@ -14,6 +14,7 @@ import {
   screenFiles,
   splitName,
   uploadErrorText,
+  withMediaType,
 } from './files';
 
 const file = (name: string, type = '', size = 100) => ({ name, size, type });
@@ -51,6 +52,35 @@ describe('matchesAccept', () => {
     expect(matchesAccept(file('a.txt', 'text/plain'), '.pdf,image/*')).toBe(
       false,
     );
+  });
+});
+
+describe('withMediaType', () => {
+  const PPTX =
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+
+  it('types an untyped file by its extension, keeping its bytes and time', async () => {
+    const original = new File(['slides'], 'Slides.PPTX', { lastModified: 42 });
+
+    const typed = withMediaType(original);
+
+    expect(typed).not.toBe(original);
+    expect(typed.type).toBe(PPTX);
+    expect(typed.name).toBe('Slides.PPTX');
+    expect(typed.lastModified).toBe(42);
+    expect(await typed.text()).toBe('slides');
+  });
+
+  it('keeps the browser type, and an untyped file the map does not know', () => {
+    const csv = new File(['x'], 'data.csv', {
+      type: 'application/vnd.ms-excel',
+    });
+
+    const unknown = new File(['x'], 'notes.xyz');
+
+    expect(withMediaType(csv)).toBe(csv);
+    expect(withMediaType(unknown)).toBe(unknown);
+    expect(unknown.type).toBe('');
   });
 });
 

@@ -42,6 +42,13 @@ takes part in native `<form>` submission (`CSelect.vue`, ADR-0023).
   always an array; `multiple` only decides whether a pick adds files or
   replaces the one entry. A server file the consumer supplies is an entry
   with no `File` and status `done`.
+  _Amended 2026-11-16_: an added file the browser reports untyped (a `.pptx`
+  on Windows without Office) takes the media type its extension implies,
+  the one `accept` already checks. The component re-wraps the `File` once
+  at add time, so the entry's `type`, its `file` and the file the upload
+  function receives all carry it, and a server that checks the type no
+  longer sees `application/octet-stream`. A browser type always wins, and a
+  `File` the consumer sets on an entry keeps its own type.
 - **Internal upload state is keyed by `id`.** The component generates ids
   for files it picks. For those ids its own status and progress win over a
   value set back, so a cloned or stale snapshot never rewinds an upload;
