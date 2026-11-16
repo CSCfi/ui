@@ -75,13 +75,7 @@ interface CToastProps {
  *
  * @internal
  */
-import {
-  mdiAlert,
-  mdiCheckCircle,
-  mdiClose,
-  mdiCloseCircle,
-  mdiInformation,
-} from '@mdi/js';
+import { mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import {
   computed,
@@ -94,6 +88,7 @@ import {
 } from 'vue';
 
 import { prefersReducedMotion } from '../../shared/reducedMotion';
+import { STATUS_ICONS } from '../../shared/statusIcons';
 import { useHostEmit } from '../../shared/useHostEmit';
 import {
   type CToastSwipeSample,
@@ -201,13 +196,7 @@ const host = useHost();
 
 const emit = useHostEmit<CToastEvents>();
 
-const icons: Record<string, string> = {
-  close: mdiClose,
-  error: mdiCloseCircle,
-  info: mdiInformation,
-  success: mdiCheckCircle,
-  warning: mdiAlert,
-};
+const icons: Record<string, string> = { ...STATUS_ICONS, close: mdiClose };
 
 const TYPES: readonly CToastType[] = ['error', 'info', 'success', 'warning'];
 
