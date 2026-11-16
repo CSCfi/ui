@@ -8,8 +8,11 @@
  *     export, type or type field removed or renamed; a type changed other
  *     than by widening a union; a built-in default changed; an optional type
  *     field made required, or a required one added;
- *   - added: anything new, and a prop newly marked `@deprecated` (the old
- *     name keeps working until the next major).
+ *   - added: anything new, a prop newly marked `@deprecated` (the old
+ *     name keeps working until the next major), and a prop that starts or
+ *     stops reading `undefined` until set (`@default`, ADR-0088): its
+ *     documented built-in is unchanged, so the switch is reported, not
+ *     hidden.
  *
  * A breaking diff needs a new `major` changeset in the branch; while the
  * changesets pre tag is anything but `alpha` (the release candidates) it
@@ -278,6 +281,21 @@ for (const tag of new Set([...baseTags, ...headTags])) {
     previous.subcomponents,
     next.subcomponents,
   );
+
+  // A prop that starts or stops reading `undefined` until set keeps its
+  // documented built-in, so it breaks nothing, but the switch is reported
+  // rather than hidden behind the unchanged default (ADR-0088).
+  for (const name of next.unsetUntilSet ?? []) {
+    if (!(previous.unsetUntilSet ?? []).includes(name)) {
+      added.push(`<${tag}> property \`${name}\` reads undefined until set`);
+    }
+  }
+
+  for (const name of previous.unsetUntilSet ?? []) {
+    if (!(next.unsetUntilSet ?? []).includes(name)) {
+      added.push(`<${tag}> property \`${name}\` reads its built-in when unset`);
+    }
+  }
 
   // Deprecating is additive (ADR-0074); lifting a deprecation breaks nothing.
   for (const name of next.deprecated ?? []) {

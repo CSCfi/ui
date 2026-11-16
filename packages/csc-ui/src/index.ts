@@ -109,7 +109,12 @@ export type {
   CSelectValue,
 } from './components/c-select/CSelect.vue';
 
-export type { CStatusType } from './components/c-status/CStatus.vue';
+export type {
+  CStatusAppearance,
+  CStatusMarker,
+  CStatusSize,
+  CStatusType,
+} from './components/c-status/CStatus.vue';
 
 export type { CTabButtonsSize } from './components/c-tab-buttons/CTabButtons.vue';
 

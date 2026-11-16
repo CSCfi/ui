@@ -6,7 +6,7 @@ export const Basic = () => {
   return (
     <CBreadcrumb>
       <CBreadcrumbItem aria-label="Home" href="https://csc.fi">
-        <CIcon path={mdiHome} size={20} slot="icon" />
+        <CIcon path={mdiHome} slot="icon" />
       </CBreadcrumbItem>
       <CBreadcrumbItem href="https://csc.fi/en/services">
         Services

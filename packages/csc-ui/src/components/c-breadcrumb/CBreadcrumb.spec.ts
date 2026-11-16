@@ -19,6 +19,7 @@ import {
   parkPointer,
   settle,
 } from '../../test/harness';
+import { expectSlottedIconSize, slottedIconBox } from '../../test/slottedIcon';
 
 const LABELS = [
   'Home',
@@ -709,6 +710,30 @@ describe('fold panel', () => {
 
     expect(isOpen(m)).toBe(false);
     expect(deepActiveElement()).not.toBe(document.body);
+  });
+
+  it('sizes a slotted icon that sets none to 20px in the row and 18px folded', async () => {
+    await expectSlottedIconSize('c-breadcrumb-item', 20, {
+      attrs: { href: '#home' },
+    });
+
+    const m = await mountBreadcrumb(
+      1200,
+      crumbsHtml(LABELS).replace(
+        '>Research',
+        `><c-icon slot="icon" path="${mdiHome}"></c-icon>Research`,
+      ),
+    );
+
+    const crumb = crumbs(m)[1];
+
+    expect(slottedIconBox(crumb).width).toBe(20);
+
+    await resize(m, 420);
+    await openFold(m);
+
+    expect(crumb.getAttribute('slot')).toBe('folded');
+    expect(slottedIconBox(crumb).width).toBe(18);
   });
 
   it('stays open while a narrower row folds more', async () => {

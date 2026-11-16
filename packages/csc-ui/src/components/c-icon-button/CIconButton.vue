@@ -192,7 +192,9 @@ import { useRipple } from '../../shared/useRipple';
  * override vars are NOT reintroduced.
  *
  * SIZE CONTRACT: driven by the `size` prop (`small` / `x-small` → smaller box
- * via the `size` variant); the inline spinner uses `spinnerSize` (px).
+ * via the `size` variant); the inline spinner uses `spinnerSize` (px). The
+ * slotted icon is sized to match (24, 22 or 18px) in the `<style>` block,
+ * unless it is a `c-icon` with its own `size`.
  *
  * Hover utilities are unguarded because the disabled variant sets
  * `pointer-events-none`, so a disabled button never receives :hover.
@@ -513,14 +515,17 @@ defineExpose({ focus });
 
 <!--
   Escape-hatch CSS: constructs Tailwind utilities cannot express.
-  - ::slotted(svg|i|span) — sizing consumer-provided light-DOM icon children
-    (a slotted `<c-icon>` sizes itself via its own `size` prop and inherits
-    colour via `currentColor`, so it needs no rule here).
+  - ::slotted(svg|img|i|span) — sizing consumer-provided light-DOM icon
+    children. A slotted `<c-icon>` without its own `size` takes the same size
+    from `--_c-icon-default-size` (c-icon's SIZE HOOKS); one with a `size`
+    keeps it, as the library's own tuned icons do. It inherits colour via
+    `currentColor`.
   All static / variant styling lives in the `tv` config above; the ripple is
   driven by the shared useRipple composable + transition utilities.
 -->
 <style>
 ::slotted(svg),
+::slotted(img),
 ::slotted(i),
 ::slotted(span) {
   width: 24px;
@@ -532,6 +537,7 @@ defineExpose({ focus });
 }
 
 :host([size='small']) ::slotted(svg),
+:host([size='small']) ::slotted(img),
 :host([size='small']) ::slotted(i),
 :host([size='small']) ::slotted(span) {
   width: 22px;
@@ -540,11 +546,24 @@ defineExpose({ focus });
 }
 
 :host([size='x-small']) ::slotted(svg),
+:host([size='x-small']) ::slotted(img),
 :host([size='x-small']) ::slotted(i),
 :host([size='x-small']) ::slotted(span) {
   width: 18px;
   height: 18px;
   font-size: 14px;
+}
+
+:host {
+  --_c-icon-default-size: 24px;
+}
+
+:host([size='small']) {
+  --_c-icon-default-size: 22px;
+}
+
+:host([size='x-small']) {
+  --_c-icon-default-size: 18px;
 }
 
 ::slotted(*) {

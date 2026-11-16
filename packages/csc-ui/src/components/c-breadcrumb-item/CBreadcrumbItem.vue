@@ -25,7 +25,7 @@
       part="content"
     >
       <span v-show="hasIcon" :class="ui.icon()">
-        <slot name="icon" />
+        <slot :class="ui.iconSlot()" name="icon" />
       </span>
 
       <span
@@ -105,6 +105,11 @@ import { useIdReferences } from '../../shared/useIdReferences';
  * The separator is an SVG, so it centres by its box like the icon; the label
  * is nudged into line with them by `capShift` (below), measured from the font
  * the page actually renders.
+ *
+ * `--_c-icon-default-size` sizes a slotted icon that sets none: 20px in the
+ * row, as c-button's small size, and 18px folded, as a c-menu-item. It reaches
+ * a `c-icon` without `size` (c-icon's SIZE HOOKS) and a plain `<svg>` or
+ * `<img>`; a `c-icon` with its own `size` keeps it.
  */
 const breadcrumbItem = tv({
   compoundVariants: [
@@ -142,6 +147,8 @@ const breadcrumbItem = tv({
     content:
       'm-0 flex min-w-0 items-center gap-2 whitespace-nowrap text-on-surface no-underline transition-colors duration-300 ease-in-out outline-none focus-visible:outline-2 focus-visible:outline-solid',
     icon: 'inline-flex shrink-0 items-center fill-current',
+    iconSlot:
+      '[&::slotted(img)]:size-(--_c-icon-default-size) [&::slotted(svg)]:size-(--_c-icon-default-size)',
     label: 'relative block min-w-0 truncate',
     root: 'flex min-w-0 items-center',
     separator: 'size-4 shrink-0 fill-current text-on-surface-muted',
@@ -155,11 +162,13 @@ const breadcrumbItem = tv({
       false: {
         content:
           'min-h-7 rounded-csc-md px-3 text-sm font-bold focus-visible:outline-offset-2',
+        icon: '[--_c-icon-default-size:20px]',
         root: 'shrink-0',
       },
       true: {
         content:
           'min-h-10 w-full rounded-csc-sm px-3 text-sm focus-visible:-outline-offset-2',
+        icon: '[--_c-icon-default-size:18px]',
         root: 'w-full',
       },
     },

@@ -13,6 +13,7 @@ import {
   settle,
   settled,
 } from '../../test/harness';
+import { expectSlottedIconSize } from '../../test/slottedIcon';
 
 describeButtonVariants('c-icon-button', {
   html: `<svg viewBox="0 0 24 24"><path d="${mdiCheck}" fill="currentColor" /></svg>`,
@@ -45,6 +46,20 @@ describe('c-icon-button', () => {
 });
 
 describe('c-icon-button loading', () => {
+  it('sizes a slotted icon that sets none to the button: 18, 22 and 24px', async () => {
+    for (const [size, px] of [
+      ['x-small', 18],
+      ['small', 22],
+      ['default', 24],
+    ] as const) {
+      await expectSlottedIconSize('c-icon-button', px, {
+        attrs: { 'aria-label': 'Star', size },
+        label: '',
+        slot: 'default',
+      });
+    }
+  });
+
   it('keeps its slotted name and tells assistive technology it is busy', async () => {
     const { deep, host } = await mount('c-icon-button', {
       attrs: { loading: true },

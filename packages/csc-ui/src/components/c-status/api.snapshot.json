@@ -1,20 +1,32 @@
 {
   "attributes": {
+    "appearance": "'filled' | 'outlined' = 'filled'",
+    "marker": "'dot' | 'icon' | 'none' = 'none'",
+    "size": "'default' | 'large' | 'small' = 'default'",
     "type": "'error' | 'info' | 'success' | 'warning'"
   },
   "cssProperties": [],
-  "defaultable": [],
+  "defaultable": [
+    "appearance",
+    "marker",
+    "size"
+  ],
   "events": {},
   "methods": {},
   "parts": [
+    "marker",
     "root"
   ],
   "propertyOnly": [],
   "props": {
+    "appearance": "'filled' | 'outlined' = 'filled'",
+    "marker": "'dot' | 'icon' | 'none' = 'none'",
+    "size": "'default' | 'large' | 'small' = 'default'",
     "type": "'error' | 'info' | 'success' | 'warning'"
   },
   "slots": [
-    "default"
+    "default",
+    "icon"
   ],
   "states": [],
   "subcomponents": [],

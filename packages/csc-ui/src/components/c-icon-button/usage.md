@@ -43,9 +43,10 @@ when both are set.
 
 ## Sizes
 
-`size` is `default` (40px), `small` (32px) or `x-small` (28px). A slotted
-`<svg>` is sized to match (24, 22 or 18px), but a slotted `c-icon` keeps its
-own `size` (24 by default), so set it to fit a smaller button. An icon drawn
+`size` is `default` (40px), `small` (32px) or `x-small` (28px). The slotted
+icon is sized to match (24, 22 or 18px): a `c-icon` without `size`, or a
+plain `<svg>` or `<img>`. A `c-icon` with its own `size` keeps it, for a
+glyph that looks too small or too large at the button's size. An icon drawn
 from `path` is always 24px.
 
 ## Badge

@@ -244,7 +244,7 @@ export interface CFileUploadEntry {
   /** The rejection text shown for a failed upload. */
   error?: string;
 
-  /** The browser file, for a file the user added. Absent on a server file. */
+  /** The browser file, for a file the user added, typed as `type` says. Absent on a server file. */
   file?: File;
 
   /** Stable identity: generated for an added file, the consumer's own for a server file. */
@@ -262,7 +262,7 @@ export interface CFileUploadEntry {
   /** Where the entry stands. */
   status: CFileUploadStatus;
 
-  /** The media type, as the browser reported it. */
+  /** The media type: the browser's, or the one its extension implies when the browser reports none. */
   type?: string;
 }
 
@@ -274,7 +274,7 @@ export type CFileUploadFunction = (
 
 /** One rejected file, as the `reject` event reports it. */
 export interface CFileUploadRejection {
-  /** The refused file. */
+  /** The refused file, as the browser handed it. */
   file: File;
 
   /** Why it was refused. */
@@ -550,6 +550,7 @@ import {
   screenFiles,
   splitName,
   uploadErrorText,
+  withMediaType,
 } from './files';
 
 /**
@@ -1184,16 +1185,20 @@ const addFiles = (candidates: Candidate<File>[]): void => {
     const added = accepted.map((file): CFileUploadEntry => {
       const id = createEntryId();
 
-      tracked.set(id, { controller: null, file });
+      // An untyped file the extension map knows is re-wrapped once, so the
+      // entry, its `file` and the upload function all carry that type.
+      const typed = withMediaType(file);
+
+      tracked.set(id, { controller: null, file: typed });
       setLive(id, { status });
 
       return {
-        file,
+        file: typed,
         id,
         name: file.name,
         size: file.size,
         status,
-        type: file.type,
+        type: typed.type,
       };
     });
 

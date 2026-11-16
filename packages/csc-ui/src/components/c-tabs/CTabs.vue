@@ -8,7 +8,7 @@
       variant="primary"
       @click="onBackClick"
     >
-      <c-icon :path="arrowLeft" />
+      <c-icon :path="arrowLeft" :size="24" />
     </c-icon-button>
 
     <div :class="ui.clip()">
@@ -45,7 +45,7 @@
       variant="primary"
       @click="onForwardClick"
     >
-      <c-icon :path="arrowRight" />
+      <c-icon :path="arrowRight" :size="24" />
     </c-icon-button>
   </div>
 

@@ -5,6 +5,10 @@ Pass the icon path in `path`: the path data of an icon drawn on a 24×24 grid,
 typically an export of `@mdi/js` (Material Design Icons). The icon renders at
 24px; `size` sets another width and height in pixels.
 
+In the icon slot of another component, such as `c-button`, `c-menu-item` or
+`c-status`, leave `size` unset: the component sizes the icon to match.
+`c-status` sizes it whatever its `size`; elsewhere a `size` of its own wins.
+
 ```vue
 <script setup lang="ts">
 import { mdiCheckCircle } from '@mdi/js';
@@ -47,5 +51,5 @@ The icon is an unnamed `<svg>` unless the element has an `aria-label`.
 ## Customization
 
 `::part(root)` is the `<svg>`. Its width and height are set inline from
-`size`, so size the icon with the prop. A `color` set on the part recolours
+`size`, or from the icon slot it sits in, so size the icon with the prop. A `color` set on the part recolours
 an icon that has no `color` prop of its own.

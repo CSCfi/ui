@@ -41,6 +41,10 @@
  *     `="<name>"` binding in the template — that bypasses the resolved value
  *     (a shorthand `:size` would hand `undefined` to c-input, whose own
  *     default then silently wins)
+ *   - `@default` (an unset prop's documented built-in) without its literal,
+ *     with a literal whose shape disagrees with the prop type, beside
+ *     `@defaultable` (which carries its own), or over a withDefaults entry
+ *     that is not `undefined`
  *
  * Warnings (best-effort surface):
  *   - `@cssprop` naming a custom property never referenced in the SFC source
@@ -242,6 +246,7 @@ export const lintComponent = (
   }
 
   lintDefaultable(component, errors);
+  lintDocumentedDefault(component, errors);
 
   for (const child of subcomponents ?? []) {
     if (child === tagName) {
@@ -317,6 +322,44 @@ const typeAccepts = (type, shape) => {
 };
 
 const normalizeLiteral = (text) => text.trim().replace(/"/g, "'");
+
+/**
+ * The `@default <built-in>` tag documents the built-in of a prop left
+ * `undefined` in withDefaults, so the component can tell it was not set.
+ */
+const lintDocumentedDefault = (component, errors) => {
+  for (const prop of component.props.filter((p) => p.documentedDefault)) {
+    if (prop.defaultable) {
+      errors.push(
+        `prop "${prop.name}" has both @default and @defaultable — @defaultable carries the built-in`,
+      );
+      continue;
+    }
+
+    if (prop.documentedDefault === true) {
+      errors.push(
+        `prop "${prop.name}" is tagged @default without its built-in literal (e.g. \`@default 24\`)`,
+      );
+      continue;
+    }
+
+    const literal = normalizeLiteral(prop.documentedDefault);
+
+    const type = prop.typeResolved ?? prop.typeExpanded ?? prop.type;
+
+    if (!typeAccepts(type, literalShape(literal))) {
+      errors.push(
+        `prop "${prop.name}" @default literal ${literal} does not fit its type ${type}`,
+      );
+    }
+
+    if (prop.withDefault !== 'undefined') {
+      errors.push(
+        `prop "${prop.name}" is tagged @default but its withDefaults value is ${prop.withDefault ?? 'missing'} — must be \`undefined\``,
+      );
+    }
+  }
+};
 
 /**
  * App-wide defaults contract: a `@defaultable <built-in>` prop must be
@@ -421,7 +464,11 @@ const lintDefaultable = (component, errors) => {
 
     const shorthand = new RegExp(`:${kebab}(?=[\\s/>])`);
 
-    const bound = new RegExp(`="(?:!|props\\.)?${prop.name}"`);
+    // A binding only (`:x=`, `v-if=`, `@x=`): a static attribute such as
+    // `part="marker"` names a part, not the prop.
+    const bound = new RegExp(
+      `(?:[:@][\\w.-]+|v-[\\w:.-]+)="(?:!|props\\.)?${prop.name}"`,
+    );
 
     if (shorthand.test(templateSource) || bound.test(templateSource)) {
       errors.push(

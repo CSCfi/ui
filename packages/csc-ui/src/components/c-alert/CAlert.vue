@@ -72,17 +72,12 @@ interface CAlertProps {
  * @csspart heading - The heading paragraph rendered from the `heading` prop
  * @csspart close - The close button rendered when `closeable` is set
  */
-import {
-  mdiAlert,
-  mdiCheckCircle,
-  mdiClose,
-  mdiCloseCircle,
-  mdiInformation,
-} from '@mdi/js';
+import { mdiClose } from '@mdi/js';
 import { tv } from 'tailwind-variants';
 import { computed, onMounted, useHost, watch } from 'vue';
 
 import { coerceBoolean } from '../../shared/coerceBoolean';
+import { STATUS_ICONS } from '../../shared/statusIcons';
 import { useHostEmit } from '../../shared/useHostEmit';
 
 /**
@@ -173,12 +168,7 @@ const props = withDefaults(defineProps<CAlertProps>(), {
 // live-region role (`pnpm lint:a11y`).
 defineOptions({ inheritAttrs: false });
 
-const icons: Record<CAlertType, string> = {
-  error: mdiCloseCircle,
-  info: mdiInformation,
-  success: mdiCheckCircle,
-  warning: mdiAlert,
-};
+const icons: Record<CAlertType, string> = STATUS_ICONS;
 
 // Attributes can deliver any string at runtime (including the legacy `''`),
 // so unknown values fall back to the neutral look.

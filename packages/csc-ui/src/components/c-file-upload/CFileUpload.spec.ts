@@ -786,6 +786,84 @@ describe('the value', () => {
   });
 });
 
+describe('media type', () => {
+  const PPTX =
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+
+  // Chrome on Windows reports a .pptx untyped when no office suite is installed.
+  it('types an untyped file by its extension: the entry, its file and the upload', async () => {
+    const { calls, upload } = controlledUpload();
+
+    const m = await mountField({ accept: PPTX, upload });
+
+    const slides = fileOf('slides.pptx');
+
+    await pick(m, [slides]);
+
+    const [entry] = value(m);
+
+    expect(m.shadowAll('[part="rejected"]')).toHaveLength(0);
+    expect(entry).toMatchObject({
+      name: 'slides.pptx',
+      size: 1000,
+      type: PPTX,
+    });
+    expect(entry.file?.type).toBe(PPTX);
+    expect(entry.file?.lastModified).toBe(slides.lastModified);
+    expect(calls[0].file.type).toBe(PPTX);
+
+    const body = new FormData();
+
+    body.append('file', entry.file as File);
+
+    expect(await new Response(body).text()).toContain(`Content-Type: ${PPTX}`);
+  });
+
+  it('keeps a type the browser reported over the extension', async () => {
+    const m = await mountField();
+
+    const csv = fileOf('data.csv', 1000, 'application/vnd.ms-excel');
+
+    await pick(m, [csv]);
+
+    expect(value(m)[0].type).toBe('application/vnd.ms-excel');
+    expect(value(m)[0].file).toBe(csv);
+  });
+
+  it('leaves an untyped file of an unknown extension untyped', async () => {
+    const m = await mountField();
+
+    const notes = fileOf('notes.xyz');
+
+    await pick(m, [notes]);
+
+    expect(value(m)[0].type).toBe('');
+    expect(value(m)[0].file).toBe(notes);
+  });
+
+  it('still refuses the same untyped file picked again', async () => {
+    const m = await mountField({ multiple: true });
+
+    const slides = fileOf('slides.pptx');
+
+    await pick(m, [slides]);
+
+    const events = recordEvents(m.host, EVENTS);
+
+    const again = new File(['x'], 'slides.pptx', {
+      lastModified: slides.lastModified,
+    });
+
+    Object.defineProperty(again, 'size', { value: slides.size });
+    await pick(m, [again]);
+
+    expect(value(m).map((e) => e.name)).toEqual(['slides.pptx']);
+    expect(events.of('reject')[0]?.detail).toEqual([
+      { file: again, reason: 'duplicate' },
+    ]);
+  });
+});
+
 describe('focus and announcements', () => {
   it('moves focus to the next row, the previous one, then the zone', async () => {
     const m = await mountField({ multiple: true });

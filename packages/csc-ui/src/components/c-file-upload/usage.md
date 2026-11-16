@@ -139,6 +139,12 @@ field holds:
 />
 ```
 
+When the browser reports no media type for a file — Chrome on Windows does
+for a `.pptx` when Office is not installed — the field takes it from the
+extension. The entry's `type`, its `file` and the file the upload function
+receives all carry that type, so a server that checks it gets the right one,
+not `application/octet-stream`.
+
 Sizes are shown in decimal units — `1 MB` is 1,000,000 bytes, as on most
 phones and Macs — so write `max-size` in decimal bytes. Name the accepted
 types and limits in the `hint`; the field does not generate that text.

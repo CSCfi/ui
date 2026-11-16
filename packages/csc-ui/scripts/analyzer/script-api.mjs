@@ -7,7 +7,8 @@
  *     `@slot` / `@csspart` / `@cssprop` tags
  *   - props: the type argument of `defineProps<T>()` (+ `withDefaults`
  *     defaults), with per-member JSDoc descriptions and the `@freeform` /
- *     `@defaultable <built-in>` / `@internal` / `@deprecated` member tags
+ *     `@defaultable <built-in>` / `@default <built-in>` / `@internal` /
+ *     `@deprecated` member tags
  *   - methods: `defineExpose({ … })` entries, resolved to their top-level
  *     declarations for JSDoc and signature text; an exposed `computed<T>(…)`
  *     is a read-only property instead (`readonlyProperties`)
@@ -52,6 +53,16 @@ const freeformTag = (member) => memberTag(member, 'freeform');
  * literal text (or `true` when missing, which lint rejects).
  */
 const defaultableTag = (member) => memberTag(member, 'defaultable');
+
+/**
+ * The `@default <built-in>` member tag: the built-in default of a prop that
+ * is NOT app-defaultable but whose withDefaults entry is `undefined` all the
+ * same, so the component can tell "unset" from the built-in (c-icon's `size`,
+ * which a slot sizes only when the icon sets none). A withDefaults value
+ * would also be written back to the host attribute, hiding the difference.
+ * Returns the literal text (or `true` when missing, which lint rejects).
+ */
+const defaultTag = (member) => memberTag(member, 'default');
 
 /**
  * The `@internal` member tag: the prop or event exists only to wire this
@@ -136,15 +147,20 @@ const interfaceMembers = (
 
     const defaultable = defaultableTag(member);
 
+    const documentedDefault = defaultTag(member);
+
     return {
-      // A `@defaultable` prop's withDefaults entry is `undefined` by contract,
-      // so its documented default is the tag's literal.
+      // A `@defaultable` or `@default` prop's withDefaults entry is
+      // `undefined` by contract, so its documented default is the tag's
+      // literal.
       default:
         defaults.get(name) ??
-        (typeof defaultable === 'string' ? defaultable : undefined),
+        (typeof defaultable === 'string' ? defaultable : undefined) ??
+        (typeof documentedDefault === 'string' ? documentedDefault : undefined),
       defaultable,
       deprecated: deprecatedTag(member),
       description: jsDocDescription(member),
+      documentedDefault,
       freeform: freeformTag(member),
       internal: internalTag(member),
       name,

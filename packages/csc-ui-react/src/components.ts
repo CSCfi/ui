@@ -702,7 +702,7 @@ export const CSpinner = createComponent({
 /** A status pill: a short word naming the state of a record, such as Active, Pending or Failed, tinted with the colours of its status type. */
 export const CStatus = createComponent({
   displayName: 'CStatus',
-  elementClass: elementClass<CStatusElement>(['type']),
+  elementClass: elementClass<CStatusElement>(['appearance', 'marker', 'size', 'type']),
   react: React,
   tagName: 'c-status',
 });
