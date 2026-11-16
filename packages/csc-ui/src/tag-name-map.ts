@@ -2400,7 +2400,23 @@ export interface CSpinnerElement extends Omit<HTMLElement, 'color' | 'size' | 't
 }
 
 /** A status pill: a short word naming the state of a record, such as Active, Pending or Failed, tinted with the colours of its status type. */
-export interface CStatusElement extends Omit<HTMLElement, 'type'> {
+export interface CStatusElement extends Omit<HTMLElement, 'appearance' | 'marker' | 'size' | 'type'> {
+  /**
+   * `filled` (unless set, or changed app-wide) paints the status tint;
+   * `outlined` keeps the ground behind the pill and colours only the marker.
+   */
+  appearance?: 'filled' | 'outlined';
+  /**
+   * The symbol before the text: `icon` (the status icon on a tinted halo),
+   * `dot`, or `none` (unless set, or changed app-wide). A slotted icon
+   * replaces it.
+   */
+  marker?: 'dot' | 'icon' | 'none';
+  /**
+   * Size of the pill: `small`, `default` (unless set, or changed app-wide)
+   * or `large`.
+   */
+  size?: 'default' | 'large' | 'small';
   /**
    * The status family whose tint and ink paint the pill; without it the
    * pill is neutral grey.
@@ -3321,6 +3337,7 @@ export interface CAppDefaults {
   'c-number-field'?: Partial<Pick<CNumberFieldElement, 'decimalSeparator' | 'decimals' | 'fixedDecimals' | 'groupSeparator' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'size' | 'step' | 'texts'>>;
   'c-pagination'?: Partial<Pick<CPaginationElement, 'texts'>>;
   'c-select'?: Partial<Pick<CSelectElement, 'hideDetails' | 'hideMessage' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
+  'c-status'?: Partial<Pick<CStatusElement, 'appearance' | 'marker' | 'size'>>;
   'c-text-field'?: Partial<Pick<CTextFieldElement, 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'size'>>;
   'c-time-picker'?: Partial<Pick<CTimePickerElement, 'format' | 'hideDetails' | 'hideMessage' | 'labelOnTop' | 'shadow' | 'showNow' | 'size' | 'texts'>>;
   'c-tree-select'?: Partial<Pick<CTreeSelectElement, 'hideDetails' | 'hideMessage' | 'itemsPerPage' | 'labelOnTop' | 'shadow' | 'size' | 'texts'>>;
@@ -3340,6 +3357,7 @@ export const DEFAULTABLE_PROPS = {
   'c-number-field': ['decimalSeparator', 'decimals', 'fixedDecimals', 'groupSeparator', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'size', 'step', 'texts'],
   'c-pagination': ['texts'],
   'c-select': ['hideDetails', 'hideMessage', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],
+  'c-status': ['appearance', 'marker', 'size'],
   'c-text-field': ['hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'size'],
   'c-time-picker': ['format', 'hideDetails', 'hideMessage', 'labelOnTop', 'shadow', 'showNow', 'size', 'texts'],
   'c-tree-select': ['hideDetails', 'hideMessage', 'itemsPerPage', 'labelOnTop', 'shadow', 'size', 'texts'],

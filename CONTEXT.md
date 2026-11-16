@@ -603,8 +603,8 @@ _Avoid_: Pill (informal), active fill (that is a button's own selected look, not
 The recessed ground a control's choices sit on — the framed well the buttons of a **button group** or **tab buttons** sit in, stamped as that component's `root` part. It paints an opaque fill, so the labels on it keep one ground wherever the control is placed, and a **load-bearing hairline**, so its boundary reads on every **surface ladder** rung. In a tab strip the **sliding indicator** glides inside it.
 _Avoid_: Well, rail, background, box ("segmented-control box" describes its shape; the track is the concept), progress track (a progress indicator's ground)
 
-**Appearance** (`c-button`, `c-icon-button`):
-How strongly a button reads, set by `appearance`: `filled` (the default) for the main action of a view, then `outlined`, `ghost` and `text`, each lighter than the last. The **variant** and `inverted` are separate axes that combine with it. Until 5.0 the 3.x `outlined` / `ghost` / `text` booleans still choose one while `appearance` is unset (**deprecated**).
+**Appearance** (`c-button`, `c-icon-button`, `c-status`):
+How strongly a button reads, set by `appearance`: `filled` (the default) for the main action of a view, then `outlined`, `ghost` and `text`, each lighter than the last. The **variant** and `inverted` are separate axes that combine with it. Until 5.0 the 3.x `outlined` / `ghost` / `text` booleans still choose one while `appearance` is unset (**deprecated**). A **status pill** has two: `filled` (the default) and `outlined`, which keeps the ground behind it and leaves the colour to its **marker**.
 _Avoid_: Variant (the colour, a separate axis), type, kind, style
 
 **Variant** (`c-button`, `c-icon-button`):
@@ -642,6 +642,14 @@ _Avoid_: Chip (Material vocabulary), token, pill (its shape, not its name), badg
 **Overflow tag**:
 The single non-interactive tag ending a folded tag row in a **multiple** field — "+3 more" — standing in for the selections that `max-tags` hides. Rendered only when the cap is exceeded; with `max-tags="0"` no tags render at all and the field shows the summary text ("5 selected") instead.
 _Avoid_: More tag, counter, badge, "+N chip"
+
+**Status pill** (`c-status`):
+A short word naming the state of a record — Active, Pending, Failed — coloured by its status `type`, drawn in one **appearance** and optionally led by a **marker**. Not interactive, and its colour never carries the state alone: the text names it.
+_Avoid_: Badge (that is `c-badge`), tag (a **tag** names an item in a set), chip, status badge
+
+**Marker** (`c-status`):
+The small decorative symbol before a **status pill**'s text, set by `marker`: `icon`, the status's icon on a tinted halo (the icon `c-alert` and `c-toast` draw), or `dot`; `none` leaves the text alone. An icon the consumer puts in the `icon` slot is the marker whatever `marker` says. A neutral pill's icon marker is a dot in the halo.
+_Avoid_: Indicator and mark (the selection controls' parts), icon (one of its shapes), badge (c-toast's icon circle)
 
 **Select-all row**:
 The pinned first row of a **multiple** field's list that toggles every *listed* enabled option at once — the **query**'s matches in `c-autocomplete`, the given items in **external** mode — and whose **indicator** reads none, some or all. Opt-in per field; it carries no value, so it is not an option, and the arrow keys reach it but never land on it by default.
@@ -848,6 +856,7 @@ _Avoid_: custom lint rule (a guard is not an oxlint or ESLint rule), check (unqu
 - **"Format"** is overloaded: (a) the date and time pickers' display-and-parse pattern (`DD.MM.YYYY`, `HH.mm`), which leaves the ISO value alone, (b) the colour picker's `format` prop, which sets its **notation** and so the value itself. Say **"display pattern"** for (a) and **"notation"** for (b).
 - **"Swatch"** is overloaded: (a) the colour picker's predefined colour (see **Swatch**), (b) the docs site's decorative samples of design tokens. Say plain **"swatch"** only for (a) and **"token sample"** for (b).
 - **"Upload"** is overloaded: (a) the act of sending a file, (b) the **upload function** (`upload`), (c) the **file upload** component. Say "uploading" for (a) and name (b) and (c) in full; one element of a file upload's value is a **file entry**, never "an upload".
+- **"Marker"** is overloaded: (a) a **status pill**'s **marker** (`marker`), (b) the usage docs' "required marker", the asterisk on a **required** field's **label**. Say plain **"marker"** only for (a) and **"required marker"** in full for (b).
 - **"Sticky"** is overloaded: (a) the data-table `sticky-header` / `sticky-footer` rows, (b) the CSS mechanism behind **pinned** elements (the toolbar, the side navigation). Say **"pinned"** for the concept and keep "sticky" for the data-table rows and for literal CSS.
 
 ## Example dialogue

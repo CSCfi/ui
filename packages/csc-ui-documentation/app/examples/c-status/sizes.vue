@@ -1,0 +1,9 @@
+<template>
+  <div class="example-row">
+    <c-status marker="icon" size="small" type="success">Small</c-status>
+
+    <c-status marker="icon" type="success">Default</c-status>
+
+    <c-status marker="icon" size="large" type="success">Large</c-status>
+  </div>
+</template>

@@ -1,5 +1,6 @@
 /**
- * Behaviour spec for c-icon: an `aria-label` on the host names the icon.
+ * Behaviour spec for c-icon: an `aria-label` on the host names the icon, and
+ * an ancestor's private `--_c-icon-size` sizes it over its own `size`.
  */
 import { mdiCheckCircle } from '@mdi/js';
 import { describe, expect, it } from 'vitest';
@@ -17,6 +18,18 @@ describe('c-icon', () => {
     expect(svg.getAttribute('role')).toBe('img');
     expect(svg.getAttribute('aria-label')).toBe('Completed');
     expect(svg.hasAttribute('ariaLabel')).toBe(false);
+  });
+
+  it('takes an ancestor’s --_c-icon-size over its own size', async () => {
+    const { part, stage } = await mount('c-icon', {
+      attrs: { path: mdiCheckCircle, size: 20 },
+    });
+
+    expect(part('root').getBoundingClientRect().width).toBe(20);
+
+    stage.style.setProperty('--_c-icon-size', '11px');
+
+    expect(part('root').getBoundingClientRect().width).toBe(11);
   });
 
   it('stays an unnamed graphic without one', async () => {

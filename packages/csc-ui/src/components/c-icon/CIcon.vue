@@ -34,6 +34,10 @@ import { computed } from 'vue';
  * c-list-item greying a `<c-icon color="...">`. Default fallback is
  * `currentColor`, so icons without a `color` still follow the inherited colour
  * (no behavioural change when `--_c-icon-color` is unset).
+ *
+ * SIZE OVERRIDE HOOK: likewise the size is `var(--_c-icon-size, <size prop>)`,
+ * so an ancestor library component that fixes its icon box sizes a slotted
+ * icon to fit it, whatever its `size` says (c-status's marker, ADR-0087).
  */
 const icon = tv({
   slots: {
@@ -67,7 +71,9 @@ const props = withDefaults(defineProps<CIconProps>(), {
 
 const ui = computed(() => icon());
 
-const iconSize = computed(() => `${props.size}px`);
+// `size` is the fallback; an ancestor's `--_c-icon-size` wins, as the colour
+// hook does.
+const iconSize = computed(() => `var(--_c-icon-size, ${props.size}px)`);
 
 // `color` is the fallback; an ancestor's `--_c-icon-color` (inherited across the
 // shadow boundary) wins — see the COLOUR OVERRIDE HOOK note above.

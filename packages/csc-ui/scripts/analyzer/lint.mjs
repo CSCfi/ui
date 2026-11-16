@@ -421,7 +421,11 @@ const lintDefaultable = (component, errors) => {
 
     const shorthand = new RegExp(`:${kebab}(?=[\\s/>])`);
 
-    const bound = new RegExp(`="(?:!|props\\.)?${prop.name}"`);
+    // A binding only (`:x=`, `v-if=`, `@x=`): a static attribute such as
+    // `part="marker"` names a part, not the prop.
+    const bound = new RegExp(
+      `(?:[:@][\\w.-]+|v-[\\w:.-]+)="(?:!|props\\.)?${prop.name}"`,
+    );
 
     if (shorthand.test(templateSource) || bound.test(templateSource)) {
       errors.push(
