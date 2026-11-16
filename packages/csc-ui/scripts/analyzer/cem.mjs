@@ -7,9 +7,11 @@
  *   - declaration-level: `csc.usage` (dist-relative path of the usage doc),
  *                        `csc.subcomponents` (composed children folded into
  *                        this parent's docs page)
- *   - member-level:      `csc.typeAlias` / `csc.freeform` (see typeCsc) and
+ *   - member-level:      `csc.typeAlias` / `csc.freeform` (see typeCsc),
  *                        `csc.defaultable` (the prop accepts an app-wide
- *                        default via `applyDefaults()`)
+ *                        default via `applyDefaults()`) and
+ *                        `csc.unsetUntilSet` (an `@default` prop: it reads
+ *                        `undefined` until set, its built-in documented)
  *   - manifest-level:    `csc.types` (shared public types from src/types.ts,
  *                        which CEM has no first-class kind for),
  *                        `csc.internalTags` (registered tags only another
@@ -82,14 +84,15 @@ const attributeType = (prop) => {
 /**
  * The manifest's standard `type.text` carries the expanded literal union so
  * third-party IDE-data generators can derive value completions; the alias
- * name, the `@freeform` marker and the `@defaultable` flag ride in the `csc`
- * vendor extension.
+ * name, the `@freeform` marker and the `@defaultable` and `@default` flags
+ * ride in the `csc` vendor extension.
  */
 const typeCsc = (prop) => {
   const csc = {
     ...(prop.typeAlias ? { typeAlias: prop.typeAlias } : {}),
     ...(prop.freeform ? { freeform: prop.freeform } : {}),
     ...(prop.defaultable ? { defaultable: true } : {}),
+    ...(prop.documentedDefault ? { unsetUntilSet: true } : {}),
   };
 
   return Object.keys(csc).length ? { csc } : {};

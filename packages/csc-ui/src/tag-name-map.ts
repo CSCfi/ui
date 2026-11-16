@@ -1172,7 +1172,10 @@ export interface CIconElement extends Omit<HTMLElement, 'color' | 'path' | 'size
   color?: string;
   /** Svg `path` `d` attribute value. */
   path: string;
-  /** Icon size in pixels. */
+  /**
+   * Icon size in pixels. Unset, the icon takes the size of the icon slot it
+   * sits in.
+   */
   size?: number;
 }
 

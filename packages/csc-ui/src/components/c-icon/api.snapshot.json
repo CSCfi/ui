@@ -20,5 +20,8 @@
   "slots": [],
   "states": [],
   "subcomponents": [],
-  "tag": "c-icon"
+  "tag": "c-icon",
+  "unsetUntilSet": [
+    "size"
+  ]
 }

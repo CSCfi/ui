@@ -51,7 +51,7 @@
         >
           <span class="sr-only">{{ t.previousPage }}</span>
 
-          <c-icon :path="chevronLeft" />
+          <c-icon :path="chevronLeft" :size="24" />
         </c-icon-button>
       </li>
 
@@ -98,7 +98,7 @@
         >
           <span class="sr-only">{{ t.nextPage }}</span>
 
-          <c-icon :path="chevronRight" />
+          <c-icon :path="chevronRight" :size="24" />
         </c-icon-button>
       </li>
     </ul>

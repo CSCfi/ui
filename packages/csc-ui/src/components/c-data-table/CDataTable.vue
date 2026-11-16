@@ -184,6 +184,7 @@
                     <c-icon
                       :class="['expander-icon', { open: isExpanded(row.id) }]"
                       :path="chevronIcon"
+                      :size="24"
                     />
                   </c-icon-button>
                 </div>

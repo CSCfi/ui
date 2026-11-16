@@ -467,6 +467,10 @@ _Avoid_: Host (the host is the custom element; the root element is its first chi
 The typeface, line height and font features the consumer's page sets, which every component and the content slotted into it inherit, as native elements do. A component pins typography only where its design calls for it (a button label's size, an alert message's size and leading). A consumer retypes a component by setting the property on the `c-*` element itself. The library ships no font and no font token.
 _Avoid_: Brand font, system font, `--c-font-family` (removed), font reset
 
+**Icon slot** (`c-button`, `c-icon-button`, `c-menu-item`, `c-accordion-item`, `c-breadcrumb-item`, `c-status`):
+The place a component takes an icon from the consumer: the `icon` slot, or `c-icon-button`'s own content. The component sizes the icon to its own design (a small button's icon is smaller than a default one's), so a `c-icon` there leaves `size` unset. A `c-icon` that does set `size` keeps it, for a glyph that looks too small or too large at the component's size. The exception is a **status pill**, whose **marker** halo is a fixed box and sizes any icon in it. A plain `<svg>` or `<img>` is sized the same.
+_Avoid_: Prefix, leading slot, icon prop (there is none; `c-icon-button`'s `path` draws its own fixed-size icon)
+
 **`override` prop** (retired):
 A removed customization prop (ADR-0006). Historical only — consumer restyling goes through `::part()`; do not reintroduce per-component class props.
 _Avoid_: using this term for anything current

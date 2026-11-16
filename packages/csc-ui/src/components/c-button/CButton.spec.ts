@@ -13,6 +13,7 @@ import {
   settle,
   settled,
 } from '../../test/harness';
+import { expectSlottedIconSize } from '../../test/slottedIcon';
 
 describeButtonVariants('c-button', { html: 'Save', pressable: true });
 
@@ -43,6 +44,16 @@ describe('c-button', () => {
 });
 
 describe('c-button ripple', () => {
+  it('sizes a slotted icon that sets none to the button: 20, 24 and 24px', async () => {
+    for (const [size, px] of [
+      ['small', 20],
+      ['default', 24],
+      ['large', 24],
+    ] as const) {
+      await expectSlottedIconSize('c-button', px, { attrs: { size } });
+    }
+  });
+
   it('clips the ripple to the same corner shape and radius as the root', async () => {
     const { part } = await mount('c-button', { html: 'Save' });
 

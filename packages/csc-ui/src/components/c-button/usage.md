@@ -51,6 +51,20 @@ of `c-tab-buttons`, whose sliding indicator has one colour.
 The `danger` attribute of earlier releases still works until 5.0; `variant`
 wins when both are set.
 
+## Icon
+
+A leading icon goes in the `icon` slot, before the label. The button sizes it
+to match: 24px, or 20px on a small button. That covers a `c-icon` without
+`size` and a plain `<svg>` or `<img>`; a `c-icon` with its own `size` keeps
+it, for a glyph that looks too small or too large at the button's size.
+
+```html
+<c-button>
+  <c-icon slot="icon" path="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"></c-icon>
+  Add
+</c-button>
+```
+
 ## In a form
 
 `type="submit"` submits the button's `<form>` — the one around it, or the one

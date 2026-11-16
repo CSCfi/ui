@@ -14,7 +14,7 @@
       variant="primary"
       @click="strip.back()"
     >
-      <c-icon :path="mdiChevronLeft" />
+      <c-icon :path="mdiChevronLeft" :size="24" />
     </c-icon-button>
 
     <div ref="trackRef" :class="ui.track()" part="root">
@@ -62,7 +62,7 @@
       variant="primary"
       @click="strip.forward()"
     >
-      <c-icon :path="mdiChevronRight" />
+      <c-icon :path="mdiChevronRight" :size="24" />
     </c-icon-button>
   </div>
 </template>

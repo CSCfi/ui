@@ -44,7 +44,7 @@ interface Named {
 }
 
 interface Typed {
-  csc?: { defaultable?: boolean; signature?: string };
+  csc?: { defaultable?: boolean; signature?: string; unsetUntilSet?: boolean };
   default?: string;
   deprecated?: boolean | string;
   name: string;
@@ -191,6 +191,17 @@ const condense = (d: { tagName: string } & Declaration) => {
     states: names(d.cssStates),
     subcomponents: [...(d.csc?.subcomponents ?? [])].sort(),
     tag: d.tagName,
+    // `@default` props, which read `undefined` until set while their
+    // documented built-in stays in `props` (ADR-0088); listed only where
+    // present.
+    ...(fields.some((f) => f.csc?.unsetUntilSet)
+      ? {
+          unsetUntilSet: fields
+            .filter((f) => f.csc?.unsetUntilSet)
+            .map((f) => f.name)
+            .sort(),
+        }
+      : {}),
   };
 };
 

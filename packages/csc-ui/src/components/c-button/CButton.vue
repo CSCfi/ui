@@ -19,7 +19,7 @@
     <span :class="ui.content()" part="content">
       <span :class="ui.contentInner()">
         <span v-show="hasIcon" :class="ui.iconWrap()">
-          <slot name="icon" />
+          <slot :class="ui.iconSlot()" name="icon" />
         </span>
 
         <!-- A slotted button (CONTEXT.md, ADR-0085): the page's own <button>,
@@ -282,10 +282,14 @@ import { ensureButtonStyles } from './injectButtonStyles';
 // it inlines the value but still declares the spacing theme variable on
 // every host, where it shadows a consumer's own Tailwind theme (ADR-0072).
 // Tailwind reads that variable's bare name, even in a comment, as a use.
+//
+// `--_c-icon-default-size` sizes a slotted icon that sets none: a `c-icon`
+// without `size` (c-icon's SIZE HOOKS), or a plain `<svg>` or `<img>`. A
+// `c-icon` with its own `size` keeps it.
 const sizeVariants = {
   default: {
     contentInner: 'h-full px-4',
-    iconWrap: 'text-2xl',
+    iconWrap: 'text-2xl [--_c-icon-default-size:24px]',
     // The shared control height (`--_c-control-height`, 52px; ADR-0055), so a
     // button sits level beside a field. `--_c-button-min-height` is an
     // INTERNAL hook (not consumer API): a wrapping c-button-group sets it on
@@ -294,13 +298,13 @@ const sizeVariants = {
   },
   large: {
     contentInner: 'h-full px-6',
-    iconWrap: 'text-2xl',
+    iconWrap: 'text-2xl [--_c-icon-default-size:24px]',
     // The toolbar height, one step above the control height.
     root: 'min-h-toolbar text-lg [--_c-button-pad-x:1.5rem]',
   },
   small: {
     contentInner: 'h-full px-3',
-    iconWrap: 'text-xl',
+    iconWrap: 'text-xl [--_c-icon-default-size:20px]',
     root: 'min-h-7 text-sm [--_c-button-pad-x:0.75rem]',
   },
 } satisfies Record<CButtonSize, object>;
@@ -513,6 +517,8 @@ const button = tv({
     contentInner:
       'flex items-center justify-center gap-2 whitespace-nowrap transition-opacity duration-200',
     description: 'px-3 pb-3 text-left text-xs font-normal',
+    iconSlot:
+      '[&::slotted(img)]:size-(--_c-icon-default-size) [&::slotted(svg)]:size-(--_c-icon-default-size)',
     iconWrap: 'inline-flex items-center fill-current',
     // The default slot: a slotted button inherits the root's corners through
     // it, as through the wrappers.

@@ -23,7 +23,7 @@ import { mdiHome } from '@mdi/js';
     <div class="box">
       <c-breadcrumb>
         <c-breadcrumb-item aria-label="Home" href="https://csc.fi">
-          <c-icon slot="icon" [path]="mdiHome" [size]="20"></c-icon>
+          <c-icon slot="icon" [path]="mdiHome"></c-icon>
         </c-breadcrumb-item>
         <c-breadcrumb-item href="https://csc.fi/en/services">
           Services

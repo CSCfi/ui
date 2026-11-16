@@ -11,7 +11,7 @@
       @click="onToggle"
     >
       <div v-show="hasIcon" :class="ui.icon()" aria-hidden="true">
-        <slot name="icon" />
+        <slot :class="ui.iconSlot()" name="icon" />
       </div>
 
       <slot name="heading">
@@ -113,7 +113,10 @@ interface CAccordionItemEvents {
 // the tint: 8px inset, 12px padding, a 25% primary inset hairline. `root`
 // deliberately has no `overflow-hidden` (that would clip the header's focus
 // outline); clipping lives on the content wrapper + content. The `*:` child
-// variant on `icon` reproduces the old `.icon > *` sizing without `::slotted`.
+// variant on `icon` reproduces the old `.icon > *` sizing without `::slotted`;
+// `--_c-icon-default-size` sizes a slotted icon that sets none to the 24px
+// row: a `c-icon` without `size` (c-icon's SIZE HOOKS), or a plain `<svg>` or
+// `<img>`. A `c-icon` with its own `size` keeps it.
 // Motion: the content grid-rows collapse, the chevron rotate and the margin
 // lift all transition, and all go instant under reduced motion through the
 // shared sheet (ADR-0057).
@@ -169,7 +172,9 @@ const accordionItem = tv({
       'grid grid-rows-[minmax(0,0fr)] overflow-hidden transition-[grid-template-rows] duration-300 ease-standard',
     header:
       'relative m-0 grid min-h-[46px] w-full cursor-pointer grid-cols-[1fr_auto] items-center gap-x-2 rounded-[inherit] border-0 bg-transparent px-3 text-left text-primary transition-colors duration-200 ease-standard select-none [font:inherit] hover:bg-tint-primary/8 hover:text-on-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-tint-primary/15 active:text-on-primary-subtle supports-corner-shape:[corner-shape:squircle]',
-    icon: 'flex h-6 items-center text-2xl text-primary *:flex *:h-6 *:items-center',
+    icon: 'flex h-6 items-center fill-current text-2xl text-primary [--_c-icon-default-size:24px] *:flex *:h-6 *:items-center',
+    iconSlot:
+      '[&::slotted(img)]:size-(--_c-icon-default-size) [&::slotted(svg)]:size-(--_c-icon-default-size)',
     indicator:
       'flex -rotate-90 items-center text-primary transition-transform duration-300 ease-standard',
     root: 'block max-w-full border border-t-0 border-border transition-[margin] duration-300 ease-in-out supports-corner-shape:[corner-shape:squircle]',

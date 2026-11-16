@@ -1,7 +1,7 @@
 <template>
   <c-breadcrumb>
     <c-breadcrumb-item aria-label="Home" href="https://csc.fi">
-      <c-icon slot="icon" :path="mdiHome" :size="20" />
+      <c-icon slot="icon" :path="mdiHome" />
     </c-breadcrumb-item>
 
     <c-breadcrumb-item href="https://csc.fi/en/services">

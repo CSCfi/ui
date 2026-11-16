@@ -1,7 +1,7 @@
 <template>
   <div ref="rootRef" :class="ui.root()" part="root">
     <span v-show="hasIcon" :class="ui.icon()" aria-hidden="true">
-      <slot name="icon" />
+      <slot :class="ui.iconSlot()" name="icon" />
     </span>
 
     <span :class="ui.content()" part="content">
@@ -162,9 +162,14 @@ const item = tv({
     // shortcut hint) with `ml-auto` / `justify-between`, instead of it sticking
     // to the label.
     content: 'flex min-w-0 flex-1 items-center gap-2',
-    // Leading icon from the `icon` prop; follows the row colour (hover,
+    // Leading icon from the `icon` slot; follows the row colour (hover,
     // keyboard highlight, danger, disabled) via currentColor.
-    icon: 'shrink-0 text-current',
+    // 18px, as the check and chevron, for a slotted icon that sets none: a
+    // `c-icon` without `size` (c-icon's SIZE HOOKS), or a plain `<svg>` or
+    // `<img>`. A `c-icon` with its own `size` keeps it.
+    icon: 'flex shrink-0 items-center fill-current text-current [--_c-icon-default-size:18px]',
+    iconSlot:
+      '[&::slotted(img)]:size-(--_c-icon-default-size) [&::slotted(svg)]:size-(--_c-icon-default-size)',
     root: 'flex min-h-10 cursor-pointer items-center justify-between gap-3 rounded-csc-sm px-3 text-sm whitespace-nowrap text-on-surface outline-none select-none hover:bg-primary-subtle hover:text-on-primary-subtle hover:ring-1 hover:ring-primary',
     // `max-w-[calc(100vw-8px)]`: on a phone the panel may end up spanning
     // the viewport (the below/above fallbacks); it never grows past it.

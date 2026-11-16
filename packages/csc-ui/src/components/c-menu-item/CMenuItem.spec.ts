@@ -4,6 +4,7 @@
  * `aria-checked` and the check mark. A leading icon goes in the `icon` slot.
  * An open submenu stays beside its row.
  */
+import { mdiStar } from '@mdi/js';
 import { expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 
@@ -15,6 +16,7 @@ import {
   setThemeMode,
   settle,
 } from '../../test/harness';
+import { expectSlottedIconSize, slottedIconBox } from '../../test/slottedIcon';
 
 // A danger item sits on its menu's overlay surface at rest and on the
 // `error-subtle` tint when hovered or keyboard-active; its label is text, so
@@ -94,6 +96,20 @@ it('renders a slotted leading icon', async () => {
 
   expect(slot.assignedElements()).toHaveLength(1);
   expect(getComputedStyle(slot.parentElement!).display).not.toBe('none');
+});
+
+it('sizes a slotted icon that sets none to 18px, centred in the row', async () => {
+  await expectSlottedIconSize('c-menu-item', 18);
+
+  const m = await mount('c-menu-item', {
+    html: `<c-icon slot="icon" path="${mdiStar}"></c-icon>Favourite`,
+  });
+
+  const icon = slottedIconBox(m.host);
+
+  const row = m.part('root').getBoundingClientRect();
+
+  expect(icon.top + icon.height / 2).toBe(row.top + row.height / 2);
 });
 
 // The submenu is anchored to a row inside the menu's own top-layer panel.

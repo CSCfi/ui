@@ -6,8 +6,9 @@ Each `c-breadcrumb-item` is a crumb, written in order from the top of the
 hierarchy down. A crumb with an `href` is a link; the last crumb is always the
 current page — shown as plain text and announced as the current page, with no
 attribute to set — and a crumb without an `href` names a level that has no page
-of its own. An icon goes in a crumb's `icon` slot; give an icon-only crumb an
-`aria-label`, which names its link:
+of its own. An icon goes in a crumb's `icon` slot, sized 20px in the row and
+18px in the fold panel unless the `c-icon` sets its own `size`; give an
+icon-only crumb an `aria-label`, which names its link:
 
 ```vue
 <c-breadcrumb>

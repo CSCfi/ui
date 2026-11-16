@@ -16,6 +16,7 @@ import {
   settle,
   settled,
 } from '../../test/harness';
+import { expectSlottedIconSize } from '../../test/slottedIcon';
 
 const HEADINGS = ['Billing', 'Members', 'Storage', 'Access'];
 
@@ -238,6 +239,15 @@ describe('c-accordion', () => {
     const m = await mountAccordion({ value: 'members' });
 
     await matchScreenshotInBothModes(m.stage, 'frame-expanded');
+  });
+});
+
+describe('c-accordion-item icon slot', () => {
+  it('sizes a slotted icon that sets none to the 24px row', async () => {
+    await expectSlottedIconSize('c-accordion-item', 24, {
+      attrs: { heading: 'Billing' },
+      label: '',
+    });
   });
 });
 
