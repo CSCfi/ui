@@ -603,8 +603,8 @@ start migrating on the first alpha that carries D2–D4.
    - **PR A, `development` → `main`:**
      - In `packages/csc-ui/package.json`, keep main's version and development's description.
      - Netlify deploy preview: `/`, `/getting-started`, `/migration`, a component page, `/v3/` and a 3.x component
-       route, and that an unknown path returns 404. The deploy log names the `netlify.toml` it read; if it is not
-       the docs package's, the UI's base directory differs.
+       route, and that an unknown path returns 404. `publish` resolves from the repo root, not the package (the
+       first preview failed on it, 2026-11-19).
      - Merge. The empty changesets make the bot open an rc Version PR: leave it **unmerged**, because PR B rewrites it
        to 4.0.0.
    - **Exit dry run** in a throwaway worktree off `main`:

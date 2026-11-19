@@ -2,8 +2,9 @@
 
 **Status (2026-11-19): step 1 done on `development`; steps 2–5 wait for the gate.** Commits 2c887d7c, a3eba94e,
 c2d0f2a9, plus the records commit. Two changes to the plan below, found while doing step 1:
-- `netlify.toml` lives in `packages/csc-ui-documentation/`, not the repo root. Netlify reads the file from the
-  base directory set in its UI, and the 3.x file sat in that package. Check the deploy log in step 3.
+- `netlify.toml` lives in `packages/csc-ui-documentation/`, not the repo root, where the 3.x file sat. Netlify
+  finds it there but resolves `publish` from the repo root (the first PR #328 preview failed on "Deploy directory
+  'dist' does not exist", resolved to `/opt/build/repo/dist`), so `publish` is `packages/csc-ui-documentation/dist`.
 - Under `NETLIFY=1`, `nuxt generate` resolves Nitro's netlify-static preset (output `dist/`, a `_redirects` for
   the child routes, `/* /404.html 404`), and that build never prerendered `/getting-started`, `/migration` or
   `/data-visualization`: the side navigation links them by `value`, not `href`. `nuxt.config.ts` now seeds every
