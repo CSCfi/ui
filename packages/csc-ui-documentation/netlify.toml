@@ -1,0 +1,13 @@
+# The docs site, design-system.csc.fi. Netlify reads this file from the base
+# directory set in its UI, this package (where the 3.x site kept its own).
+# The site reads the library's built manifest and usage docs, so csc-ui
+# builds first. On Netlify, `nuxt generate` resolves Nitro's netlify-static
+# preset: the static site goes to dist/, with a _redirects file for the
+# composed children's old routes and a 404 for any unknown path (no SPA
+# catch-all; /v3/ is plain files).
+[build]
+command = "pnpm --filter @cscfi/csc-ui build && pnpm --filter @cscfi/csc-ui-documentation generate"
+publish = "dist"
+
+[build.environment]
+NODE_VERSION = "24"

@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite';
 
 import tailwindcss from '@tailwindcss/vite';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { ignoreExampleDocsBlocks } from './scripts/ignore-example-docs-blocks.mjs';
@@ -81,6 +81,17 @@ for (const module of manifest.modules ?? []) {
   }
 }
 
+// The side navigation links the guides by `value`, not `href`, so the
+// prerender crawler only reaches them by chance: the plain static build
+// happened to, Nitro's netlify-static preset (the Netlify build) did not, so
+// Netlify would answer them with its 404. Seed every top-level page; the
+// crawler finds the component pages through their `href` links.
+const pageRoutes = readdirSync(
+  fileURLToPath(new URL('app/pages', import.meta.url)),
+)
+  .filter((file) => file.endsWith('.vue'))
+  .map((file) => (file === 'index.vue' ? '/' : `/${file.slice(0, -4)}`));
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -114,7 +125,7 @@ export default defineNuxtConfig({
       crawlLinks: true,
       // The 3.x archive is static files in public/v3/, not app routes.
       ignore: ['/v3'],
-      routes: ['/'],
+      routes: pageRoutes,
     },
   },
   routeRules: childRedirects,
