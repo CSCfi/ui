@@ -67,11 +67,17 @@ Gate: component bugs on any engine block 4.0.0; a spec may skip Firefox/WebKit o
 Before `pre exit`: delete the changeset files already released in an alpha (text stays in the alpha CHANGELOG
 sections) and add one hand-written major changeset — first stable release of the rewrite, highlights, breaking
 changes since alpha.32, migration-guide link. Changesets added after alpha.32 stay.
+**Amended 2026-11-17 (user):** delete every changeset, the rc ones too: by rc.8 all 252 on disk were released in an
+alpha or an rc, and in `exit` mode changesets lists each changeset still on disk in the stable entry
+(`@changesets/assemble-release-plan` `getRelevantChangesets`). 4.0.0 = the curated text alone, short and themed (about
+20 lines). ADR-0028 amended.
 
 ### D8 — RC phase gated on MyCSC
 Land D2–D6 + accepted audit fixes as alphas, then switch the pre tag to `rc` (`4.0.0-rc.N`). No API change after
 rc.1 (enforced by D10). Exit criterion: MyCSC fully migrated onto the latest RC (open sweep items closed — autocomplete
 port, rel, z-index, color — e2e green) with no open csc-ui blocker. Then `changeset pre exit`.
+**Amended 2026-11-17 (user):** met when MyCSC's rc.8 branch is merged with its CI green plus one manual pass (login;
+reset-password with a password manager). A local e2e run past the CSC IdP is not required.
 
 ### D9 — 3.x frozen
 No further 3.x releases (`legacy-main`'s 3.0.20 stays unpublished). `npm dist-tag add @cscfi/csc-ui@3.0.19 v3`
@@ -584,12 +590,43 @@ start migrating on the first alpha that carries D2–D4.
      secondary's tint ink is secondary-100; `lint:tint` fails a see-through role background; the inverted filled
      hover no longer goes dark. Plan: `_plan/dark-overlay-contrast.md`.
    Gate (D8): MyCSC fully migrated on the latest RC, e2e green, no open csc-ui blocker.
-5. **4.0.0** — D7 curated changeset (delete changesets already released in an alpha, add the hand-written major),
-   `changeset pre exit`, merge the version PR → publish via `release.yml`. Then D9: `v3` dist-tag on 3.0.19 (both
-   packages), remove `alpha`/`rc` dist-tags, `npm deprecate` `@cscfi/csc-ui-vue` + `@cscfi/csc-ui-vue2`, publish the
-   v3 docs archive.
+5. **4.0.0** — runbook grilled 2026-11-17 (`_plan/csc-ui-4-0-0-readiness.md`, decisions G1–G7). The grill found
+   no component work left, only release mechanics.
+   - **Done on `development` (2026-11-19):** 2c887d7c (the eight plans since rc.5), a3eba94e (devcontainer
+     Firefox 140 libraries), c2d0f2a9 (`packages/csc-ui-documentation/netlify.toml` pins the 4.x Netlify build;
+     the prerender seeds every top-level page, since under the netlify-static preset the crawler never reached
+     `/getting-started`, `/migration` or `/data-visualization`), and the records (ADR-0028 amended twice, a
+     `release.yml` comment, this plan).
+   - **Gate (user):** D8 as amended. Make `build-lint-test`, `Behaviour specs (firefox)`, `Behaviour specs (webkit)`
+     and `require-changeset` required on `main`. The bot's Version PR never runs CI (it is opened with
+     `GITHUB_TOKEN`), so an admin merges it past them (ADR-0028).
+   - **PR A, `development` → `main`:**
+     - In `packages/csc-ui/package.json`, keep main's version and development's description.
+     - Netlify deploy preview: `/`, `/getting-started`, `/migration`, a component page, `/v3/` and a 3.x component
+       route, and that an unknown path returns 404. The deploy log names the `netlify.toml` it read; if it is not
+       the docs package's, the UI's base directory differs.
+     - Merge. The empty changesets make the bot open an rc Version PR: leave it **unmerged**, because PR B rewrites it
+       to 4.0.0.
+   - **Exit dry run** in a throwaway worktree off `main`:
+     - `pnpm changeset pre exit`, delete every `.changeset/*.md` but `README.md`, add the curated major for both
+       packages, `pnpm changeset version`.
+     - Expect both packages at `4.0.0`, `pre.json` gone, no changeset left, and the curated text as the top
+       CHANGELOG section in both.
+     - `check-api-breaks.mjs --base origin/main` passes: only `mode === 'pre'` freezes the API.
+   - **PR B (exit):** a branch from `main` with those three changes alone. Merge it. The Version PR becomes 4.0.0;
+     review its CHANGELOGs, then the admin merges it. `release.yml` publishes under `latest`, and Netlify builds
+     `main`.
+   - **After publish (user, npm owner login: trusted publishing covers only `publish`):**
+     - `npm dist-tag add <pkg>@3.0.19 v3`, then `npm dist-tag rm <pkg> alpha` and `rc`, for both packages.
+     - `npm deprecate @cscfi/csc-ui-vue` and `-vue2`, pointing to the migration guide.
+     - MyCSC moves to `^4.0.0` and drops its rc `minimumReleaseAgeExclude` entries.
+     - Merge `main` back into `development`, so its versions and CHANGELOG stop drifting.
 6. **4.x follow-ups** — the D13 "4.x additive only" list; removals queued for 5.0. The deprecation mechanism
-   and the "add + deprecate" renames moved before 4.0.0 (2026-11-03).
+   and the "add + deprecate" renames moved before 4.0.0 (2026-11-03). Known gaps the user chose not to block
+   4.0.0 on (2026-11-17), for 4.0.x:
+   - iOS Safari is untested (CI's WebKit is WebKitGTK).
+   - A real Android device check: does a long press on toast text end the press-and-hold pause (ADR-0073)?
+   - c-tab-item collapses on an undeclared `[disabled]` attribute: outside the manifest, so declare or drop it.
 
 ## ADRs and glossary follow-ups (written during phase 0–1)
 
