@@ -1,5 +1,14 @@
 # @cscfi/csc-ui
 
+## 4.0.1
+
+### Patch Changes
+
+- [#332](https://github.com/CSCfi/ui/pull/332) [`9b71454`](https://github.com/CSCfi/ui/commit/9b7145402151703908e350cf6782fef9a49d94ff) Thanks [@razorfever](https://github.com/razorfever)! - A `c-tab-item` carrying a `disabled` attribute no longer collapses to zero
+  width. The attribute was never part of the panel's API, a 3.x leftover, and a
+  selected panel carrying it showed nothing. To keep a tab from being selected,
+  set `disabled` on its `c-tab`.
+
 ## 4.0.0
 
 ### Major Changes
