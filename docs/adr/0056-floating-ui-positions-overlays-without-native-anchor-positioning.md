@@ -66,12 +66,35 @@ distance away from its row (40px above it in the conformance suite's scroll
 scenario), while Chromium and Firefox kept it on the row. The suite already
 showed the fallback lands where they do.
 
+_Amended 2026-11-20_: the submenu was one case of a wider Safari fault.
+Native positioning misplaces a panel whose anchor sits in a box that does not
+scroll with the page. After 4.0.0 an iOS user saw the docs toolbar's menus (the
+toolbar is pinned) sink by the scroll distance as the page scrolled, and open
+that far below their trigger after a scroll. Safari 27 lists a fix for
+fixed-position anchored elements that overcompensated for scrolling, which
+points at Safari 26, still a supported browser; the reporter's iOS version was
+not known when this was written. So at every open `useFallbackPosition` walks
+the anchor's flat-tree ancestors, and when one is `position: fixed` or `sticky`
+(a top-layer panel or a modal dialog is fixed too) Floating UI places the panel
+in every browser. A designated trigger's panel is always placed this way: its
+native anchor was a fixed-position proxy box, which the same fault misplaces,
+so the proxy is gone (ADR-0038). Anchors in the page flow keep native
+positioning, so this path is no longer temporary. *Rejected:* scripting every
+panel (it trails a scrolling trigger by a frame, which iOS momentum scrolling
+shows, and loads the chunk everywhere) and a Safari 26 feature probe (a version
+check in disguise, and no help if Safari 27 still drifts). None of our engines
+reproduces the drift, so the fix is gated on the reporter's phone: the drift
+must reproduce on the live site and be gone on the fix's preview.
+
 ## Consequences
 
 - The conformance suite's anchored-overlay kind asserts that each panel lands on
   the same rect with and without the feature: in the page flow, crowded into a
-  corner (flipped), after a scroll, against a designated trigger, and too big
-  to fit (taller or wider than the viewport, or with no room on either side). Chromium
+  corner (flipped), after a scroll, and too big to fit (taller or wider than
+  the viewport, or with no room on either side). A designated trigger's panel
+  must sit against it as the native panel of the same trigger, slotted at the
+  same spot, sits against that one (since 2026-11-20; before, it compared the
+  proxy path with and without the feature). Chromium
   148 has no runtime flag that disables anchor positioning, and Playwright's
   Firefox is 150, so `src/test/noAnchorPositioning.ts` emulates Firefox 140's
   CSSOM (drops the anchor properties, and reports them unsupported). This checks
@@ -81,4 +104,9 @@ showed the fallback lands where they do.
 - Delete `useFallbackPosition`, the TS chains and the emulation once the oldest
   Firefox ESR the library supports positions anchors natively, and Safari
   positions an anchor inside another top-layer panel correctly (until then the
-  submenu stays scripted).
+  submenu stays scripted). _Since 2026-11-20_: not before the oldest supported
+  Safari also places panels against fixed and pinned anchors, and designated
+  triggers would then need a native route again.
+- The conformance suite also asserts, for every overlay tag, that a panel stays
+  on its trigger after the page scrolls when the trigger sits in a pinned box or
+  is designated, and that the panel is placed by script there.
