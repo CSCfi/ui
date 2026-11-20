@@ -626,7 +626,8 @@ start migrating on the first alpha that carries D2–D4.
    and the "add + deprecate" renames moved before 4.0.0 (2026-11-03). Known gaps the user chose not to block
    4.0.0 on (2026-11-17), for 4.0.x:
    - iOS Safari is untested (CI's WebKit is WebKitGTK).
-   - A real Android device check: does a long press on toast text end the press-and-hold pause (ADR-0073)?
+   - Done 2026-11-20 (user): on a real Android device a long press on toast text keeps the press-and-hold pause
+     (ADR-0073).
    - c-tab-item collapses on an undeclared `[disabled]` attribute: outside the manifest, so declare or drop it.
 
 ## ADRs and glossary follow-ups (written during phase 0–1)

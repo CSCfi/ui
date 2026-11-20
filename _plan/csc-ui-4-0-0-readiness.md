@@ -38,8 +38,9 @@ rule predates the RCs, required checks would block the bot's Version PR, the doc
 - **G5 — Pin the 4.x Netlify build in a `netlify.toml`** (in the docs package, see Status). The site builds from `main` on Netlify. The 3.x
   `packages/csc-ui-documentation/netlify.toml` (only a `/* → /index.html` SPA redirect) went in 84882b8b, so the
   build settings in the Netlify UI date from 3.x.
-- **G6 — Known gaps don't block:** iOS Safari untested, Android long-press check on toast swipe, c-tab-item's
-  undeclared `[disabled]` hook (outside the manifest contract). All go on the 4.0.x follow-up list.
+- **G6 — Known gaps don't block:** iOS Safari untested, Android long-press check on toast swipe (done 2026-11-20:
+  the pause holds), c-tab-item's undeclared `[disabled]` hook (outside the manifest contract). All go on the 4.0.x
+  follow-up list.
 - **G7 — Commit the leftovers:** the 8 untracked `_plan/*.md` (done work) and the `.devcontainer/Dockerfile` Firefox
   140 libs.
 - **Checked, nothing to do:** `check-api-breaks.mjs` treats only `mode === 'pre'` as frozen, so the exit PR's major
