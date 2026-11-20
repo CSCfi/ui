@@ -11,7 +11,7 @@ import type { Mounted } from '../harness';
 
 import { registeredTags } from '../../registry';
 import { supportsAnchorPositioning } from '../../shared/useFallbackPosition';
-import { deepActiveElement, mount, settle } from '../harness';
+import { deepActiveElement, mount, parkPointer, settle } from '../harness';
 import { withoutAnchorPositioning } from '../noAnchorPositioning';
 import { FIXTURES, KNOWN_FOCUS_LOSS_ON_CLOSE, OVERLAY_RECIPES } from './kinds';
 
@@ -541,20 +541,13 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
 
     /**
      * Mounted in a pinned (sticky) stage, at the top of a tall page. The
-     * pointer is parked away first: left resting on the last test's trigger,
-     * it would open a tooltip on mount, before its stage is pinned.
+     * pointer is parked first: left resting on the last open's trigger, it
+     * would open a tooltip on mount, before its stage is pinned.
      */
     const pinned = async (): Promise<Mounted> => {
       document.body.replaceChildren();
       window.scrollTo(0, 0);
-
-      const away = document.createElement('div');
-
-      away.style.cssText =
-        'position:fixed;right:0;bottom:0;width:8px;height:8px';
-      document.body.append(away);
-      await userEvent.hover(away);
-      away.remove();
+      await parkPointer();
 
       const m = await mount(recipe.mountTag ?? tag, recipe.mount);
 
@@ -585,6 +578,63 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
       } finally {
         m.unmount();
         window.scrollTo(0, 0);
+      }
+    });
+
+    // A modal dialog is fixed too, so every panel opened from a form in a
+    // c-modal is placed by script; its content scrolls in a box of its own,
+    // not the page. The dialog is held near the top of the viewport, so no
+    // panel flips to the other side as its trigger moves.
+    it('stays on a trigger in a modal as the modal content scrolls', async () => {
+      document.body.replaceChildren();
+      window.scrollTo(0, 0);
+      await parkPointer();
+
+      const style = document.createElement('style');
+
+      style.textContent = 'c-modal::part(root) { margin-top: 16px }';
+      document.head.append(style);
+
+      const modal = await mount('c-modal', {
+        attrs: { 'aria-label': 'Dialog' },
+        html: '<div data-scroller style="height:240px;overflow:auto"><div data-content style="height:800px;padding-top:60px"></div></div>',
+        props: { value: true },
+        stage: false,
+      });
+
+      const scroller =
+        modal.host.querySelector<HTMLElement>('[data-scroller]')!;
+
+      const m = await mount(recipe.mountTag ?? tag, {
+        ...recipe.mount,
+        parent: scroller.querySelector('[data-content]')!,
+      });
+
+      try {
+        await recipe.open(m);
+
+        const panel = recipe.panel(m);
+
+        expect(placedByScript(panel)).toBe(true);
+
+        const before = offset(panel, m.stage);
+
+        const top = m.stage.getBoundingClientRect().top;
+
+        scroller.scrollTop = 40;
+        await settle();
+        await settle();
+
+        expect(
+          m.stage.getBoundingClientRect().top,
+          'the trigger moved with the content',
+        ).toBe(top - 40);
+        expect(panel.matches(':popover-open'), 'still open').toBe(true);
+        expect(offset(panel, m.stage)).toBe(before);
+      } finally {
+        m.unmount();
+        modal.unmount();
+        style.remove();
       }
     });
 
