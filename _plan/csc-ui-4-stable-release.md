@@ -433,7 +433,7 @@ start migrating on the first alpha that carries D2–D4.
      with `href` never navigated, c-tabs dropped a resize during the indicator's move, c-tab-items matched no
      HTML panel at mount, and the analyzer listed `Alias | null` object props as attributes (c-data-table `sort`,
      the pickers' `value` types; a major changeset for the guard). Left: c-tab-item's undeclared `[disabled]` hook,
-     which the slide still reads. Verified: Chromium suite 66 files / 1699 tests, node 435, lint + guards,
+     which the slide still reads (dropped 2026-11-20). Verified: Chromium suite 66 files / 1699 tests, node 435, lint + guards,
      `format:check`, both builds, docs smoke with axe 509/509; the changed specs on Playwright Firefox (two
      Chromium-only specs added: the `Touch` constructor and synthetic paste data are Chromium test tooling). The
      smoke caught a regression of 7ef09509, fixed in d6253feb: ARIA id references copied into the shadow DOM
@@ -617,7 +617,8 @@ start migrating on the first alpha that carries D2–D4.
      review its CHANGELOGs, then the admin merges it. `release.yml` publishes under `latest`, and Netlify builds
      `main`.
    - **After publish (user, npm owner login: trusted publishing covers only `publish`):**
-     - `npm dist-tag add <pkg>@3.0.19 v3`, then `npm dist-tag rm <pkg> alpha` and `rc`, for both packages.
+     - `npm dist-tag rm <pkg> alpha` and `rc`, for both packages. No `v3` tag: npm refuses it (a valid range), and
+       `@3` already resolves to 3.0.19.
      - `npm deprecate @cscfi/csc-ui-vue` and `-vue2`, pointing to the migration guide.
      - MyCSC moves to `^4.0.0` and drops its rc `minimumReleaseAgeExclude` entries.
      - Merge `main` back into `development`, so its versions and CHANGELOG stop drifting.
@@ -625,8 +626,10 @@ start migrating on the first alpha that carries D2–D4.
    and the "add + deprecate" renames moved before 4.0.0 (2026-11-03). Known gaps the user chose not to block
    4.0.0 on (2026-11-17), for 4.0.x:
    - iOS Safari is untested (CI's WebKit is WebKitGTK).
-   - A real Android device check: does a long press on toast text end the press-and-hold pause (ADR-0073)?
-   - c-tab-item collapses on an undeclared `[disabled]` attribute: outside the manifest, so declare or drop it.
+   - Done 2026-11-20 (user): on a real Android device a long press on toast text keeps the press-and-hold pause
+     (ADR-0073).
+   - Done 2026-11-20: c-tab-item's undeclared `[disabled]` collapse is dropped, from the panel and the slide (a
+     selected panel carrying it showed nothing); `disabled` belongs to `c-tab`.
 
 ## ADRs and glossary follow-ups (written during phase 0–1)
 
@@ -638,7 +641,7 @@ start migrating on the first alpha that carries D2–D4.
 - **ADR-0027 amendment** What an upgrade can rely on — D17 R1/R2 (written 2026-10-23).
 - **ADR-0077** Supported browsers; behaviour specs on three engines, visuals on Chromium — D6; amends ADR-0049
   (also records D14 axe and D15 flavor smokes as part of the verification layer).
-- Amend ADR-0027/0028: RC phase, 3.x frozen with a `v3` dist-tag, curated 4.0.0 changelog (D7–D9).
+- Amend ADR-0027/0028: RC phase, 3.x frozen at 3.0.19 (`@3`, no dist-tag), curated 4.0.0 changelog (D7–D9).
 - `CONTEXT.md` (already updated: Public API, Value events, Commit, Internal event, Supported browsers,
   Chromium-only spec, Kebab-case twin retired). Done since (checked 2026-10-28): **Value events** says a Vue
   template cannot hear `update:value`; **Internal** covers tags, props, events, slots and methods (c-dropdown,
@@ -660,6 +663,6 @@ start migrating on the first alpha that carries D2–D4.
   no internal tag/prop/event/slot (`grep -E '"[a-z]+[A-Z]' api.snapshot.json` over events is empty).
 - Example smokes: Vue, React and TypeScript flavors mount cleanly; axe reports zero violations in both modes.
 - MyCSC on the latest RC: migration sweep items closed, e2e green (D8 gate).
-- After publishing: `npm view @cscfi/csc-ui dist-tags` → `latest: 4.0.0`, `v3: 3.0.19`, no `alpha`/`rc` (same for
+- After publishing: `npm view @cscfi/csc-ui dist-tags` → `latest: 4.0.0`, no `alpha`/`rc`, `@3` → 3.0.19 (same for
   `-react`); `npm view @cscfi/csc-ui-vue deprecated` non-empty; the 4.0.0 CHANGELOG entry is the curated one;
   a vanilla HTML page loading `dist/csc-ui.js` from the published tarball upgrades every tag.

@@ -7,11 +7,8 @@
         The components are native custom elements — the same
         <code>&lt;c-*&gt;</code>
         tags work in every framework. Pick your flavor with the switcher in the
-        header (or below on small screens); the whole documentation, examples
-        included, follows your choice.
+        header; the whole documentation, examples included, follows your choice.
       </p>
-
-      <flavor-switcher class="md:hidden" />
 
       <section v-for="section in sections" :key="section.id" class="mt-10">
         <h2

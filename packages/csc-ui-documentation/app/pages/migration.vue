@@ -11,10 +11,8 @@
         <code>&lt;c-*&gt;</code>
         tag names are unchanged; what changes is registration, two-way binding,
         customization, and theming. Pick your flavor with the switcher in the
-        header (or below on small screens).
+        header.
       </p>
-
-      <flavor-switcher class="md:hidden" />
 
       <section v-for="section in sections" :key="section.id" class="mt-10">
         <h2

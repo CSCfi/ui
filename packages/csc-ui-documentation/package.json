@@ -8,6 +8,7 @@
     "build": "pnpm run lint:examples && nuxt build",
     "dev": "nuxt dev",
     "generate": "pnpm run lint:examples && nuxt generate",
+    "lint:bindings": "node scripts/check-element-bindings.mjs",
     "lint:examples": "node scripts/check-example-parity.mjs",
     "lint:migration": "node scripts/check-migration-guide.mjs",
     "postinstall": "nuxt prepare",

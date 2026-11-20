@@ -102,6 +102,27 @@ describe('panels', () => {
       expect(shown.getBoundingClientRect().width).toBeGreaterThan(0);
     }));
 
+  it('shows a selected panel that carries a disabled attribute', async () => {
+    // `disabled` belongs to the c-tab, not to its panel; a panel carrying it
+    // anyway collapsed to zero width, selected or not.
+    const { host } = await mount('c-tabs', {
+      html:
+        `${tab('one') + tab('two')}<c-tab-items slot="items">${panel('one')}` +
+        '<c-tab-item value="two" disabled>two</c-tab-item></c-tab-items>',
+      props: { value: 'two' },
+    });
+    await settled();
+
+    const items = host.querySelector('c-tab-items')!;
+
+    const shown = host.querySelectorAll('c-tab-item')[1]!;
+
+    expect(shown.getBoundingClientRect().width).toBe(
+      items.getBoundingClientRect().width,
+    );
+    expect(shown.getBoundingClientRect().width).toBeGreaterThan(0);
+  });
+
   it('a modal in a panel covers the viewport, not the panel', async () => {
     const { host } = await mount('c-tabs', {
       html:

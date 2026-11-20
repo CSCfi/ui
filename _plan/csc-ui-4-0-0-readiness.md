@@ -38,8 +38,9 @@ rule predates the RCs, required checks would block the bot's Version PR, the doc
 - **G5 — Pin the 4.x Netlify build in a `netlify.toml`** (in the docs package, see Status). The site builds from `main` on Netlify. The 3.x
   `packages/csc-ui-documentation/netlify.toml` (only a `/* → /index.html` SPA redirect) went in 84882b8b, so the
   build settings in the Netlify UI date from 3.x.
-- **G6 — Known gaps don't block:** iOS Safari untested, Android long-press check on toast swipe, c-tab-item's
-  undeclared `[disabled]` hook (outside the manifest contract). All go on the 4.0.x follow-up list.
+- **G6 — Known gaps don't block:** iOS Safari untested, Android long-press check on toast swipe (done 2026-11-20:
+  the pause holds), c-tab-item's undeclared `[disabled]` hook (outside the manifest contract; dropped 2026-11-20).
+  All go on the 4.0.x follow-up list.
 - **G7 — Commit the leftovers:** the 8 untracked `_plan/*.md` (done work) and the `.devcontainer/Dockerfile` Firefox
   140 libs.
 - **Checked, nothing to do:** `check-api-breaks.mjs` treats only `mode === 'pre'` as frozen, so the exit PR's major
@@ -92,7 +93,6 @@ checks (G4).
 
 ### 5. After publish (user, npm owner login with 2FA: trusted publishing covers only `publish`)
 ```
-npm dist-tag add @cscfi/csc-ui@3.0.19 v3 && npm dist-tag add @cscfi/csc-ui-react@3.0.19 v3
 npm dist-tag rm @cscfi/csc-ui alpha && npm dist-tag rm @cscfi/csc-ui rc   # same two for -react
 npm deprecate @cscfi/csc-ui-vue "Retired: csc-ui 4 needs no Vue adapter. See https://design-system.csc.fi/migration"
 npm deprecate @cscfi/csc-ui-vue2 "<same>"
@@ -109,7 +109,8 @@ Then:
 - Step 3: the deploy preview checks above.
 - Step 4: the dry-run expectations above, then on the Version PR the same diff as the dry run.
 - After publish:
-  - `npm view @cscfi/csc-ui dist-tags` (and `-react`) shows `latest: 4.0.0` and `v3: 3.0.19`, with no `alpha` or `rc`.
+  - `npm view @cscfi/csc-ui dist-tags` (and `-react`) shows `latest: 4.0.0`, with no `alpha` or `rc`. No `v3` tag: npm refuses it (a valid
+    range), and `@3` resolves to 3.0.19.
   - `npm view @cscfi/csc-ui-vue deprecated` is non-empty. CONTEXT.md's claim is now true.
   - The CHANGELOG 4.0.0 entry is the curated one.
   - A plain HTML page that loads `dist/csc-ui.js` from the published tarball upgrades every tag.

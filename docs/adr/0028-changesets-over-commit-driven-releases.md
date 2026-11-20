@@ -72,9 +72,11 @@ Versioning and publishing are driven by **changesets**:
   rc.8 every changeset on disk had been released in one, and in `exit` mode
   changesets lists each changeset still on disk in the stable entry, so the
   exit PR deletes them all and 4.0.0 carries the curated text alone.
-- **3.x is frozen at 3.0.19**, which keeps a `v3` dist-tag; no 3.x version is
-  deprecated on npm. After 4.0.0 the `alpha` and `rc` dist-tags are removed,
-  and `@cscfi/csc-ui-vue` / `@cscfi/csc-ui-vue2` are deprecated.
+- **3.x is frozen at 3.0.19**; no 3.x version is deprecated on npm. It needs
+  no dist-tag, since `@3` resolves to it (_amended 2026-11-20_: npm refuses a
+  `v3` tag, which is a valid range). After 4.0.0 the `alpha` and `rc`
+  dist-tags are removed, and `@cscfi/csc-ui-vue` / `@cscfi/csc-ui-vue2` are
+  deprecated.
 - _Amended 2026-11-17_: **an admin merges the Version PR past the required
   checks.** Before the exit PR, `main` starts requiring `build-lint-test`,
   both engine jobs and `require-changeset`, but the release workflow opens

@@ -88,8 +88,9 @@ frame. A swipe that takes the toast away makes that jump more visible.
   moves capture to the host, and the inner element's `lostpointercapture`
   bubbles to the host, so the toast reacts only to a capture loss of its
   own.
-- Chrome on Android cancels a long press on text after about half a second
-  to start selection, which ends the press-and-hold pause there. Check this
-  on a device before relying on the pause for long reads.
+- Chrome on Android may cancel a long press on text after about half a
+  second to start selection, which would end the press-and-hold pause there.
+  _Checked 2026-11-20_ on a real Android device: a long press on toast text
+  keeps the pause.
 - Under `absolute`, a toast swiped away can overflow its container for the
   length of the exit.

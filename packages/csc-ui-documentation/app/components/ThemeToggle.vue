@@ -1,38 +1,38 @@
 <template>
   <!-- Rendered client-only: the label depends on localStorage, which the
-       prerendered HTML cannot know. -->
+       prerendered HTML cannot know. The fallback holds the trigger's place
+       at both of ToolbarMenu's sizes. -->
   <client-only>
     <template #fallback>
       <span
-        class="invisible inline-flex min-w-22 items-center gap-[0.4rem] rounded-full border px-3 py-1 text-[0.8125rem]"
+        class="invisible inline-flex min-w-22 items-center gap-[0.4rem] rounded-full border px-3 py-1 text-[0.8125rem] max-md:hidden"
       />
+
+      <span class="invisible size-8 md:hidden" />
     </template>
 
-    <c-menu distance="8" position="bottom-end" @select="onSelect">
-      <c-button
-        slot="trigger"
-        :aria-label="`Color theme: ${preference}`"
-        size="small"
-        text
-      >
-        <c-icon :path="icon" :size="20" aria-hidden="true" />
-
-        <!-- Icon-only below `md`: the toolbar has to fit a phone. -->
-        <span class="capitalize max-md:hidden">{{ preference }}</span>
-      </c-button>
+    <toolbar-menu
+      :label="`Color theme: ${preference}`"
+      :text="label"
+      @select="onSelect"
+    >
+      <template #icon="{ compact }">
+        <c-icon :path="icon" :size="compact ? undefined : 20" />
+      </template>
 
       <c-menu-label>Theme</c-menu-label>
 
       <c-menu-item
         v-for="option in THEME_OPTIONS"
         :key="option.id"
-        :active="option.id === preference"
+        :checked="option.id === preference"
         :value="option.id"
+        type="radio"
       >
         <c-icon :path="option.icon" :size="16" />
         {{ option.label }}
       </c-menu-item>
-    </c-menu>
+    </toolbar-menu>
   </client-only>
 </template>
 
@@ -61,16 +61,18 @@ const THEME_OPTIONS: ThemeOption[] = [
 
 const icon = computed(() => ICONS[preference.value] ?? mdiThemeLightDark);
 
+const label = computed(
+  () =>
+    THEME_OPTIONS.find((option) => option.id === preference.value)?.label ??
+    preference.value,
+);
+
 const onSelect = (event: CustomEvent<{ value: ThemePreference }>) => {
   setPreference(event.detail.value);
 };
 </script>
 
 <style scoped>
-c-button::part(root) {
-  color: var(--c-on-surface);
-}
-
 c-icon::part(root) {
   color: var(--c-primary);
 }
