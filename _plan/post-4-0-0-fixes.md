@@ -78,7 +78,16 @@ without updating iOS in between:
    scroll; scroll, then open one; open a `c-popover` demo and scroll.
 3. Repeat the same steps on the PR's Netlify deploy preview.
 
-Merge waits for "drifts on live, holds on preview". If it drifts on iOS 27,
+Merge waits for "drifts on live, holds on preview".
+
+Scope the gate does not cover: every panel opened from a form in a `c-modal`
+(the dialog is fixed) is now placed by script in every browser, Chrome and
+Firefox included. The conformance suite covers it ("stays on a trigger in a
+modal as the modal content scrolls", all overlay tags, Chromium and Firefox;
+WebKit in CI). The docs have no modal with a field in it, so the reporter
+cannot try it on the preview; check it in MyCSC when it moves to 4.0.1: open a
+select, autocomplete and date picker in a modal form, scroll the modal, in
+Safari and in Chrome. If it drifts on iOS 27,
 re-diagnose before merging. If the in-flow popover demos still drift on the
 preview, that is a new decision (park it, do not widen the rule unasked).
 
