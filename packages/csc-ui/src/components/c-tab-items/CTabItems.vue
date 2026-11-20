@@ -104,7 +104,7 @@ let ready = false;
 
 let readyTimer: null | ReturnType<typeof setTimeout> = null;
 
-// The panel index (counting visible panels) shown last, -1 before the first.
+// The index of the panel shown last, -1 before the first.
 let shownBefore = -1;
 
 // Set while a slide plays; it puts the track back at rest when it ends.
@@ -208,19 +208,14 @@ const setActiveTab = () => {
   // page coordinates), which would fling the track off-screen and overflow
   // would then clip the active panel entirely. Each panel is exactly one
   // container in the slide axis, so panels sit at integer multiples of it.
-  // Disabled panels collapse (width/height 0) and take no slot, so we count
-  // only the non-disabled panels before the active one.
-  const visibleBefore = all
-    .slice(0, activeIndex)
-    .filter((t) => !t.hasAttribute('disabled')).length;
-
+  // Every panel takes a slot, the panel of a disabled c-tab too.
   const from = shownBefore;
 
   // The same panel again (c-tabs pushes its value more than once): nothing
   // moves, and a slide under way finishes on its own.
-  if (from === visibleBefore) return;
+  if (from === activeIndex) return;
 
-  shownBefore = visibleBefore;
+  shownBefore = activeIndex;
 
   if (slideTimer !== null) clearTimeout(slideTimer);
 
@@ -237,7 +232,7 @@ const setActiveTab = () => {
   host.classList.remove('c-tab-items--rest');
   void host.offsetWidth;
   host.style.setProperty('--_c-tab-items-animation-duration', `${SLIDE_MS}ms`);
-  setOffset(visibleBefore, vertical);
+  setOffset(activeIndex, vertical);
   slideTimer = setTimeout(rest, SLIDE_MS);
 };
 

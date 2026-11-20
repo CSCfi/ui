@@ -433,7 +433,7 @@ start migrating on the first alpha that carries D2–D4.
      with `href` never navigated, c-tabs dropped a resize during the indicator's move, c-tab-items matched no
      HTML panel at mount, and the analyzer listed `Alias | null` object props as attributes (c-data-table `sort`,
      the pickers' `value` types; a major changeset for the guard). Left: c-tab-item's undeclared `[disabled]` hook,
-     which the slide still reads. Verified: Chromium suite 66 files / 1699 tests, node 435, lint + guards,
+     which the slide still reads (dropped 2026-11-20). Verified: Chromium suite 66 files / 1699 tests, node 435, lint + guards,
      `format:check`, both builds, docs smoke with axe 509/509; the changed specs on Playwright Firefox (two
      Chromium-only specs added: the `Touch` constructor and synthetic paste data are Chromium test tooling). The
      smoke caught a regression of 7ef09509, fixed in d6253feb: ARIA id references copied into the shadow DOM
@@ -628,7 +628,8 @@ start migrating on the first alpha that carries D2–D4.
    - iOS Safari is untested (CI's WebKit is WebKitGTK).
    - Done 2026-11-20 (user): on a real Android device a long press on toast text keeps the press-and-hold pause
      (ADR-0073).
-   - c-tab-item collapses on an undeclared `[disabled]` attribute: outside the manifest, so declare or drop it.
+   - Done 2026-11-20: c-tab-item's undeclared `[disabled]` collapse is dropped, from the panel and the slide (a
+     selected panel carrying it showed nothing); `disabled` belongs to `c-tab`.
 
 ## ADRs and glossary follow-ups (written during phase 0–1)
 

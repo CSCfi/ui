@@ -31,8 +31,8 @@ interface CTabItemEvents {
  * is via `::part()`. Only the inner `root` panel's padding is a
  * utility. The host MUST stay a real box here (it is a slotted child whose
  * `min-width:100%` drives c-tab-items' slide math, and its `[active]`/
- * `.is-active`/`[disabled]` state toggles the panel visibility), so those
- * host-level rules remain in the escape-hatch <style> below.
+ * `.is-active` state toggles the panel visibility), so those host-level
+ * rules remain in the escape-hatch <style> below.
  */
 const tabItem = tv({
   slots: {
@@ -97,11 +97,12 @@ onBeforeUnmount(() => resizeObserver?.disconnect());
   Escape-hatch CSS: the host must be a real box because its
   `min-width:100%` is what c-tab-items measures to slide the panel track, and
   its visibility is toggled via the `[active]` attribute (reflected by Vue's
-  prop), the `.is-active` class (toggled imperatively by c-tab-items as a
-  defensive fallback), and the `[disabled]` attribute — all positional :host
-  selectors utilities can't express. This :host overrides the global
-  `:host{display:contents}`; the per-type sheet is adopted after the shared
-  sheet, so it wins.
+  prop) and the `.is-active` class (toggled imperatively by c-tab-items as a
+  defensive fallback) — positional :host selectors utilities can't express.
+  This :host overrides the global `:host{display:contents}`; the per-type
+  sheet is adopted after the shared sheet, so it wins. A `disabled` attribute
+  does nothing here: it belongs to the panel's `c-tab` (3.x collapsed a panel
+  carrying one, never declared, and a selected one then showed nothing).
 -->
 <style>
 :host {
@@ -121,11 +122,5 @@ onBeforeUnmount(() => resizeObserver?.disconnect());
  * defensive measure when Vue's prop reflection doesn't land) is set. */
 :host(:not([active]):not(.is-active)) [part='root'] {
   display: none;
-}
-
-:host([disabled]) {
-  min-width: 0;
-  width: 0;
-  overflow: hidden;
 }
 </style>
