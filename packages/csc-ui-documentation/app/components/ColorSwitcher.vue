@@ -18,8 +18,9 @@
     <template v-for="(color, index) in colors" :key="index">
       <template v-if="color.type === 'color'">
         <c-menu-item
-          :active="color.value === currentColor.value"
+          :checked="color.value === currentColor.value"
           :value="color"
+          type="radio"
         >
           <span
             :style="{ 'background-color': color.value }"

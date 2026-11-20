@@ -16,8 +16,9 @@
     <c-menu-item
       v-for="option in FLAVORS"
       :key="option.id"
-      :active="option.id === currentFlavor?.id"
+      :checked="option.id === currentFlavor?.id"
       :value="option.id"
+      type="radio"
     >
       <c-icon :class="ICON_COLORS[option.id]" :path="option.icon" :size="16" />
       {{ option.label }}

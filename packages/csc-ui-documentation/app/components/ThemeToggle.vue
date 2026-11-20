@@ -26,8 +26,9 @@
       <c-menu-item
         v-for="option in THEME_OPTIONS"
         :key="option.id"
-        :active="option.id === preference"
+        :checked="option.id === preference"
         :value="option.id"
+        type="radio"
       >
         <c-icon :path="option.icon" :size="16" />
         {{ option.label }}
