@@ -19,17 +19,6 @@
     <slot name="trigger" />
   </span>
 
-  <!-- Proxy anchor for a designated trigger (ADR-0038): anchor names are
-       tree-scoped, so the panel cannot anchor to an outer-tree element
-       directly. This inert box is pinned over the designated trigger's rect
-       while the panel is open; the panel's position-anchor switches to it. -->
-  <span
-    ref="proxyRef"
-    :class="ui.proxy()"
-    aria-hidden="true"
-    style="anchor-name: --c-tooltip-designated"
-  />
-
   <!-- Manual popover in the top layer: never clipped by overflow, no teleport,
        no z-index war; paints above modals, which is correct for a tooltip
        triggered from inside one. Positioned with CSS anchor positioning.
@@ -164,7 +153,6 @@ const tooltip = tv({
   slots: {
     panel:
       'fixed [inset:auto] m-0 box-border w-max max-w-xs overflow-visible rounded-csc-sm border-0 bg-surface-inverted px-2 py-1 text-sm text-on-surface-inverted shadow-[2px_4px_10px_#00000029]',
-    proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },
 });
@@ -189,8 +177,6 @@ const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
 const panelRef = useTemplateRef<HTMLElement>('panelRef');
 
-const proxyRef = useTemplateRef<HTMLElement>('proxyRef');
-
 const isOpen = ref(false);
 
 // Grace period before hiding, so the pointer can cross the trigger→panel gap
@@ -213,25 +199,25 @@ const clearTimers = () => {
 // position-try flip fallbacks). Unlike c-menu there is no nested panel to
 // inherit it, so it is inlined directly instead of published as a custom
 // property.
-// With a designated trigger the panel anchors to the tracked proxy instead
-// of the trigger-slot wrapper (ADR-0038).
 const panelStyle = computed(
   () =>
-    `position-anchor:${
-      designated.element.value ? '--c-tooltip-designated' : '--c-tooltip-anchor'
-    };position-area:${
+    `position-anchor:--c-tooltip-anchor;position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA.top
     };inset:auto;margin-${placementAxis(props.position)}:${Number(props.distance) || 0}px;${fallback.style.value}`,
 );
 
-// Without native anchor positioning (Firefox 140 ESR) Floating UI places the
-// panel; the chain mirrors the `position-try-fallbacks` rule below (ADR-0056).
+// Floating UI places the panel without native anchor positioning (Firefox
+// 140 ESR), against a designated trigger (an outer-tree element no anchor
+// name reaches, ADR-0038), and from a fixed or sticky box such as a pinned
+// toolbar; the chain mirrors the `position-try-fallbacks` rule below
+// (ADR-0056).
 const fallback = useFallbackPosition({
   fallbacks: flipChain,
   floating: panelRef,
   gap: () => Number(props.distance) || 0,
   placement: () => (props.position in POSITION_AREA ? props.position : 'top'),
   reference: () => designated.element.value ?? anchorRef.value,
+  scripted: () => designated.element.value !== null,
 });
 // ---- show / hide -----------------------------------------------------------
 
@@ -240,17 +226,14 @@ const emit = useHostEmit<CTooltipEvents>();
 const show = () => {
   clearTimers();
 
-  // Re-resolve a designated trigger ID (its element may have appeared since)
-  // and pin the proxy anchor before the panel shows, so the first paint is
-  // already in place.
+  // Re-resolve a designated trigger ID (its element may have appeared since).
   if (props.trigger) designated.resolve();
-
-  designated.startTracking();
 
   const p = panelRef.value;
 
   if (p && typeof p.showPopover === 'function' && !p.matches(':popover-open')) {
     p.showPopover();
+    fallback.start();
   }
 };
 
@@ -344,7 +327,6 @@ const onToggle = (event: Event) => {
     document.addEventListener('keydown', onDocKeydown, true);
   } else {
     document.removeEventListener('keydown', onDocKeydown, true);
-    designated.stopTracking();
     fallback.stop();
   }
 };
@@ -387,7 +369,6 @@ const designated = useDesignatedTrigger({
 
     syncTriggerDescription();
   },
-  proxy: proxyRef,
   source: () => props.trigger,
 });
 

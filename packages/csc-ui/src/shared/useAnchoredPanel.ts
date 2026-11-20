@@ -262,6 +262,8 @@ export const useAnchoredPanel = (
 
     options.onOpening?.();
     p.showPopover();
+
+    if (!fullscreen) fallback.start();
   };
 
   const close = (returnFocus = false): void => {

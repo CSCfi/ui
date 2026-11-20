@@ -7,14 +7,11 @@
  * exactly as it does for a slotted one.
  *
  * Positioning: CSS anchor names are tree-scoped, so the shadow-DOM panel
- * cannot reference an `anchor-name` on an outer-tree element. Instead the
- * component keeps a *proxy anchor* — an inert, fixed-position box in its own
- * shadow root carrying the anchor name — and this composable pins it over
- * the designated trigger's rect while the panel is open (a rAF loop).
- * `position-area` placement and the `position-try-fallbacks` flip/shift keep
- * working unchanged; only the measurement is JS. Without native anchor
- * positioning the proxy is unused: Floating UI places the panel against the
- * designated element directly (`useFallbackPosition`, ADR-0056).
+ * cannot reference an `anchor-name` on an outer-tree element. Floating UI
+ * places the panel against the designated element in every browser
+ * (`useFallbackPosition` with `scripted`, ADR-0056 amended 2026-11-20); the
+ * fixed-position proxy anchor it replaced was misplaced by Safari 26 once
+ * the page scrolled.
  */
 
 import { onBeforeUnmount, ref, type Ref, watch } from 'vue';
@@ -25,10 +22,6 @@ export interface DesignatedTriggerHandle {
 
   /** Re-resolve the prop (an ID may match only after later DOM insertion). */
   resolve(): HTMLElement | null;
-
-  /** Pin the proxy over the trigger every frame until `stopTracking`. */
-  startTracking(): void;
-  stopTracking(): void;
 }
 
 export interface UseDesignatedTriggerOptions {
@@ -40,9 +33,6 @@ export interface UseDesignatedTriggerOptions {
 
   /** Resolved element changed — mirror/clean ARIA here. */
   onElementChange?: (el: HTMLElement | null, prev: HTMLElement | null) => void;
-
-  /** The in-shadow proxy anchor to pin over the designated trigger. */
-  proxy: Ref<HTMLElement | null>;
 
   /** The raw `trigger` prop: a document ID or an element reference. */
   source: () => HTMLElement | string | undefined;
@@ -98,52 +88,7 @@ export const useDesignatedTrigger = (
 
   watch(options.source, resolve);
 
-  // ---- proxy-anchor tracking ----------------------------------------------
+  onBeforeUnmount(() => setElement(null));
 
-  let rafId = 0;
-
-  let lastRect = '';
-
-  const track = (): void => {
-    const el = element.value;
-
-    const proxy = options.proxy.value;
-
-    if (el && proxy) {
-      const rect = el.getBoundingClientRect();
-
-      const key = `${rect.left},${rect.top},${rect.width},${rect.height}`;
-
-      if (key !== lastRect) {
-        lastRect = key;
-        proxy.style.left = `${rect.left}px`;
-        proxy.style.top = `${rect.top}px`;
-        proxy.style.width = `${rect.width}px`;
-        proxy.style.height = `${rect.height}px`;
-      }
-    }
-
-    rafId = requestAnimationFrame(track);
-  };
-
-  const startTracking = (): void => {
-    if (rafId || !element.value) return;
-
-    lastRect = '';
-    track();
-  };
-
-  const stopTracking = (): void => {
-    if (!rafId) return;
-
-    cancelAnimationFrame(rafId);
-    rafId = 0;
-  };
-
-  onBeforeUnmount(() => {
-    stopTracking();
-    setElement(null);
-  });
-
-  return { element, resolve, startTracking, stopTracking };
+  return { element, resolve };
 };
