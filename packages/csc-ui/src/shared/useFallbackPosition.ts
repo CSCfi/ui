@@ -18,10 +18,15 @@
  * which Vue's next `:style` patch would wipe.
  *
  * On a browser with native support every method is a no-op and `style` stays
- * empty, so the native path is untouched — unless the panel is `scripted`,
- * placed this way in every browser. Floating UI is imported lazily, and
- * preloaded at setup where it will be needed so the first open does not wait
- * on it.
+ * empty, so the native path is untouched — unless the panel is `scripted`, or
+ * its anchor sits in a fixed or sticky box (`inFixedOrStickyBox`), decided at
+ * each open: those are placed this way in every browser (ADR-0056, amended
+ * 2026-11-20). The scripted style also switches the panel's own
+ * `position-area` and `position-try-fallbacks` off, which would otherwise
+ * still shape it. Floating UI is imported lazily, and preloaded where it will
+ * be needed so the first open does not wait on it. Call `start()` right after
+ * `showPopover()`: the placement then lands before the first paint, which the
+ * queued `toggle` event would miss.
  *
  * Each consumer's `fallbacks` mirror its `position-try-fallbacks` rule; keep
  * the two in step.
@@ -30,7 +35,16 @@
 import type * as FloatingUiModule from '@floating-ui/dom';
 import type { Middleware, Padding, Placement } from '@floating-ui/dom';
 
-import { onBeforeUnmount, readonly, ref, type Ref, watch } from 'vue';
+import {
+  type MaybeRefOrGetter,
+  onBeforeUnmount,
+  onMounted,
+  readonly,
+  ref,
+  type Ref,
+  toValue,
+  watch,
+} from 'vue';
 
 import type { Placement as PanelPlacement } from './positionArea';
 
@@ -44,6 +58,30 @@ export const supportsAnchorPositioning = (): boolean =>
   typeof CSS.supports === 'function' &&
   CSS.supports('anchor-name: --x') &&
   CSS.supports('position-anchor: --x');
+
+/** The element's parent in the flat tree: its slot, parent or shadow host. */
+const flatParent = (el: Element): Element | null =>
+  el.assignedSlot ??
+  el.parentElement ??
+  (el.parentNode as null | ShadowRoot)?.host ??
+  null;
+
+/**
+ * True when `el` or a flat-tree ancestor is `position: fixed` or `sticky`: a
+ * box that does not scroll with the page, such as a pinned toolbar, or a
+ * top-layer panel or modal dialog (fixed by the UA). Safari 26's native
+ * positioning misplaces a panel anchored inside one by the scroll distance
+ * (ADR-0056, amended 2026-11-20).
+ */
+export const inFixedOrStickyBox = (el: Element | null | undefined): boolean => {
+  for (let node = el ?? null; node; node = flatParent(node)) {
+    const { position } = getComputedStyle(node);
+
+    if (position === 'fixed' || position === 'sticky') return true;
+  }
+
+  return false;
+};
 
 let floatingUi: null | Promise<FloatingUi> = null;
 
@@ -97,13 +135,16 @@ export const flipChain = (placement: PanelPlacement): PanelPlacement[] => [
 ];
 
 export interface FallbackPosition {
-  /** Start positioning — call once the panel is open. */
+  /**
+   * Start positioning — call right after `showPopover()`. A second call
+   * while this open is already placed does nothing.
+   */
   start(): void;
 
   /** Stop tracking — call when the panel closes. */
   stop(): void;
 
-  /** Declarations to append to the panel's inline style; empty with native support. */
+  /** Declarations to append to the panel's inline style; empty while native. */
   style: Readonly<Ref<string>>;
 }
 
@@ -127,9 +168,9 @@ export interface UseFallbackPositionOptions {
    * Place the panel with Floating UI in every browser, even where anchors are
    * positioned natively: a submenu, anchored inside the menu's own top-layer
    * panel, is left behind by Safari's native positioning once the page
-   * scrolls.
+   * scrolls, and a designated trigger has no native anchor at all.
    */
-  scripted?: boolean;
+  scripted?: MaybeRefOrGetter<boolean>;
 }
 
 export const useFallbackPosition = (
@@ -137,13 +178,44 @@ export const useFallbackPosition = (
 ): FallbackPosition => {
   const style = ref('');
 
-  const native = !options.scripted && supportsAnchorPositioning();
+  const supported = supportsAnchorPositioning();
 
-  if (!native) void loadFloatingUi().catch(() => {});
+  const preload = (): void => void loadFloatingUi().catch(() => {});
+
+  // Decided at each open: the anchor's surroundings can change between opens.
+  const placedByScript = (): boolean =>
+    !supported ||
+    toValue(options.scripted) === true ||
+    inFixedOrStickyBox(options.reference());
+
+  if (!supported || options.scripted === true) preload();
+
+  onMounted(() => {
+    // Watched from mount, not setup: the getter may read component state
+    // declared after this call. A designated trigger can resolve later still.
+    watch(
+      () => toValue(options.scripted),
+      (scripted) => {
+        if (scripted) preload();
+      },
+      { immediate: true },
+    );
+
+    // An anchor in a fixed or sticky box, looked for a task after mount: by
+    // then the surrounding elements have upgraded and slotted this one into
+    // their shadow trees, where a pinned toolbar keeps its sticky box.
+    if (supported) {
+      setTimeout(() => {
+        if (inFixedOrStickyBox(options.reference())) preload();
+      });
+    }
+  });
 
   let cleanup: (() => void) | null = null;
 
   let update: (() => void) | null = null;
+
+  let started = false;
 
   // Bumped by every start/stop so a late import or computation of an earlier
   // open never lands.
@@ -154,12 +226,20 @@ export const useFallbackPosition = (
     cleanup?.();
     cleanup = null;
     update = null;
+    started = false;
   };
 
   const start = (): void => {
-    if (native) return;
+    if (started) return;
+
+    if (!placedByScript()) {
+      style.value = '';
+
+      return;
+    }
 
     stop();
+    started = true;
 
     const current = generation;
 
@@ -243,7 +323,7 @@ export const useFallbackPosition = (
                 lastFit = { from: placement, placement: resolved };
               }
 
-              style.value = `position:fixed;inset:auto;margin:0;left:${x}px;top:${y}px;`;
+              style.value = `position:fixed;inset:auto;margin:0;position-area:none;position-try-fallbacks:none;left:${x}px;top:${y}px;`;
             });
           };
 
@@ -256,7 +336,7 @@ export const useFallbackPosition = (
       });
   };
 
-  if (!native) watch(options.placement, () => update?.());
+  watch(options.placement, () => update?.());
 
   onBeforeUnmount(stop);
 
