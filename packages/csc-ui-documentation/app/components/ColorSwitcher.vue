@@ -27,7 +27,7 @@
             class="size-4 rounded-full"
           />
 
-          <span class="text-accent">{{ color.label }}</span>
+          {{ color.label }}
         </c-menu-item>
       </template>
 
