@@ -83,3 +83,9 @@ re-diagnose before merging. If the in-flow popover demos still drift on the
 preview, that is a new decision (park it, do not widen the rule unasked).
 
 Commit: `Fix(overlays): …` with a patch changeset, user-facing wording.
+
+Found while testing (user chose: fix on this branch, own commit): a designated
+`c-button` (any `display: contents` host) measured as an empty rect at 0,0, so
+its panel opened at the page's top-left corner, before and after the fix
+above. `useFallbackPosition` now measures such a reference by the union of the
+boxes it renders; a conformance spec compares it with a slotted `c-button`.

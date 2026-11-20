@@ -6,7 +6,7 @@ status: accepted
 
 > Amended by ADR-0050: the chain's light dismiss pairs the press with its release; a member survives when either landed inside it.
 
-> Amended by ADR-0056 (2026-11-20): designated triggers are no longer measured onto a proxy anchor. Safari 26 misplaces a panel anchored to a fixed-position box once the page scrolls, so Floating UI places the panel against the designated element in every browser, and the proxy is gone.
+> Amended by ADR-0056 (2026-11-20): designated triggers are no longer measured onto a proxy anchor. Safari 26 misplaces a panel anchored to a fixed-position box once the page scrolls, so Floating UI places the panel against the designated element in every browser, and the proxy is gone. A `display: contents` element (a component host such as `c-button`) is measured by the box it renders: it has none of its own, and both the proxy and the first Floating UI version put the panel at the page's top-left corner.
 
 Two related extensions to the anchored overlay components. First, a **trigger**
 no longer has to be slotted: every overlay component with a `trigger` slot
