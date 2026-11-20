@@ -1,19 +1,16 @@
 <template>
-  <c-menu distance="8" position="bottom-end" @select="onSelect">
-    <c-button
-      slot="trigger"
-      :aria-label="`Primary colour: ${currentColor.label}`"
-      size="small"
-      text
-    >
+  <toolbar-menu
+    :label="`Primary colour: ${currentColor.label}`"
+    :text="currentColor.label"
+    @select="onSelect"
+  >
+    <template #icon="{ compact }">
       <span
+        :class="compact ? 'size-4' : 'size-3'"
         :style="{ 'background-color': currentColor.value }"
-        class="size-3 rounded-full"
+        class="rounded-full"
       />
-
-      <!-- Swatch-only below `md`: the toolbar has to fit a phone. -->
-      <span class="max-md:hidden">{{ currentColor.label }}</span>
-    </c-button>
+    </template>
 
     <template v-for="(color, index) in colors" :key="index">
       <template v-if="color.type === 'color'">
@@ -39,7 +36,7 @@
         <c-divider />
       </template>
     </template>
-  </c-menu>
+  </toolbar-menu>
 </template>
 
 <script setup lang="ts">
@@ -76,9 +73,3 @@ const currentColor = computed<Swatch>(
 const onSelect = (event: CustomEvent<{ value: Swatch }>) =>
   setSeed('primary', event.detail.value.value);
 </script>
-
-<style scoped>
-c-button::part(root) {
-  color: var(--c-on-surface);
-}
-</style>

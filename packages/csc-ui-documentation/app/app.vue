@@ -1,10 +1,10 @@
 <template>
   <div class="flex min-h-screen flex-col">
     <!-- The bar must fit a 360px phone (plan: fullscreen-panel-and-mobile-docs,
-         part B): below `sm` only the logo, the two icon-only switchers and
-         the burger remain; the wordmark and badge return at `sm`, the flavor
-         switcher at `md`. `min-w-0` + `truncate` keep the wordmark on one
-         line and the control cluster never shrinks off the right edge. -->
+         part B): below `sm` only the logo, the three switchers and the burger
+         remain; the wordmark and badge return at `sm`, the switchers' labels
+         at `md` (ToolbarMenu). `min-w-0` + `truncate` keep the wordmark on
+         one line and the control cluster never shrinks off the right edge. -->
     <c-toolbar>
       <nuxt-link
         aria-label="CSC Design System home"
@@ -23,7 +23,7 @@
       </span>
 
       <div class="ml-auto flex shrink-0 items-center gap-2">
-        <flavor-switcher class="max-md:hidden" />
+        <flavor-switcher />
 
         <theme-toggle />
 

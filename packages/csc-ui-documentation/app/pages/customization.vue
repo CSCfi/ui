@@ -10,8 +10,6 @@
         your own Tailwind build.
       </p>
 
-      <flavor-switcher class="md:hidden" />
-
       <section v-for="section in sections" :key="section.id" class="mt-10">
         <h2
           :id="section.id"

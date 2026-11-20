@@ -1,29 +1,31 @@
 <template>
   <!-- Documentation-wide flavor selection. -->
-  <c-menu distance="8" position="bottom-end" @select="onSelect">
-    <c-button slot="trigger" size="small" text>
+  <toolbar-menu
+    :label="`Flavour: ${currentFlavor.label}`"
+    :text="currentFlavor.label"
+    @select="onSelect"
+  >
+    <template #icon="{ compact }">
       <c-icon
-        :class="ICON_COLORS[currentFlavor!.id]"
-        :path="currentFlavor?.icon"
-        :size="16"
+        :class="ICON_COLORS[currentFlavor.id]"
+        :path="currentFlavor.icon"
+        :size="compact ? undefined : 16"
       />
-
-      {{ currentFlavor?.label }}
-    </c-button>
+    </template>
 
     <c-menu-label>Flavour</c-menu-label>
 
     <c-menu-item
       v-for="option in FLAVORS"
       :key="option.id"
-      :checked="option.id === currentFlavor?.id"
+      :checked="option.id === currentFlavor.id"
       :value="option.id"
       type="radio"
     >
       <c-icon :class="ICON_COLORS[option.id]" :path="option.icon" :size="16" />
       {{ option.label }}
     </c-menu-item>
-  </c-menu>
+  </toolbar-menu>
 </template>
 
 <script setup lang="ts">
@@ -38,14 +40,6 @@ const onSelect = (event: CustomEvent<{ value: string }>) => {
 };
 
 const currentFlavor = computed(
-  () => FLAVORS.find((option) => option.id === flavor.value) ?? FLAVORS[0],
+  () => FLAVORS.find((option) => option.id === flavor.value) ?? FLAVORS[0]!,
 );
 </script>
-
-<style scoped>
-c-menu c-button {
-  &::part(root) {
-    color: var(--c-on-surface);
-  }
-}
-</style>
