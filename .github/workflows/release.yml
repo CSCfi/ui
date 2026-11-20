@@ -44,6 +44,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # GITHUB_TOKEN opens the Version PR, and GitHub starts no workflow for
+      # that token's events: the PR's required checks never report, so an
+      # admin merges it past them (ADR-0028, amended 2026-11-17).
       - name: Create release PR or publish to npm
         uses: changesets/action@v1
         with:

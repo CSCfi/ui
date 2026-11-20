@@ -68,6 +68,17 @@ Versioning and publishing are driven by **changesets**:
   changesets already released in an alpha are deleted (their text stays under
   each alpha in `CHANGELOG.md`) and one hand-written major changeset describes
   the release for 3.x upgraders, linking the migration guide.
+  _Amended 2026-11-17_: the rule covers every prerelease, alpha or rc. By
+  rc.8 every changeset on disk had been released in one, and in `exit` mode
+  changesets lists each changeset still on disk in the stable entry, so the
+  exit PR deletes them all and 4.0.0 carries the curated text alone.
 - **3.x is frozen at 3.0.19**, which keeps a `v3` dist-tag; no 3.x version is
   deprecated on npm. After 4.0.0 the `alpha` and `rc` dist-tags are removed,
   and `@cscfi/csc-ui-vue` / `@cscfi/csc-ui-vue2` are deprecated.
+- _Amended 2026-11-17_: **an admin merges the Version PR past the required
+  checks.** Before the exit PR, `main` starts requiring `build-lint-test`,
+  both engine jobs and `require-changeset`, but the release workflow opens
+  the Version PR with `GITHUB_TOKEN`, and GitHub starts no workflow for that
+  token's events, so those checks never report on it. Its diff is versions
+  and changelogs over a `main` that already passed CI; a GitHub App token
+  that let CI run there was not worth an org app and two secrets.

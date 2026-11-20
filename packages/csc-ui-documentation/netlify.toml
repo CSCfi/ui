@@ -1,0 +1,14 @@
+# The docs site, design-system.csc.fi. Netlify finds this file in this package
+# (where the 3.x site kept its own), but resolves `publish` from the
+# repository root: a bare "dist" pointed at the root's dist/, which never
+# exists. The site reads the library's built manifest and usage docs, so
+# csc-ui builds first. On Netlify, `nuxt generate` resolves Nitro's
+# netlify-static preset: the static site goes to this package's dist/, with a
+# _redirects file for the composed children's old routes and a 404 for any
+# unknown path (no SPA catch-all; /v3/ is plain files).
+[build]
+command = "pnpm --filter @cscfi/csc-ui build && pnpm --filter @cscfi/csc-ui-documentation generate"
+publish = "packages/csc-ui-documentation/dist"
+
+[build.environment]
+NODE_VERSION = "24"
