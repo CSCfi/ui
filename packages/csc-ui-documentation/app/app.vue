@@ -17,9 +17,9 @@
       <span class="min-w-0 truncate max-sm:hidden">CSC Design System</span>
 
       <span
-        class="ml-[0.35rem] shrink-0 rounded-full bg-accent px-2 py-[0.1rem] align-middle text-xs font-semibold tracking-wider text-on-accent uppercase max-sm:hidden"
+        class="ml-[0.35rem] shrink-0 rounded-full bg-accent px-2 py-[0.1rem] align-middle text-xs font-semibold tracking-wider text-on-accent max-sm:hidden"
       >
-        v{{ major }}
+        v{{ corePackage.version }}
       </span>
 
       <div class="ml-auto flex shrink-0 items-center gap-2">
@@ -112,6 +112,8 @@
 </template>
 
 <script setup lang="ts">
+// The badge names the release these docs were built from: the core package's
+// version, which only the Version packages PR changes. `/v3/` archives 3.x.
 import corePackage from '../../csc-ui/package.json';
 
 // A stable gutter keeps the page from reflowing when the library's page lock
@@ -123,9 +125,6 @@ useHead({
 });
 
 const { navComponents } = useManifest();
-
-// The badge names the major these docs cover; `/v3/` archives the last one.
-const major = corePackage.version.split('.')[0];
 
 const route = useRoute();
 
