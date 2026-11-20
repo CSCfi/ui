@@ -410,6 +410,58 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
       },
     );
 
+    // A component host such as c-button is `display: contents`: no box of
+    // its own (an empty rect at 0,0), so the panel is placed against the box
+    // it renders.
+    it.runIf(['c-menu', 'c-popover', 'c-tooltip'].includes(tag))(
+      'places the panel against a designated c-button as native does against a slotted one',
+      async () => {
+        const label =
+          recipe.mount.html?.match(
+            /<c-button slot="trigger">(.*?)<\/c-button>/,
+          )?.[1] ?? '';
+
+        const buttonOf = (host: Element): HTMLElement =>
+          host.shadowRoot!.querySelector('button')!;
+
+        document.body.replaceChildren();
+
+        const at = document.createElement('div');
+
+        at.style.cssText = TRIGGER_AT;
+        at.innerHTML = `<c-button id="designated">${label}</c-button>`;
+        document.body.append(at);
+        await settle();
+
+        const d = await mount(tag, {
+          ...recipe.mount,
+          html: withoutSlottedTrigger(),
+          props: { ...recipe.mount.props, trigger: 'designated' },
+        });
+
+        const designatedButton = buttonOf(at.querySelector('c-button')!);
+
+        await openFrom(designatedButton);
+
+        const designated = fromTrigger(recipe.panel(d), designatedButton);
+
+        d.unmount();
+        document.body.replaceChildren();
+
+        const s = await mount(tag, recipe.mount);
+
+        s.stage.style.cssText += `;${TRIGGER_AT};padding:0`;
+
+        const slottedButton = buttonOf(s.host.querySelector('c-button')!);
+
+        await openFrom(slottedButton);
+
+        expect(designated).toBe(fromTrigger(recipe.panel(s), slottedButton));
+
+        s.unmount();
+      },
+    );
+
     it.each(Object.keys(SCENARIOS))(
       'places the panel as native does %s',
       async (scenario) => {

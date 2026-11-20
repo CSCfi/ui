@@ -33,7 +33,12 @@
  */
 
 import type * as FloatingUiModule from '@floating-ui/dom';
-import type { Middleware, Padding, Placement } from '@floating-ui/dom';
+import type {
+  Middleware,
+  Padding,
+  Placement,
+  VirtualElement,
+} from '@floating-ui/dom';
 
 import {
   type MaybeRefOrGetter,
@@ -82,6 +87,46 @@ export const inFixedOrStickyBox = (el: Element | null | undefined): boolean => {
 
   return false;
 };
+
+/** The elements that render `el`'s box: its slot's assignees, or its shadow or light children. */
+const renderedChildren = (el: Element): Element[] =>
+  el instanceof HTMLSlotElement
+    ? el.assignedElements({ flatten: true })
+    : [...(el.shadowRoot ?? el).children];
+
+/** The boxes `el` renders, through any `display: contents` layers. */
+const renderedBoxes = (el: Element): DOMRect[] =>
+  getComputedStyle(el).display === 'contents'
+    ? renderedChildren(el).flatMap(renderedBoxes)
+    : [el.getBoundingClientRect()].filter((r) => r.width || r.height);
+
+/**
+ * What Floating UI measures for `el`. A `display: contents` element, such as
+ * a component host like `c-button` designated as a trigger, has no box of its
+ * own (an empty rect at 0,0), so it is measured by the union of the boxes it
+ * renders.
+ */
+const measurable = (el: Element): Element | VirtualElement =>
+  getComputedStyle(el).display === 'contents'
+    ? {
+        contextElement: el,
+        getBoundingClientRect: () => {
+          const boxes = renderedBoxes(el);
+
+          if (!boxes.length) return el.getBoundingClientRect();
+
+          const left = Math.min(...boxes.map((r) => r.left));
+
+          const top = Math.min(...boxes.map((r) => r.top));
+
+          const right = Math.max(...boxes.map((r) => r.right));
+
+          const bottom = Math.max(...boxes.map((r) => r.bottom));
+
+          return new DOMRect(left, top, right - left, bottom - top);
+        },
+      }
+    : el;
 
 let floatingUi: null | Promise<FloatingUi> = null;
 
@@ -246,7 +291,9 @@ export const useFallbackPosition = (
     loadFloatingUi()
       .then(
         ({ autoUpdate, computePosition, detectOverflow, offset, shift }) => {
-          const reference = options.reference();
+          const element = options.reference();
+
+          const reference = element && measurable(element);
 
           const floating = options.floating.value;
 
