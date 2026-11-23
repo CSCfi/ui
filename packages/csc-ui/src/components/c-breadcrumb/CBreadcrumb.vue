@@ -451,6 +451,7 @@ const openPanel = (): void => {
   if (!foldedCount.value || !p || p.matches(':popover-open')) return;
 
   p.showPopover();
+  fallback.start();
 };
 
 function closePanel(returnFocus: boolean): void {

@@ -12,17 +12,6 @@
     <slot name="trigger" />
   </span>
 
-  <!-- Proxy anchor for a designated trigger (ADR-0038): anchor names are
-       tree-scoped, so the panel cannot anchor to an outer-tree element
-       directly. This inert box is pinned over the designated trigger's rect
-       while the panel is open; the panel's position-anchor switches to it. -->
-  <span
-    ref="proxyRef"
-    :class="ui.proxy()"
-    aria-hidden="true"
-    style="anchor-name: --c-popover-designated"
-  />
-
   <!-- Manual popover in the top layer: never clipped by overflow, no teleport,
        no z-index war. Manual, not auto: auto popovers across separate shadow
        roots dismiss each other (ADR-0008), so light-dismiss is hand-rolled —
@@ -160,7 +149,6 @@ const popover = tv({
     heading: 'm-0 mb-2 font-semibold text-on-surface',
     panel:
       'fixed [inset:auto] m-0 box-border w-max max-w-sm overflow-visible rounded-csc-md border-0 bg-surface-overlay p-4 text-on-surface shadow-[2px_4px_10px_#00000029] [--_c-tint-ground:var(--c-surface)] [--_c-tint-scale:1]',
-    proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },
 });
@@ -187,8 +175,6 @@ const focusOptions = useKeyboardModality(host);
 const anchorRef = useTemplateRef<HTMLElement>('anchorRef');
 
 const panelRef = useTemplateRef<HTMLElement>('panelRef');
-
-const proxyRef = useTemplateRef<HTMLElement>('proxyRef');
 
 const isOpen = ref(false);
 
@@ -249,7 +235,6 @@ const designated = useDesignatedTrigger({
       setTriggerWiring(slotted, isOpen.value);
     }
   },
-  proxy: proxyRef,
   source: () => props.trigger,
 });
 
@@ -260,19 +245,19 @@ const getTriggerEl = (): HTMLElement | null =>
 // The gap is applied on the placement's axis (both sides, so it survives the
 // position-try flip fallbacks). Unlike c-menu there is no nested panel to
 // inherit it, so it is inlined directly instead of published as a custom
-// property. With a designated trigger the panel anchors to the tracked proxy
-// instead of the trigger-slot wrapper.
+// property.
 const panelStyle = computed(
   () =>
-    `position-anchor:${
-      designated.element.value ? '--c-popover-designated' : '--c-popover-anchor'
-    };position-area:${
+    `position-anchor:--c-popover-anchor;position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA.bottom
     };inset:auto;margin-${placementAxis(props.position)}:${Number(props.distance) || 0}px;${fallback.style.value}`,
 );
 
-// Without native anchor positioning (Firefox 140 ESR) Floating UI places the
-// panel; the chain mirrors the `position-try-fallbacks` rule below (ADR-0056).
+// Floating UI places the panel without native anchor positioning (Firefox
+// 140 ESR), against a designated trigger (an outer-tree element no anchor
+// name reaches, ADR-0038), and from a fixed or sticky box such as a pinned
+// toolbar; the chain mirrors the `position-try-fallbacks` rule below
+// (ADR-0056).
 const fallback = useFallbackPosition({
   fallbacks: flipChain,
   floating: panelRef,
@@ -280,23 +265,21 @@ const fallback = useFallbackPosition({
   placement: () =>
     props.position in POSITION_AREA ? props.position : 'bottom',
   reference: () => designated.element.value ?? anchorRef.value,
+  scripted: () => designated.element.value !== null,
 });
 // ---- open / close ----------------------------------------------------------
 
 const emit = useHostEmit<CPopoverEvents>();
 
 const openPopover = () => {
-  // Re-resolve a designated trigger ID (its element may have appeared since)
-  // and pin the proxy anchor before the panel shows, so the first paint is
-  // already in place.
+  // Re-resolve a designated trigger ID (its element may have appeared since).
   if (props.trigger) designated.resolve();
-
-  designated.startTracking();
 
   const p = panelRef.value;
 
   if (p && typeof p.showPopover === 'function' && !p.matches(':popover-open')) {
     p.showPopover();
+    fallback.start();
   }
 };
 
@@ -373,7 +356,6 @@ const onToggle = (event: Event) => {
     enterChain(chainEntry);
   } else {
     leaveChain(chainEntry);
-    designated.stopTracking();
     fallback.stop();
 
     if (pendingReturnFocus) getTriggerEl()?.focus(focusOptions());

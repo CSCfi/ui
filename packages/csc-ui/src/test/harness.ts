@@ -59,6 +59,9 @@ export interface MountOptions {
   /** Light-DOM children, i.e. slotted content. */
   html?: string;
 
+  /** Where the stage goes; `document.body` by default. */
+  parent?: Element;
+
   /** Host properties, assigned before the element connects (arrays, objects, numbers). */
   props?: Record<string, unknown>;
 
@@ -285,7 +288,7 @@ export async function mount<T extends HTMLElement = HTMLElement>(
     stage.append(host);
   }
 
-  document.body.append(stage);
+  (options.parent ?? document.body).append(stage);
 
   await customElements.whenDefined(tag);
   await settle();

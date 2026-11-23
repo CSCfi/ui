@@ -12,17 +12,6 @@ The wrapper carries `anchor-name`; the panel references it. -->
     <slot name="trigger" />
   </span>
 
-  <!-- Proxy anchor for a designated trigger (ADR-0038): anchor names are
-       tree-scoped, so the panel cannot anchor to an outer-tree element
-       directly. This inert box is pinned over the designated trigger's rect
-       while the panel is open; the panel's position-anchor switches to it. -->
-  <span
-    ref="proxyRef"
-    :class="ui.proxy()"
-    aria-hidden="true"
-    style="anchor-name: --c-menu-designated"
-  />
-
   <!-- Manual popover in the top layer: never clipped by overflow, no teleport,
        no z-index war. Light-dismiss + submenu coordination are handled by this
        controller (manual, not auto, so cross-shadow submenu popovers don't
@@ -166,7 +155,6 @@ const menu = tv({
     list: 'm-0 max-h-[80vh] w-max min-w-[180px] scrollbar-hidden list-none overflow-y-auto rounded-csc-md bg-surface-overlay p-1 text-on-surface shadow-[2px_4px_10px_#00000029] outline-none',
     panel:
       'fixed [inset:auto] m-0 overflow-visible border-0 bg-transparent p-0',
-    proxy: 'pointer-events-none fixed',
     trigger: 'inline-flex w-max max-w-full',
   },
 });
@@ -195,8 +183,6 @@ const panelRef = useTemplateRef<HTMLElement>('panelRef');
 
 const listRef = useTemplateRef<HTMLElement>('listRef');
 
-const proxyRef = useTemplateRef<HTMLElement>('proxyRef');
-
 const isOpen = ref(false);
 
 const currentItem = ref<HTMLElement | null>(null);
@@ -208,19 +194,18 @@ const currentItem = ref<HTMLElement | null>(null);
 // but an inherited property can.
 const distancePx = computed(() => `${Number(props.distance) || 0}px`);
 
-// With a designated trigger the panel anchors to the tracked proxy instead
-// of the trigger-slot wrapper (ADR-0038).
 const panelStyle = computed(
   () =>
-    `position-anchor:${
-      designated.element.value ? '--c-menu-designated' : '--c-menu-anchor'
-    };position-area:${
+    `position-anchor:--c-menu-anchor;position-area:${
       POSITION_AREA[props.position] ?? POSITION_AREA['bottom-start']
     };inset:auto;margin-${placementAxis(props.position)}:var(--_c-menu-distance,0px);${fallback.style.value}`,
 );
 
-// Without native anchor positioning (Firefox 140 ESR) Floating UI places the
-// panel; the chain mirrors the `position-try-fallbacks` rule below (ADR-0056).
+// Floating UI places the panel without native anchor positioning (Firefox
+// 140 ESR), against a designated trigger (an outer-tree element no anchor
+// name reaches, ADR-0038), and from a fixed or sticky box such as a pinned
+// toolbar; the chain mirrors the `position-try-fallbacks` rule below
+// (ADR-0056).
 const fallback = useFallbackPosition({
   fallbacks: flipChain,
   floating: panelRef,
@@ -228,6 +213,7 @@ const fallback = useFallbackPosition({
   placement: () =>
     props.position in POSITION_AREA ? props.position : 'bottom-start',
   reference: () => designated.element.value ?? anchorRef.value,
+  scripted: () => designated.element.value !== null,
 });
 watch(distancePx, (px) => {
   host?.style.setProperty('--_c-menu-distance', px);
@@ -341,7 +327,6 @@ const designated = useDesignatedTrigger({
       setTriggerWiring(slotted, isOpen.value);
     }
   },
-  proxy: proxyRef,
   source: () => props.trigger,
 });
 
@@ -602,17 +587,14 @@ const emit = useHostEmit<CMenuEvents>();
 const openMenu = (focus: 'first' | 'last' | 'none' = 'first') => {
   pendingOpenFocus = focus;
 
-  // Re-resolve a designated trigger ID (its element may have appeared since)
-  // and pin the proxy anchor before the panel shows, so the first paint is
-  // already in place.
+  // Re-resolve a designated trigger ID (its element may have appeared since).
   if (props.trigger) designated.resolve();
-
-  designated.startTracking();
 
   const p = panelRef.value;
 
   if (p && typeof p.showPopover === 'function' && !p.matches(':popover-open')) {
     p.showPopover();
+    fallback.start();
   }
 };
 
@@ -673,7 +655,6 @@ const onToggle = (event: Event) => {
     });
   } else {
     removeDismissListeners();
-    designated.stopTracking();
     fallback.stop();
     closeAllSubmenus();
     clearActive();
