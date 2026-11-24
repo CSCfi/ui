@@ -22,9 +22,11 @@
 @source not '../examples';
 
 @theme {
-  /* CSC brand font stack (site-loaded, not the library's concern) — preflight
-   * picks it up as the document default. */
-  --font-sans: 'museo-sans', system-ui, sans-serif;
+  /* The site's typeface, Noto Sans, self-hosted through
+   * @fontsource-variable/noto-sans (nuxt.config.ts `css`); the library ships
+   * no font (ADR-0072), so components inherit it. Preflight picks it up as the
+   * document default. */
+  --font-sans: 'Noto Sans Variable', system-ui, sans-serif;
   /* Keep the exact mono stack the site chrome always used. */
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 

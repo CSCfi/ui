@@ -13,22 +13,34 @@
  * elements to upgrade, and fails the run when a route's scroll width exceeds
  * the viewport — naming the widest offending elements, with their light-DOM
  * path and the shadow host they sit in, so the fix is targeted.
+ *
+ * The landing page also gets an axe pass (WCAG 2.1 AA, the example smoke's
+ * tags) in both theme modes (plan `_plan/csc-ui-landing-page.md`): it is the
+ * one page of hand-written markup around live components, where a skipped
+ * heading level or an unnamed link would otherwise go unchecked.
  */
-import {
-  createReadStream,
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  statSync,
-} from 'node:fs';
-import { createServer } from 'node:http';
-import { extname, join, relative, resolve } from 'node:path';
+import { mkdirSync, readdirSync, statSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 
+import {
+  PUBLIC,
+  requireGenerated,
+  servePublic,
+  settlePage,
+} from './static-site.mjs';
+
 const here = fileURLToPath(new URL('.', import.meta.url));
 
-const PUBLIC = resolve(here, '../.output/public');
+const require = createRequire(import.meta.url);
+
+/** Routes that also get the axe pass, in both theme modes. */
+const AXE_ROUTES = new Set(['/']);
+
+/** The example smoke's axe rules (tests/smoke.ts AXE_OPTIONS). */
+const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 /**
  * The same font pin the visual baselines use (ADR-0049): the bundled
@@ -61,27 +73,7 @@ const SHOTS = option('shots', null);
 /** A route may exceed the viewport by this much before it counts (subpixel rounding). */
 const TOLERANCE = 1;
 
-const MIME = {
-  '.css': 'text/css',
-  '.html': 'text/html; charset=utf-8',
-  '.ico': 'image/x-icon',
-  '.js': 'text/javascript',
-  '.json': 'application/json',
-  '.mjs': 'text/javascript',
-  '.png': 'image/png',
-  '.svg': 'image/svg+xml',
-  '.txt': 'text/plain',
-  '.webp': 'image/webp',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-};
-
-if (!existsSync(PUBLIC)) {
-  console.error(
-    `viewport-smoke: ${relative(process.cwd(), PUBLIC)} is missing — run \`pnpm generate\` first`,
-  );
-  process.exit(2);
-}
+requireGenerated('viewport-smoke');
 
 /** Every prerendered route: a directory holding an index.html, as a URL path. */
 const routes = (dir = PUBLIC, found = []) => {
@@ -106,30 +98,7 @@ const routes = (dir = PUBLIC, found = []) => {
   return found.sort();
 };
 
-const server = createServer((req, res) => {
-  const url = new URL(req.url ?? '/', 'http://localhost');
-
-  let file = join(PUBLIC, decodeURIComponent(url.pathname));
-
-  if (existsSync(file) && statSync(file).isDirectory())
-    file = join(file, 'index.html');
-
-  if (!existsSync(file)) {
-    res.writeHead(404);
-    res.end();
-
-    return;
-  }
-
-  res.writeHead(200, {
-    'Content-Type': MIME[extname(file)] ?? 'application/octet-stream',
-  });
-  createReadStream(file).pipe(res);
-});
-
-await new Promise((done) => server.listen(0, '127.0.0.1', done));
-
-const origin = `http://127.0.0.1:${server.address().port}`;
+const { close, origin } = await servePublic();
 
 const browser = await chromium.launch({
   env: { ...process.env, FONTCONFIG_FILE: FONTS_CONF },
@@ -151,23 +120,7 @@ const list = ONLY ? [ONLY] : routes();
 for (const route of list) {
   await page.goto(`${origin}${route}`, { waitUntil: 'networkidle' });
 
-  // Hydration + custom-element upgrade: every c-* tag on the page defined,
-  // then two frames for the upgraded elements to lay out.
-  await page.evaluate(async () => {
-    const tags = new Set(
-      Array.from(document.querySelectorAll('*'))
-        .map((el) => el.localName)
-        .filter((name) => name.startsWith('c-')),
-    );
-
-    await Promise.all(
-      Array.from(tags).map((tag) => customElements.whenDefined(tag)),
-    );
-    await document.fonts.ready;
-    await new Promise((r) =>
-      requestAnimationFrame(() => requestAnimationFrame(r)),
-    );
-  });
+  await settlePage(page);
 
   const result = await page.evaluate((tolerance) => {
     const viewport = document.documentElement.clientWidth;
@@ -304,6 +257,45 @@ for (const route of list) {
     });
   }
 
+  if (AXE_ROUTES.has(route)) {
+    await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') });
+
+    for (const mode of ['light', 'dark']) {
+      const violations = await page.evaluate(
+        async ({ mode, tags }) => {
+          document.documentElement.setAttribute('data-theme', mode);
+          await new Promise((r) =>
+            requestAnimationFrame(() => requestAnimationFrame(r)),
+          );
+
+          // Shiki's token colours (utils/highlight.ts themes) are the
+          // site's choice for every code block, not the landing page's; their
+          // contrast is a site-wide question, left out of this pass.
+          const context = { exclude: [['.shiki']] };
+
+          const { violations } = await window.axe.run(context, {
+            resultTypes: ['violations'],
+            runOnly: { type: 'tag', values: tags },
+          });
+
+          return violations.flatMap((violation) =>
+            violation.nodes.map(
+              (node) => `${violation.id} ${JSON.stringify(node.target)}`,
+            ),
+          );
+        },
+        { mode, tags: AXE_TAGS },
+      );
+
+      if (violations.length) {
+        failures.push({ route });
+        console.log(`✖ ${route}  axe (${mode})`);
+
+        for (const line of violations) console.log(`    ${line}`);
+      }
+    }
+  }
+
   const pageOverflow = result.scrollWidth > result.viewport + TOLERANCE;
 
   if (pageOverflow || result.offenders.length) {
@@ -326,10 +318,10 @@ for (const route of list) {
 }
 
 await browser.close();
-server.close();
+close();
 
 console.log(
-  `\nviewport-smoke: ${list.length - failures.length}/${list.length} routes fit ${WIDTH}×${HEIGHT}`,
+  `\nviewport-smoke: ${list.length - new Set(failures.map((f) => f.route)).size}/${list.length} routes pass at ${WIDTH}×${HEIGHT}`,
 );
 
 process.exit(failures.length ? 1 : 0);

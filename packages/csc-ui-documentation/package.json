@@ -11,6 +11,7 @@
     "lint:bindings": "node scripts/check-element-bindings.mjs",
     "lint:examples": "node scripts/check-example-parity.mjs",
     "lint:migration": "node scripts/check-migration-guide.mjs",
+    "og-image": "node scripts/og-image.mjs",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@cscfi/csc-ui-react": "workspace:*",
+    "@fontsource-variable/noto-sans": "^5.3.0",
     "@tailwindcss/vite": "^4.3.1",
     "@types/markdown-it": "^14.1.2",
     "@types/react": "^19.2.17",

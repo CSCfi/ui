@@ -86,15 +86,34 @@ for (const module of manifest.modules ?? []) {
 // happened to, Nitro's netlify-static preset (the Netlify build) did not, so
 // Netlify would answer them with its 404. Seed every top-level page; the
 // crawler finds the component pages through their `href` links.
-const pageRoutes = readdirSync(
-  fileURLToPath(new URL('app/pages', import.meta.url)),
-)
-  .filter((file) => file.endsWith('.vue'))
-  .map((file) => (file === 'index.vue' ? '/' : `/${file.slice(0, -4)}`));
+const pageRoutes = [
+  ...readdirSync(fileURLToPath(new URL('app/pages', import.meta.url)))
+    .filter((file) => file.endsWith('.vue'))
+    .map((file) => (file === 'index.vue' ? '/' : `/${file.slice(0, -4)}`)),
+  '/components',
+];
+
+// The landing page's pitch, also every page's fallback description.
+const DESCRIPTION =
+  'Accessible web components for CSC services, in light and dark, for Vue, React, Angular or plain TypeScript.';
 
 export default defineNuxtConfig({
   app: {
     head: {
+      link: [{ href: '/favicon.svg', rel: 'icon', type: 'image/svg+xml' }],
+      meta: [
+        { content: DESCRIPTION, name: 'description' },
+        { content: 'CSC Design System', property: 'og:site_name' },
+        { content: 'website', property: 'og:type' },
+        // Crawlers want an absolute image URL; the site is served at root.
+        {
+          content: 'https://design-system.csc.fi/og-image.png',
+          property: 'og:image',
+        },
+        { content: '1200', property: 'og:image:width' },
+        { content: '630', property: 'og:image:height' },
+        { content: 'summary_large_image', name: 'twitter:card' },
+      ],
       script: [
         {
           // Apply the stored theme before first paint (prerendered pages
@@ -113,6 +132,12 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2026-07-01',
   css: [
+    // The site's typeface (tailwind.css `--font-sans`), self-hosted: the
+    // files ship in the build, so no page view reaches Google Fonts. Kept out
+    // of site.css, which the example smoke loads with the harness's pinned
+    // Liberation fonts.
+    '@fontsource-variable/noto-sans/wght.css',
+    '@fontsource-variable/noto-sans/wght-italic.css',
     '@cscfi/csc-ui/css/tokens.css',
     '~/assets/tailwind.css',
     '~/assets/site.css',
