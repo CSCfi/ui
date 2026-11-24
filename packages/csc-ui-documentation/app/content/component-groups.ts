@@ -1,9 +1,11 @@
 /**
- * The landing page's component overview: every standalone component
- * (`useManifest().navComponents`) in exactly one group. Grouping is how the
- * docs present the library, not a fact about a component, so it lives here
- * and not in the manifest; tests/landing.spec.ts fails when a standalone tag
- * is in no group or in two, and when a group names a tag the manifest lacks.
+ * The component groups by which the landing page's overview, the /components
+ * page's sections and the side navigation list the components: every
+ * standalone component (`useManifest().navComponents`) in exactly one group.
+ * Grouping is how the docs present the library, not a fact about a component,
+ * so it lives here and not in the manifest; tests/landing.spec.ts fails when
+ * a standalone tag is in no group or in two, and when a group names a tag the
+ * manifest lacks.
  */
 export interface ComponentGroup {
   id: string;
@@ -11,7 +13,7 @@ export interface ComponentGroup {
   /** One line on what the group's components are for. */
   summary: string;
 
-  /** Tag names, in the order the overview lists them. */
+  /** Tag names, alphabetically (tests/landing.spec.ts checks). */
   tags: string[];
   title: string;
 }

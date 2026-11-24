@@ -254,7 +254,15 @@
             <h3
               class="flex items-baseline justify-between gap-3 text-lg font-bold"
             >
-              {{ group.title }}
+              <!-- The group's section on the components overview page. The
+                   card holds a link per component, so only its heading
+                   links (links cannot nest). -->
+              <nuxt-link
+                :to="`/components#${group.id}`"
+                class="text-inherit no-underline hover:underline"
+              >
+                {{ group.title }} →
+              </nuxt-link>
 
               <span class="text-sm font-semibold text-on-surface-muted">
                 {{ group.tags.length }}

@@ -148,4 +148,12 @@ describe('component groups', () => {
   it('name only standalone components', () => {
     expect(grouped.filter((tag) => !standalone.includes(tag))).toEqual([]);
   });
+
+  it('list their components alphabetically', () => {
+    for (const group of COMPONENT_GROUPS) {
+      expect(group.tags, group.title).toEqual(
+        [...group.tags].sort((a, b) => a.localeCompare(b)),
+      );
+    }
+  });
 });

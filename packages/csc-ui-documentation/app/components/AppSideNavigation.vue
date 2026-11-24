@@ -51,24 +51,31 @@
       Overview
     </c-side-navigation-item>
 
-    <c-side-navigation-item
-      v-for="component in navComponents"
-      :key="component.tagName"
-      :current.prop="route.path === `/components/${component.tagName}`"
-      :value="`/components/${component.tagName}`"
-    >
-      {{ component.tagName }}
-    </c-side-navigation-item>
+    <!-- The components in their groups, as the overview page sections them
+         (content/component-groups.ts keeps every standalone component in
+         exactly one). -->
+    <template v-for="group in COMPONENT_GROUPS" :key="group.id">
+      <c-side-navigation-title>{{ group.title }}</c-side-navigation-title>
+
+      <c-side-navigation-item
+        v-for="tag in group.tags"
+        :key="tag"
+        :current.prop="route.path === `/components/${tag}`"
+        :value="`/components/${tag}`"
+      >
+        {{ tag }}
+      </c-side-navigation-item>
+    </template>
   </c-side-navigation>
 </template>
 
 <script setup lang="ts">
+import { COMPONENT_GROUPS } from '~/content/component-groups';
+
 defineProps<{
   /** The slide-in drawer instead of the pinned desktop column. */
   mobile: boolean;
 }>();
 
 const route = useRoute();
-
-const { navComponents } = useManifest();
 </script>
