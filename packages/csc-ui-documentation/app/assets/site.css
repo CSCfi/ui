@@ -115,6 +115,34 @@
   }
 }
 
+/* Component previews (/components): one image per theme mode, keyed on the
+   same predicate as the Shiki colours above. A hidden lazy image is never
+   fetched, so a reader downloads only their mode's previews. */
+.component-preview-light {
+  display: block;
+}
+
+.component-preview-dark,
+[data-theme='dark'] .component-preview-light {
+  display: none;
+}
+
+[data-theme='dark'] .component-preview-dark {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']):not([data-theme='dark'])
+    .component-preview-light {
+    display: none;
+  }
+
+  :root:not([data-theme='light']):not([data-theme='dark'])
+    .component-preview-dark {
+    display: block;
+  }
+}
+
 .example-shiki .shiki,
 .usage .shiki {
   border-radius: 0;

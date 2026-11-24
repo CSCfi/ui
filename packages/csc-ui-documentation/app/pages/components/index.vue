@@ -14,16 +14,36 @@
       <li v-for="component in navComponents" :key="component.tagName">
         <nuxt-link
           :to="`/components/${component.tagName}`"
-          class="block h-full rounded-lg border border-border px-4 py-[0.875rem] text-inherit no-underline hover:border-primary"
+          class="block h-full overflow-hidden rounded-lg border border-border text-inherit no-underline hover:border-primary"
         >
-          <code>&lt;{{ component.tagName }}&gt;</code>
+          <!-- A picture of the component's live example, one per theme mode
+               (scripts/component-previews.mjs); site.css shows the one for
+               the current mode. Decorative: the tag and the description name
+               the component. -->
+          <span class="block aspect-[8/5] border-b border-border">
+            <img
+              v-for="mode in ['light', 'dark']"
+              :key="mode"
+              :class="`component-preview-${mode}`"
+              :src="`/previews/${component.tagName}-${mode}.webp`"
+              alt=""
+              class="size-full object-cover"
+              height="275"
+              loading="lazy"
+              width="440"
+            />
+          </span>
 
-          <p
-            v-if="component.description"
-            class="mt-1.5 text-[0.8125rem] text-on-surface-faint"
-          >
-            {{ firstSentence(component.description) }}
-          </p>
+          <span class="block px-4 py-[0.875rem]">
+            <code>&lt;{{ component.tagName }}&gt;</code>
+
+            <span
+              v-if="component.description"
+              class="mt-1.5 block text-[0.8125rem] text-on-surface-faint"
+            >
+              {{ firstSentence(component.description) }}
+            </span>
+          </span>
         </nuxt-link>
       </li>
     </ul>

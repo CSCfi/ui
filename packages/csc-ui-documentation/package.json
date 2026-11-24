@@ -14,6 +14,7 @@
     "og-image": "node scripts/og-image.mjs",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
+    "previews": "node scripts/component-previews.mjs",
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
     "test:update": "vitest run --update",
