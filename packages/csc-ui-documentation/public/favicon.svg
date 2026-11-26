@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -58 233.61 233.61">
+  <!-- The CSC mark: the two shapes of c-csc-logo without the wordmark, in the
+       fixed brand colours of its light mode (tokens/semantic/light.json). -->
+  <path fill="#006778" d="M117.26,117.71s-2.66-.42-2.72-1.66c-2.41-54.33-7.39-52.22-111.82-54.33-2,0-2.72-2.87-2.72-2.87H117.26Z"/>
+  <path fill="#830051" d="M116.35,0s2.66.42,2.72,1.66C121.49,56,126.46,53.88,230.89,56c2,0,2.72,2.87,2.72,2.87H116.35Z"/>
+</svg>
