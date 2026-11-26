@@ -105,6 +105,12 @@ jobs:
           pnpm --filter @cscfi/csc-ui-documentation run generate
           pnpm --filter @cscfi/csc-ui-documentation run test:viewport
 
+      # The /components overview's pictures (public/previews) must still show
+      # each component as the generated site renders it: a change to a
+      # component's look fails here until `pnpm previews` has re-taken them.
+      - name: Docs component previews up to date
+        run: pnpm --filter @cscfi/csc-ui-documentation run test:previews
+
       # `pnpm test` runs vitest from the repo root, so attachments land in
       # `<root>/.vitest`; the per-package path only catches a run started
       # inside a package. Both are listed — a failing visual case uploaded
@@ -117,6 +123,16 @@ jobs:
           path: |
             .vitest/attachments/**
             packages/**/.vitest/attachments/**
+          if-no-files-found: ignore
+
+      # The fresh pictures of the previews that no longer match, to compare
+      # with the committed ones.
+      - name: Upload out-of-date component previews
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: component-previews
+          path: packages/csc-ui-documentation/.output/previews-check/**
           if-no-files-found: ignore
 
   # The behaviour specs on Firefox and WebKit (ADR-0077), beside the Chromium

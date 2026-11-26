@@ -4,6 +4,14 @@ A web-component design-system library implemented as Vue SFCs compiled to custom
 
 ## Language
 
+**CSC Design System**:
+The design language of CSC's services — the semantic tokens and colour **families**, the **theme modes**, the accessibility rules, the component designs — and the documentation site that presents it (design-system.csc.fi). What the site and its landing page name and pitch; **CSC UI** is how a service gets it.
+_Avoid_: csc-ui for the whole system, UI kit, style guide
+
+**CSC UI** (`@cscfi/csc-ui`):
+The web-component library implementing the **CSC Design System**: the package a service installs, with its **wrapper package**. Versioned and released; the design system is not.
+_Avoid_: the design system (it is the implementation), CSC components
+
 **Component**:
 A reusable custom element with a stable tag name (e.g. `<c-button>`). The tag is the canonical identifier and survived the 3.x→4.x rewrite unchanged. Consumers depend on the tag, not the package internals.
 _Avoid_: Widget, control, element
@@ -785,6 +793,14 @@ _Avoid_: sub-component (imprecise — conflates composed children with internal-
 **Standalone component**:
 A component the consumer uses on its own — it keeps a top-level nav entry and its own page. The complement of a **composed child**. A standalone can still be a parent that owns composed children.
 _Avoid_: top-level component, root component, main component
+
+**Component group**:
+One of the docs site's groupings of **standalone components** — Forms, Overlays, Feedback & status… — by which the landing page's overview, the components overview page and the side navigation list them, every standalone component in exactly one. A presentation choice of the docs, kept out of the **manifest**: nothing about a component's API depends on its group.
+_Avoid_: Category (implies a manifest field), section, group alone (a **group label** names a set of form controls)
+
+**Component preview**:
+The picture of a **standalone component** on its card on the components overview page, one per **theme mode**. A preview is site content, re-taken from the component's live example whenever the component's look changes; CI fails while a preview no longer matches the component's render.
+_Avoid_: Visual baseline (a test fixture of the component's own spec), thumbnail, screenshot (unqualified)
 
 **Flavor**:
 The reader's consumption dialect on the docs site: `vue | react | angular | typescript` (TypeScript = framework-free typed custom-element usage). One documentation-wide selection — clicking any example tab or the header switcher changes every example, and the getting-started code blocks, everywhere; persisted per reader (ADR-0020). Also the naming axis for **example variants** (`basic.react.tsx`).

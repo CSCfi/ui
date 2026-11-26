@@ -1,5 +1,27 @@
 # @cscfi/csc-ui-react
 
+## 4.0.1
+
+### Patch Changes
+
+- [#334](https://github.com/CSCfi/ui/pull/334) [`7425168`](https://github.com/CSCfi/ui/commit/74251684875f2dc05ccef21d012654fb85d1b353) Thanks [@razorfever](https://github.com/razorfever)! - A menu, popover or tooltip whose `trigger` prop designates a `c-button`, or
+  another component whose element has no box of its own, now opens against that
+  button. It opened at the top-left corner of the page.
+
+- [#334](https://github.com/CSCfi/ui/pull/334) [`37b5034`](https://github.com/CSCfi/ui/commit/37b5034a7b93644479303a5ff5eb7243392804e7) Thanks [@razorfever](https://github.com/razorfever)! - Menus, popovers, tooltips and the panels of the select, autocomplete, tree
+  select, date, time and colour pickers and the folded breadcrumb stay on their
+  trigger in Safari 26 (iOS included) when the trigger sits in a pinned toolbar,
+  a modal or another fixed or sticky container, or is designated with the
+  `trigger` prop. Safari 26 moved such a panel by the scroll distance as the page
+  scrolled, and opened it that far away after a scroll.
+
+- [#332](https://github.com/CSCfi/ui/pull/332) [`9b71454`](https://github.com/CSCfi/ui/commit/9b7145402151703908e350cf6782fef9a49d94ff) Thanks [@razorfever](https://github.com/razorfever)! - A `c-tab-item` carrying a `disabled` attribute no longer collapses to zero
+  width. The attribute was never part of the panel's API, a 3.x leftover, and a
+  selected panel carrying it showed nothing. To keep a tab from being selected,
+  set `disabled` on its `c-tab`.
+- Updated dependencies [[`7425168`](https://github.com/CSCfi/ui/commit/74251684875f2dc05ccef21d012654fb85d1b353), [`37b5034`](https://github.com/CSCfi/ui/commit/37b5034a7b93644479303a5ff5eb7243392804e7), [`9b71454`](https://github.com/CSCfi/ui/commit/9b7145402151703908e350cf6782fef9a49d94ff)]:
+  - @cscfi/csc-ui@4.0.1
+
 ## 4.0.0
 
 ### Major Changes

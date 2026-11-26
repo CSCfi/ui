@@ -11,7 +11,7 @@ import type { Mounted } from '../harness';
 
 import { registeredTags } from '../../registry';
 import { supportsAnchorPositioning } from '../../shared/useFallbackPosition';
-import { deepActiveElement, mount, settle } from '../harness';
+import { deepActiveElement, mount, parkPointer, settle } from '../harness';
 import { withoutAnchorPositioning } from '../noAnchorPositioning';
 import { FIXTURES, KNOWN_FOCUS_LOSS_ON_CLOSE, OVERLAY_RECIPES } from './kinds';
 
@@ -262,9 +262,11 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
           document.body.append(tall);
         },
       },
+      // `absolute`, not `fixed`: an anchor in a fixed box is placed by script
+      // in every browser, which would leave nothing native to compare with.
       'crowded into the bottom-right corner': {
         before: (m) => {
-          m.stage.style.cssText += ';position:fixed;right:0;bottom:0';
+          m.stage.style.cssText += ';position:absolute;right:0;bottom:0';
         },
       },
       'in the page flow': {},
@@ -279,7 +281,7 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
       'with no room on either side': {
         after: (m) => sizePanel(m, 'min-width: 80vw; max-width: none'),
         before: (m) => {
-          m.stage.style.cssText += ';position:fixed;left:50%;top:40%';
+          m.stage.style.cssText += ';position:absolute;left:50%;top:40%';
         },
       },
     };
@@ -324,8 +326,37 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
       return { margins, rect: [r.left, r.top, r.width, r.height] };
     };
 
-    // ADR-0038: a designated trigger elsewhere in the document; natively the
-    // panel anchors to a tracked proxy, without the feature to the element.
+    // ADR-0038: a designated trigger elsewhere in the document. No anchor
+    // name reaches it, so its panel is placed by script in every browser
+    // (ADR-0056, amended 2026-11-20), and must sit against it as native
+    // places the panel of the same trigger slotted at the same spot.
+    const TRIGGER_AT = 'position:absolute;left:300px;top:200px';
+
+    /** The panel's border box from the trigger's top-left corner. */
+    const fromTrigger = (panel: HTMLElement, trigger: Element): string => {
+      for (const a of panel.getAnimations({ subtree: true })) a.finish();
+
+      const p = panel.getBoundingClientRect();
+
+      const t = trigger.getBoundingClientRect();
+
+      return [p.left - t.left, p.top - t.top, p.width, p.height]
+        .map((v) => Math.round(v))
+        .join(',');
+    };
+
+    const openFrom = async (trigger: HTMLElement): Promise<void> => {
+      if (tag === 'c-tooltip') await userEvent.hover(trigger);
+      else await userEvent.click(trigger);
+      await settle();
+    };
+
+    const withoutSlottedTrigger = (): string | undefined =>
+      recipe.mount.html?.replace(
+        /<c-button slot="trigger">.*?<\/c-button>/,
+        '',
+      );
+
     const designatedRect = async (): Promise<string> => {
       document.body.replaceChildren();
 
@@ -333,47 +364,101 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
 
       trigger.id = 'designated';
       trigger.textContent = 'Designated';
-      trigger.style.cssText = 'position:fixed;left:300px;top:200px';
+      trigger.style.cssText = TRIGGER_AT;
       document.body.append(trigger);
 
       const m = await mount(tag, {
         ...recipe.mount,
-        html: recipe.mount.html?.replace(
-          /<c-button slot="trigger">.*?<\/c-button>/,
-          '',
-        ),
+        html: withoutSlottedTrigger(),
         props: { ...recipe.mount.props, trigger: 'designated' },
       });
 
-      if (tag === 'c-tooltip') await userEvent.hover(trigger);
-      else await userEvent.click(trigger);
-      await settle();
+      await openFrom(trigger);
 
-      const panel = recipe.panel(m);
-
-      for (const a of panel.getAnimations({ subtree: true })) a.finish();
-
-      const r = panel.getBoundingClientRect();
+      const rect = fromTrigger(recipe.panel(m), trigger);
 
       m.unmount();
 
-      return [r.left, r.top, r.width, r.height]
-        .map((v) => Math.round(v))
-        .join(',');
+      return rect;
+    };
+
+    const slottedRect = async (): Promise<string> => {
+      document.body.replaceChildren();
+
+      const m = await mount(tag, {
+        ...recipe.mount,
+        html: `<button slot="trigger">Designated</button>${withoutSlottedTrigger()}`,
+      });
+
+      m.stage.style.cssText += `;${TRIGGER_AT};padding:0`;
+
+      const trigger = m.host.querySelector('button')!;
+
+      await openFrom(trigger);
+
+      const rect = fromTrigger(recipe.panel(m), trigger);
+
+      m.unmount();
+
+      return rect;
     };
 
     it.runIf(['c-menu', 'c-popover', 'c-tooltip'].includes(tag))(
-      'places the panel as native does against a designated trigger',
+      'places the panel against a designated trigger as native does against a slotted one',
       async () => {
-        const native = await designatedRect();
+        expect(await designatedRect()).toBe(await slottedRect());
+      },
+    );
 
-        const restore = withoutAnchorPositioning();
+    // A component host such as c-button is `display: contents`: no box of
+    // its own (an empty rect at 0,0), so the panel is placed against the box
+    // it renders.
+    it.runIf(['c-menu', 'c-popover', 'c-tooltip'].includes(tag))(
+      'places the panel against a designated c-button as native does against a slotted one',
+      async () => {
+        const label =
+          recipe.mount.html?.match(
+            /<c-button slot="trigger">(.*?)<\/c-button>/,
+          )?.[1] ?? '';
 
-        try {
-          expect(await designatedRect()).toBe(native);
-        } finally {
-          restore();
-        }
+        const buttonOf = (host: Element): HTMLElement =>
+          host.shadowRoot!.querySelector('button')!;
+
+        document.body.replaceChildren();
+
+        const at = document.createElement('div');
+
+        at.style.cssText = TRIGGER_AT;
+        at.innerHTML = `<c-button id="designated">${label}</c-button>`;
+        document.body.append(at);
+        await settle();
+
+        const d = await mount(tag, {
+          ...recipe.mount,
+          html: withoutSlottedTrigger(),
+          props: { ...recipe.mount.props, trigger: 'designated' },
+        });
+
+        const designatedButton = buttonOf(at.querySelector('c-button')!);
+
+        await openFrom(designatedButton);
+
+        const designated = fromTrigger(recipe.panel(d), designatedButton);
+
+        d.unmount();
+        document.body.replaceChildren();
+
+        const s = await mount(tag, recipe.mount);
+
+        s.stage.style.cssText += `;${TRIGGER_AT};padding:0`;
+
+        const slottedButton = buttonOf(s.host.querySelector('c-button')!);
+
+        await openFrom(slottedButton);
+
+        expect(designated).toBe(fromTrigger(recipe.panel(s), slottedButton));
+
+        s.unmount();
       },
     );
 
@@ -403,6 +488,225 @@ describe.each(Object.keys(OVERLAY_RECIPES))(
           );
         } finally {
           restore();
+        }
+      },
+    );
+  },
+);
+
+// Safari 26's native positioning misplaced a panel anchored in a box that
+// does not scroll with the page — the docs' pinned toolbar, a designated
+// trigger's fixed proxy — by the scroll distance (ADR-0056, amended
+// 2026-11-20). Such a panel is placed by script in every browser, and stays
+// on its trigger whether the page scrolls while it is open or before it.
+describe.each(Object.keys(OVERLAY_RECIPES))(
+  '%s where the page scrolls past its trigger',
+  (tag) => {
+    const recipe = OVERLAY_RECIPES[tag];
+
+    /** Placed by `useFallbackPosition`: a pixel `left`, not `inset: auto`. */
+    const placedByScript = (panel: HTMLElement): boolean =>
+      panel.style.left.endsWith('px');
+
+    /** The panel's border box from `from`'s top-left corner. */
+    const offset = (panel: HTMLElement, from: Element): string => {
+      for (const a of panel.getAnimations({ subtree: true })) a.finish();
+
+      const p = panel.getBoundingClientRect();
+
+      const f = from.getBoundingClientRect();
+
+      return [p.left - f.left, p.top - f.top, p.width, p.height]
+        .map((v) => Math.round(v))
+        .join(',');
+    };
+
+    const scrollTo = async (y: number): Promise<void> => {
+      window.scrollTo(0, y);
+      await settle();
+      await settle();
+
+      expect(window.scrollY).toBe(y);
+    };
+
+    /** Page content below, so the page can scroll. */
+    const tallPage = (): HTMLElement => {
+      const tall = document.createElement('div');
+
+      tall.style.height = '200vh';
+      document.body.append(tall);
+
+      return tall;
+    };
+
+    /**
+     * Mounted in a pinned (sticky) stage, at the top of a tall page. The
+     * pointer is parked first: left resting on the last open's trigger, it
+     * would open a tooltip on mount, before its stage is pinned.
+     */
+    const pinned = async (): Promise<Mounted> => {
+      document.body.replaceChildren();
+      window.scrollTo(0, 0);
+      await parkPointer();
+
+      const m = await mount(recipe.mountTag ?? tag, recipe.mount);
+
+      m.stage.style.cssText += ';position:sticky;top:0';
+      tallPage();
+
+      return m;
+    };
+
+    it('stays on a trigger in a pinned box as the page scrolls', async () => {
+      const m = await pinned();
+
+      try {
+        await recipe.open(m);
+
+        const panel = recipe.panel(m);
+
+        expect(placedByScript(panel)).toBe(true);
+
+        const before = offset(panel, m.stage);
+
+        await scrollTo(40);
+
+        expect(m.stage.getBoundingClientRect().top, 'the stage is pinned').toBe(
+          0,
+        );
+        expect(offset(panel, m.stage)).toBe(before);
+      } finally {
+        m.unmount();
+        window.scrollTo(0, 0);
+      }
+    });
+
+    // A modal dialog is fixed too, so every panel opened from a form in a
+    // c-modal is placed by script; its content scrolls in a box of its own,
+    // not the page. The dialog is held near the top of the viewport, so no
+    // panel flips to the other side as its trigger moves.
+    it('stays on a trigger in a modal as the modal content scrolls', async () => {
+      document.body.replaceChildren();
+      window.scrollTo(0, 0);
+      await parkPointer();
+
+      const style = document.createElement('style');
+
+      style.textContent = 'c-modal::part(root) { margin-top: 16px }';
+      document.head.append(style);
+
+      const modal = await mount('c-modal', {
+        attrs: { 'aria-label': 'Dialog' },
+        html: '<div data-scroller style="height:240px;overflow:auto"><div data-content style="height:800px;padding-top:60px"></div></div>',
+        props: { value: true },
+        stage: false,
+      });
+
+      const scroller =
+        modal.host.querySelector<HTMLElement>('[data-scroller]')!;
+
+      const m = await mount(recipe.mountTag ?? tag, {
+        ...recipe.mount,
+        parent: scroller.querySelector('[data-content]')!,
+      });
+
+      try {
+        await recipe.open(m);
+
+        const panel = recipe.panel(m);
+
+        expect(placedByScript(panel)).toBe(true);
+
+        const before = offset(panel, m.stage);
+
+        const top = m.stage.getBoundingClientRect().top;
+
+        scroller.scrollTop = 40;
+        await settle();
+        await settle();
+
+        expect(
+          m.stage.getBoundingClientRect().top,
+          'the trigger moved with the content',
+        ).toBe(top - 40);
+        expect(panel.matches(':popover-open'), 'still open').toBe(true);
+        expect(offset(panel, m.stage)).toBe(before);
+      } finally {
+        m.unmount();
+        modal.unmount();
+        style.remove();
+      }
+    });
+
+    it('opens on a trigger in a pinned box after the page scrolls', async () => {
+      const placed = async (y: number): Promise<string> => {
+        const m = await pinned();
+
+        try {
+          await scrollTo(y);
+          await recipe.open(m);
+
+          const panel = recipe.panel(m);
+
+          expect(placedByScript(panel), `at scrollY ${y}`).toBe(true);
+
+          return offset(panel, m.stage);
+        } finally {
+          m.unmount();
+          window.scrollTo(0, 0);
+        }
+      };
+
+      const unscrolled = await placed(0);
+
+      expect(await placed(40)).toBe(unscrolled);
+    });
+
+    it.runIf(['c-menu', 'c-popover', 'c-tooltip'].includes(tag))(
+      'stays on a designated trigger as the page scrolls',
+      async () => {
+        document.body.replaceChildren();
+        window.scrollTo(0, 0);
+
+        const trigger = document.createElement('button');
+
+        trigger.id = 'designated';
+        trigger.textContent = 'Designated';
+        trigger.style.cssText = 'margin:120px 0 0 300px';
+        document.body.append(trigger);
+        tallPage();
+
+        const m = await mount(tag, {
+          ...recipe.mount,
+          html: recipe.mount.html?.replace(
+            /<c-button slot="trigger">.*?<\/c-button>/,
+            '',
+          ),
+          props: { ...recipe.mount.props, trigger: 'designated' },
+        });
+
+        try {
+          if (tag === 'c-tooltip') await userEvent.hover(trigger);
+          else await userEvent.click(trigger);
+          await settle();
+
+          const panel = recipe.panel(m);
+
+          expect(placedByScript(panel)).toBe(true);
+
+          const before = offset(panel, trigger);
+
+          const top = trigger.getBoundingClientRect().top;
+
+          await scrollTo(40);
+
+          expect(trigger.getBoundingClientRect().top, 'the trigger moved').toBe(
+            top - 40,
+          );
+          expect(offset(panel, trigger)).toBe(before);
+        } finally {
+          m.unmount();
+          window.scrollTo(0, 0);
         }
       },
     );
