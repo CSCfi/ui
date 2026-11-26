@@ -7,15 +7,28 @@
  *
  *   pnpm generate && pnpm previews [--only <tag>]
  *
+ * A run rewrites only the pictures that no longer match the render (within
+ * TOLERANCE), so an unchanged component adds nothing to the history; `--only`
+ * rewrites its tag's pictures regardless. `--check` (`pnpm test:previews`,
+ * in CI) writes nothing and fails while a picture is missing or no longer
+ * matches; it leaves the fresh pictures of those in `.output/previews-check`.
+ *
  * Renders in the pinned Playwright Chromium with the harness font pin, like
  * the viewport smoke; the site's own Noto Sans is self-hosted, so the text is
  * the site's. tests/component-previews.spec.ts fails when a standalone
  * component has no preview.
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import pixelmatch from 'pixelmatch';
 import { chromium } from 'playwright';
 
 import { requireGenerated, servePublic, settlePage } from './static-site.mjs';
@@ -26,6 +39,8 @@ const require = createRequire(import.meta.url);
 
 const OUT = resolve(here, '../public/previews');
 
+const CHECK_OUT = resolve(here, '../.output/previews-check');
+
 const FONTS_CONF =
   process.env.FONTCONFIG_FILE ??
   resolve(here, '../../csc-ui/src/test/fonts.conf');
@@ -35,6 +50,20 @@ const FONTS_CONF =
  * that, for high-density screens.
  */
 const FRAME = { height: 275, width: 440 };
+
+/**
+ * How far a fresh picture may stray from the committed one and still match.
+ * pixelmatch (the visual baselines' comparator) counts a pixel as differing
+ * past an OKLab distance of `threshold` and skips anti-aliased pixels, where
+ * machines differ. A picture matches while no `window`-pixel square has more
+ * than `pixels` of its pixels differing: a square, not the whole picture, so
+ * a component that fills little of its frame still fails. Measured
+ * 2026-11-24: a one-step ramp change of the primary or border token differs
+ * in 23–100% of a square (c-checkbox, c-progress-circle, c-date-picker
+ * among them), a 0.03 lightness nudge 6–25%; two local renders, 0%. Never
+ * raise it past the point where a one-step change would match.
+ */
+const TOLERANCE = { pixels: 0.05, threshold: 0.05, window: 16 };
 
 /**
  * How to frame a component whose `basic` example is not its best picture.
@@ -129,6 +158,8 @@ const args = process.argv.slice(2);
 
 const ONLY = args.includes('--only') ? args[args.indexOf('--only') + 1] : null;
 
+const CHECK = args.includes('--check');
+
 // Standalone components, as the docs' navComponents count them.
 const manifest = JSON.parse(
   readFileSync(require.resolve('@cscfi/csc-ui/custom-elements.json'), 'utf8'),
@@ -151,6 +182,7 @@ const tags = ONLY
 
 requireGenerated('component-previews');
 mkdirSync(OUT, { recursive: true });
+rmSync(CHECK_OUT, { force: true, recursive: true });
 
 const { close, origin } = await servePublic();
 
@@ -167,44 +199,93 @@ const context = await browser.newContext({
 
 const page = await context.newPage();
 
-// Start the page's clock at one moment, so the date and time pickers open on
-// the same month and hour on every run. It keeps running: Vue drops an event
-// stamped no later than its listener was attached, so a frozen clock
-// (`setFixedTime`) swallows the clicks that open the panels.
-await page.clock.setSystemTime(new Date('2026-05-14T09:30:00'));
-
 // Encodes a PNG screenshot as WebP at the frame size through a canvas, so
-// the script needs no image library.
+// the script needs no image codec, and decodes it again beside the committed
+// picture: both sides are decoded WebP, so the encoding's own loss never
+// counts as a difference. `before` is null when there is no committed picture
+// of the frame's size.
 const encoder = await context.newPage();
 
-const toWebp = (png) =>
+const encode = (png, committed) =>
   encoder.evaluate(
-    async ({ data, height, width }) => {
-      const image = new Image();
+    async ({ committed, data, height, width }) => {
+      const decode = async (src) => {
+        const image = new Image();
 
-      image.src = `data:image/png;base64,${data}`;
-      await image.decode();
+        image.src = src;
+        await image.decode();
 
-      const canvas = document.createElement('canvas');
+        const canvas = document.createElement('canvas');
 
-      canvas.width = width;
-      canvas.height = height;
+        canvas.width = width;
+        canvas.height = height;
 
-      const context = canvas.getContext('2d');
+        const context = canvas.getContext('2d', { willReadFrequently: true });
 
-      context.imageSmoothingQuality = 'high';
-      context.drawImage(image, 0, 0, width, height);
+        context.imageSmoothingQuality = 'high';
+        context.drawImage(image, 0, 0, width, height);
 
-      return canvas.toDataURL('image/webp', 0.85).split(',')[1];
+        return { canvas, context, image };
+      };
+
+      // RGBA bytes as base64, the cheapest way out of the page.
+      const pixels = ({ context }) => {
+        const bytes = context.getImageData(0, 0, width, height).data;
+
+        let binary = '';
+
+        for (let i = 0; i < bytes.length; i += 0x8000)
+          binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+
+        return btoa(binary);
+      };
+
+      const webp = (await decode(`data:image/png;base64,${data}`)).canvas
+        .toDataURL('image/webp', 0.85)
+        .split(',')[1];
+
+      const before = committed
+        ? await decode(`data:image/webp;base64,${committed}`)
+        : null;
+
+      return {
+        after: pixels(await decode(`data:image/webp;base64,${webp}`)),
+        before:
+          before?.image.naturalWidth === width &&
+          before.image.naturalHeight === height
+            ? pixels(before)
+            : null,
+        webp,
+      };
     },
     {
+      committed: committed?.toString('base64') ?? null,
       data: png.toString('base64'),
       height: FRAME.height * 2,
       width: FRAME.width * 2,
     },
   );
 
+/** The share of the worst window's pixels that differ (1 with no picture). */
+const mismatch = ({ after, before }) =>
+  before
+    ? pixelmatch(
+        Buffer.from(after, 'base64'),
+        Buffer.from(before, 'base64'),
+        null,
+        FRAME.width * 2,
+        FRAME.height * 2,
+        { threshold: TOLERANCE.threshold, windowSize: TOLERANCE.window },
+      ) /
+      TOLERANCE.window ** 2
+    : 1;
+
 const failures = [];
+
+// The `<tag>-<mode>.webp` pictures that no longer match, for the summary.
+const stale = [];
+
+let written = 0;
 
 for (const tag of tags) {
   const recipe = RECIPES[tag] ?? {};
@@ -212,6 +293,12 @@ for (const tag of tags) {
   try {
     const scale = recipe.scale ?? 1;
 
+    // Start the page's clock at one moment for each component, so the date
+    // and time pickers open on the same day and minute however long the run
+    // took to get here. It keeps running: Vue drops an event stamped no later
+    // than its listener was attached, so a frozen clock (`setFixedTime`)
+    // swallows the clicks that open the panels.
+    await page.clock.setSystemTime(new Date('2026-05-14T09:30:00'));
     await page.setViewportSize({ height: 900, width: 1280 });
     await page.goto(`${origin}/components/${tag}`, {
       waitUntil: 'networkidle',
@@ -330,6 +417,8 @@ for (const tag of tags) {
       }
     });
 
+    const notes = [];
+
     for (const mode of ['light', 'dark']) {
       await page.evaluate((mode) => {
         document.documentElement.setAttribute('data-theme', mode);
@@ -337,18 +426,43 @@ for (const tag of tags) {
       await settlePage(page);
       await page.waitForTimeout(300);
 
-      writeFileSync(
-        join(OUT, `${tag}-${mode}.webp`),
-        Buffer.from(
-          await toWebp(
-            await page.screenshot({ clip: { x: 0, y: 0, ...frame } }),
-          ),
-          'base64',
-        ),
+      const name = `${tag}-${mode}.webp`;
+
+      const committed = existsSync(join(OUT, name))
+        ? readFileSync(join(OUT, name))
+        : null;
+
+      const encoded = await encode(
+        await page.screenshot({ clip: { x: 0, y: 0, ...frame } }),
+        committed,
       );
+
+      const difference = mismatch(encoded);
+
+      const why = committed
+        ? `${Math.round(difference * 100)}% of a ${TOLERANCE.window}px square differs`
+        : 'missing';
+
+      if (CHECK) {
+        if (difference <= TOLERANCE.pixels) continue;
+
+        stale.push(name);
+        notes.push(`${mode}: ${why}`);
+        mkdirSync(CHECK_OUT, { recursive: true });
+        writeFileSync(
+          join(CHECK_OUT, name),
+          Buffer.from(encoded.webp, 'base64'),
+        );
+      } else if (difference > TOLERANCE.pixels || ONLY) {
+        writeFileSync(join(OUT, name), Buffer.from(encoded.webp, 'base64'));
+        written++;
+        notes.push(`${mode} written (${why})`);
+      }
     }
 
-    console.log(`✔ ${tag}`);
+    console.log(
+      `${CHECK && notes.length ? '✖' : '✔'} ${tag}${notes.length ? `  ${notes.join(', ')}` : ''}`,
+    );
   } catch (error) {
     failures.push(tag);
     console.log(`✖ ${tag}  ${error.message.split('\n')[0]}`);
@@ -358,8 +472,23 @@ for (const tag of tags) {
 await browser.close();
 close();
 
-console.log(
-  `\ncomponent-previews: ${tags.length - failures.length}/${tags.length} written to ${OUT}`,
-);
+const captured = (tags.length - failures.length) * 2;
 
-process.exit(failures.length ? 1 : 0);
+if (CHECK) {
+  console.log(
+    `\ncomponent-previews: ${captured - stale.length}/${captured} pictures match the render`,
+  );
+
+  if (stale.length)
+    console.log(
+      `Out of date: ${stale.join(', ')}\nRun \`pnpm generate && pnpm previews\` in packages/csc-ui-documentation and commit public/previews (fresh pictures: ${CHECK_OUT}).`,
+    );
+} else {
+  console.log(
+    `\ncomponent-previews: ${written} pictures written to ${OUT}, ${captured - written} unchanged`,
+  );
+}
+
+if (failures.length) console.log(`Could not capture: ${failures.join(', ')}`);
+
+process.exit(failures.length || stale.length ? 1 : 0);

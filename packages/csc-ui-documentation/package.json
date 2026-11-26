@@ -17,6 +17,7 @@
     "previews": "node scripts/component-previews.mjs",
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
+    "test:previews": "node scripts/component-previews.mjs --check",
     "test:update": "vitest run --update",
     "test:viewport": "node scripts/viewport-smoke.mjs"
   },
@@ -37,6 +38,7 @@
     "@vitest/browser-playwright": "catalog:",
     "axe-core": "^4.14.0",
     "nuxt": "^4.0.0",
+    "pixelmatch": "^8.0.0",
     "playwright": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

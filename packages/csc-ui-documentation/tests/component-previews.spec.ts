@@ -2,7 +2,9 @@
  * The /components overview shows a picture of every standalone component in
  * both theme modes, written by scripts/component-previews.mjs. A new
  * component fails here until the script has run for it, and a removed one
- * until its pictures are deleted.
+ * until its pictures are deleted. Whether a picture still matches the
+ * component's render is CI's `pnpm test:previews`, which needs the generated
+ * site.
  */
 import { describe, expect, it } from 'vitest';
 
