@@ -798,6 +798,10 @@ _Avoid_: top-level component, root component, main component
 One of the docs site's groupings of **standalone components** — Forms, Overlays, Feedback & status… — by which the landing page's overview, the components overview page and the side navigation list them, every standalone component in exactly one. A presentation choice of the docs, kept out of the **manifest**: nothing about a component's API depends on its group.
 _Avoid_: Category (implies a manifest field), section, group alone (a **group label** names a set of form controls)
 
+**Component preview**:
+The picture of a **standalone component** on its card on the components overview page, one per **theme mode**. A preview is site content, re-taken from the component's live example whenever the component's look changes; CI fails while a preview no longer matches the component's render.
+_Avoid_: Visual baseline (a test fixture of the component's own spec), thumbnail, screenshot (unqualified)
+
 **Flavor**:
 The reader's consumption dialect on the docs site: `vue | react | angular | typescript` (TypeScript = framework-free typed custom-element usage). One documentation-wide selection — clicking any example tab or the header switcher changes every example, and the getting-started code blocks, everywhere; persisted per reader (ADR-0020). Also the naming axis for **example variants** (`basic.react.tsx`).
 _Avoid_: Framework (TypeScript is not one), consumer (that is the person/app using the library), language, target

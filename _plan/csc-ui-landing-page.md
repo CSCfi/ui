@@ -205,8 +205,8 @@ Each card on the `/components` overview shows a picture of the component's live 
 - **Theme swap**: in `site.css`, keyed on `data-theme` with an OS-preference fallback, the same
   predicate as the Shiki rules. A hidden lazy image is never fetched, so a reader downloads
   only the previews for their mode (checked: 51 light, 0 dark).
-- **Limits**: previews show the CSC default colours, not a re-seeded primary. They go stale
-  until `pnpm previews` is re-run after a visual change.
+- **Limits**: previews show the CSC default colours, not a re-seeded primary. They are re-taken
+  by `pnpm previews`, which CI's `test:previews` now enforces (see the last follow-up).
 - **Traps found**:
   - A c-* host is `display: contents`, so Playwright cannot hover or click it; target the
     button inside it.
@@ -236,3 +236,30 @@ component stays one click away, and no expanded state has to follow the route.
 Each group's tags in `content/component-groups.ts` are alphabetical, which orders the overview
 sections, the side navigation and the landing page's chips. `tests/landing.spec.ts` checks the
 order (`localeCompare`, as the old A–Z navigation sorted).
+
+## Follow-up: CI fails on out-of-date previews (2026-11-24)
+
+The pictures are committed, so a change to a component's look left the old picture on the
+overview with nothing failing. `pnpm previews --check` (`pnpm test:previews`) now runs in CI
+after the viewport smoke, on the same generated site. It re-takes every picture and compares
+it with the committed one; on a mismatch it fails with the stale names and uploads the fresh
+pictures as the `component-previews` artifact. A plain `pnpm previews` rewrites only the
+pictures that no longer match, so a re-run after a one-component change adds only that
+component's pictures to the history.
+
+- **Comparator**: `pixelmatch` (the comparator of the visual baselines, now a docs
+  devDependency) at an OKLab threshold of 0.05, skipping anti-aliased pixels. A picture
+  matches while no 16-pixel square has more than 5% of its pixels differing. Measuring the
+  worst square, rather than the whole picture, keeps a small component in a large frame
+  detectable.
+- **Calibration**:
+  - A one-step ramp change of the primary or border token differed in 23–100% of a square,
+    across c-checkbox, c-progress-circle, c-spinner, c-radio-group, c-button, c-data-table
+    and c-date-picker.
+  - A 0.03 lightness nudge differed in 6–25%.
+  - Repeated local renders and a render with Skia's CPU-specific paths off
+    (`--disable-skia-runtime-opts`) differed in 0%.
+  - Not yet measured: x64 CI against the arm64 devcontainer. The first CI run shows that
+    noise; lower the tolerance only if CI itself fails.
+- **Trap fixed**: the page clock started at 09:30 once per run, so the time picker showed
+  whichever minute the run had reached. The clock now restarts at 09:30 for each component.
