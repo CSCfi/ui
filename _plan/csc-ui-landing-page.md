@@ -259,7 +259,14 @@ component's pictures to the history.
   - A 0.03 lightness nudge differed in 6–25%.
   - Repeated local renders and a render with Skia's CPU-specific paths off
     (`--disable-skia-runtime-opts`) differed in 0%.
-  - Not yet measured: x64 CI against the arm64 devcontainer. The first CI run shows that
-    noise; lower the tolerance only if CI itself fails.
+  - x64 CI against the arm64 devcontainer (2026-11-26, PR #335) differed in at most 3%,
+    with LCD text off.
 - **Trap fixed**: the page clock started at 09:30 once per run, so the time picker showed
   whichever minute the run had reached. The clock now restarts at 09:30 for each component.
+- **Trap fixed**: subpixel text. The first CI run failed 64 of 102 pictures, by up to 57%
+  of a square. CI's text had coloured LCD edges; the devcontainer's text is grayscale.
+  `fonts.conf` includes the system's fontconfig, and Ubuntu turns on subpixel rendering
+  where Debian doesn't. A local run with fontconfig forced to `rgba=rgb` reproduced CI's
+  pictures to within 3%, 18 of them byte for byte. The script now launches Chromium with
+  `--disable-lcd-text`, which overrides fontconfig. With it, the forced run and the plain
+  run both match 102/102 with no picture re-taken.
