@@ -60,8 +60,10 @@ const FRAME = { height: 275, width: 440 };
  * a component that fills little of its frame still fails. Measured
  * 2026-11-24: a one-step ramp change of the primary or border token differs
  * in 23–100% of a square (c-checkbox, c-progress-circle, c-date-picker
- * among them), a 0.03 lightness nudge 6–25%; two local renders, 0%. Never
- * raise it past the point where a one-step change would match.
+ * among them), a 0.03 lightness nudge 6–25%; two local renders, 0%; x64 CI
+ * against the arm64 devcontainer, at most 3% (2026-11-26, with LCD text off
+ * as at the launch below). Never raise it past the point where a one-step
+ * change would match.
  */
 const TOLERANCE = { pixels: 0.05, threshold: 0.05, window: 16 };
 
@@ -186,7 +188,12 @@ rmSync(CHECK_OUT, { force: true, recursive: true });
 
 const { close, origin } = await servePublic();
 
+// Grayscale text anti-aliasing on every machine: fonts.conf takes the
+// system's fontconfig defaults, which turn on subpixel (LCD) text on Ubuntu
+// (CI) and not on Debian (the devcontainer), and coloured glyph edges alone
+// put half the pictures past TOLERANCE.
 const browser = await chromium.launch({
+  args: ['--disable-lcd-text'],
   env: { ...process.env, FONTCONFIG_FILE: FONTS_CONF },
   executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined,
 });
